@@ -13,10 +13,10 @@ import Combine
 struct Authentication {
     struct State: Equatable {
         var loggedIn = false
-        var email = String()
-        var password = String()
         var attempted = false
         var error: FirestoreError?
+        var email = String.init()
+        var password = String.init()
     }
     
     enum Action: Equatable {
