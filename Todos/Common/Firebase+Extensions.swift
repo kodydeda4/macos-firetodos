@@ -27,6 +27,7 @@ extension Firestore {
         case add
         case set
         case remove
+        case login
     }
 
     func fetchData<A>(ofType: A.Type, from collection: String) -> AnyPublisher<Result<[A], DBError>, Never> where A: Codable {

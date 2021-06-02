@@ -8,21 +8,38 @@
 import SwiftUI
 import ComposableArchitecture
 import Firebase
+import Combine
 
 struct UserAuthentication {
     struct State: Equatable {
         var email = ""
         var password = ""
+        var loggedIn = false
+        var error: Firestore.DBError?
     }
     
     enum Action: Equatable {
         case updateEmail(String)
         case updatePassword(String)
         case loginButtonTapped
+        case loginButtonTappedResult(Result<Bool, Firestore.DBError>)
     }
     
     struct Environment {
-        // environment
+        func auth(email: String, password: String) -> AnyPublisher<Result<Bool, Firestore.DBError>, Never> {
+            let rv = PassthroughSubject<Result<Bool, Firestore.DBError>, Never>()
+            
+            Auth.auth().signIn(withEmail: email, password: password) { result, error in
+                switch error {
+                case .none:
+                    rv.send(.success(true))
+                case .some:
+                    rv.send(.failure(.login))
+                }
+            }
+            
+            return rv.eraseToAnyPublisher()
+        }
     }
 }
 
@@ -41,13 +58,16 @@ extension UserAuthentication {
                 return .none
                 
             case .loginButtonTapped:
-                Auth.auth().signIn(withEmail: state.email, password: state.password) { result, error in
-                    if let error = error {
-                        print(error.localizedDescription)
-                    } else {
-                        print("success")
-                    }
-                }
+                return environment.auth(email: state.email, password: state.password)
+                    .map(Action.loginButtonTappedResult)
+                    .eraseToEffect()
+
+            case .loginButtonTappedResult(.success):
+                state.loggedIn.toggle()
+                return .none
+                
+            case let .loginButtonTappedResult(.failure(error)):
+                state.error = error
                 return .none
             }
         }

@@ -13,13 +13,13 @@ struct RootView: View {
     
     var body: some View {
         WithViewStore(store) { viewStore in
-            TodosListView(
-                store: store.scope(
-                    state: \.todosList,
-                    action: Root.Action.todosList
-                )
-            )
-            .navigationTitle("")
+            if !viewStore.userAuthentication.loggedIn {
+                UserAuthenticationView(store: store.scope(state: \.userAuthentication, action: Root.Action.userAuthentication))
+                
+            } else {
+                TodosListView(store: store.scope(state: \.todosList, action: Root.Action.todosList))
+                    .navigationTitle("")
+            }
         }
     }
 }
