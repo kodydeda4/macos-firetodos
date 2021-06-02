@@ -19,7 +19,7 @@ struct UserAuthenticationView: View {
                     TextField("Password", text: viewStore.binding(get: \.password, send: Authentication.Action.updatePassword))
                     
                     Text("Wrong password. Try again or click Forgot password to reset it.")
-                        .opacity(viewStore.failedLoginAttempt ? 1 : 0)
+                        .opacity(viewStore.attempted ? 1 : 0)
                         .foregroundColor(.red)
                     
                     Button("Login with email") { viewStore.send(.loginButtonTapped) }

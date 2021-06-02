@@ -15,7 +15,7 @@ struct Authentication {
         var loggedIn = false
         var email = ""
         var password = ""
-        var failedLoginAttempt = false
+        var attempted = false
         var error: FirestoreError?
     }
     
@@ -36,33 +36,31 @@ struct Authentication {
 }
 
 extension Authentication {
-    static let reducer = Reducer<State, Action, Environment>.combine(
-        // pullbacks
-        Reducer { state, action, environment in
-            switch action {
+    static let reducer = Reducer<State, Action, Environment> { state, action, environment in
+        
+        switch action {
+        
+        case let .updateEmail(value):
+            state.email = value
+            return .none
             
-            case let .updateEmail(value):
-                state.email = value
-                return .none
-                
-            case let .updatePassword(value):
-                state.password = value
-                return .none
-                
-            case .loginButtonTapped:
-                return environment.signIn(email: state.email, password: state.password)
-
-            case .loginButtonTappedResult(.success):
-                state.loggedIn.toggle()
-                return .none
-                
-            case let .loginButtonTappedResult(.failure(error)):
-                state.error = error
-                state.failedLoginAttempt = true
-                return .none
-            }
+        case let .updatePassword(value):
+            state.password = value
+            return .none
+            
+        case .loginButtonTapped:
+            return environment.signIn(email: state.email, password: state.password)
+            
+        case .loginButtonTappedResult(.success):
+            state.loggedIn.toggle()
+            return .none
+            
+        case let .loginButtonTappedResult(.failure(error)):
+            state.error = error
+            state.attempted = true
+            return .none
         }
-    )
+    }
 }
 
 extension Authentication {
