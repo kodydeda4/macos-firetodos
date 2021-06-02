@@ -31,7 +31,10 @@ extension Root {
         ),
         Reducer { state, action, environment in
             switch action {
-            default: return .none
+            
+            default:
+                return .none
+                
             }
         }
     )
