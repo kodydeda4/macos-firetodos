@@ -20,18 +20,18 @@ struct TodosList {
         case onAppear
         case fetchTodos
         case todos(index: Int, action: Todo.Action)
+        
         case createTodo
         case removeTodo(Todo.State)
-        case toggleCompleted(Todo.State)
-        case updateTodoText(Todo.State, String)
+        case updateTodo(Todo.State)
         case clearCompleted
         
         // results
-        case didFetchTodos(Result<[Todo.State], Firestore.DBError>)
-        case didCreateTodo(Result<Bool, Firestore.DBError>)
-        case didRemoveTodo(Result<Bool, Firestore.DBError>)
-        case didRemoveCompleted(Result<Bool, Firestore.DBError>)
-        case didUpdateTodo(Result<Bool, Firestore.DBError>)
+        case didFetchTodos      (Result<[Todo.State], Firestore.DBError>)
+        case didCreateTodo      (Result<Bool, Firestore.DBError>)
+        case didRemoveTodo      (Result<Bool, Firestore.DBError>)
+        case didRemoveCompleted (Result<Bool, Firestore.DBError>)
+        case didUpdateTodo      (Result<Bool, Firestore.DBError>)
     }
     
     struct Environment {
@@ -62,8 +62,8 @@ struct TodosList {
                 .eraseToEffect()
         }
         
-        func updateTodo(_ oldTodo: Todo.State, to newTodo: Todo.State) -> Effect<Action, Never> {
-            db.set(oldTodo.id!, to: newTodo, in: collection)
+        func updateTodo(_ todo: Todo.State) -> Effect<Action, Never> {
+            db.set(todo.id!, to: todo, in: collection)
                 .map(Action.didUpdateTodo)
                 .eraseToEffect()
         }
@@ -88,26 +88,24 @@ extension TodosList {
                 return environment.fetchData
                 
             case let .todos(index, action):
-                return .none
+                let todo = state.todos[index]
+                return Effect(value: .updateTodo(todo))
                 
             case .createTodo:
                 return environment.addTodo(Todo.State())
                 
-            case let .removeTodo(book):
-                return environment.removeTodo(book)
+            case let .removeTodo(todo):
+                return environment.removeTodo(todo)
                 
-            case let .toggleCompleted(book):
-                var book2 = book
-                book2.completed.toggle()
-                
-                return environment.updateTodo(book, to: book2)
-                
+            case let .updateTodo(todo):
+                return environment.updateTodo(todo)
+
             case .clearCompleted:
                 return environment.removeTodos(state.todos.filter(\.completed))
 
             // Result
-            case let .didFetchTodos(.success(books)):
-                state.todos = books
+            case let .didFetchTodos(.success(todos)):
+                state.todos = todos
                 return .none
                 
             case .didCreateTodo          (.success),
@@ -123,13 +121,6 @@ extension TodosList {
                  let .didUpdateTodo      (.failure(error)):
                 state.error = error
                 return .none
-                
-            case let .updateTodoText(todo, text):
-                var newTodo = todo
-                newTodo.description = text
-                
-                return environment.updateTodo(todo, to: newTodo)
-                
             }
         }
         .debug()
