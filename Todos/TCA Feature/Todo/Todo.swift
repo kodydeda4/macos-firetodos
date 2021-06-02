@@ -7,6 +7,8 @@
 
 import SwiftUI
 import ComposableArchitecture
+
+import Firebase
 import FirebaseFirestore
 import FirebaseFirestoreSwift
 
@@ -16,6 +18,7 @@ struct Todo {
         @ServerTimestamp var createdAt: Date?
         var description: String = "Untitled"
         var completed: Bool = false
+        var userID: String? = Auth.auth().currentUser?.uid
     }
     
     enum Action: Equatable {

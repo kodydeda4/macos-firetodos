@@ -24,10 +24,13 @@ import Combine
 
 extension Firestore {
 
-    func fetchData<A>(ofType: A.Type, from collection: String) -> AnyPublisher<Result<[A], FirestoreError>, Never> where A: Codable {
+    func fetchData<A>(ofType: A.Type, from collection: String, userID: String) -> AnyPublisher<Result<[A], FirestoreError>, Never> where A: Codable {
         let rv = PassthroughSubject<Result<[A], FirestoreError>, Never>()
         
-        self.collection(collection).addSnapshotListener { querySnapshot, error in
+        self.collection(collection)
+            .whereField("userID", isEqualTo: userID)
+            .addSnapshotListener { querySnapshot, error in
+            
             if let values = querySnapshot?
                 .documents
                 .compactMap({ try? $0.data(as: A.self) }) {
@@ -36,6 +39,7 @@ extension Firestore {
                 
             } else if let error = error {
                 rv.send(.failure(FirestoreError(error)))
+                print(error.localizedDescription)
             }
         }
         return rv.eraseToAnyPublisher()
@@ -45,6 +49,8 @@ extension Firestore {
         let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
         
         do {
+//            var addedTask = value
+//
             let _ = try self.collection(collection).addDocument(from: value)
             rv.send(.success(true))
         }

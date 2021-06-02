@@ -7,6 +7,8 @@
 
 import Combine
 import ComposableArchitecture
+
+import Firebase
 import FirebaseFirestore
 import FirebaseFirestoreSwift
 
@@ -37,9 +39,11 @@ struct TodosList {
     struct Environment {
         let db = Firestore.firestore()
         let collection = "todos"
+        let userID = Auth.auth().currentUser!.uid
+        
         
         var fetchData: Effect<Action, Never> {
-            db.fetchData(ofType: Todo.State.self, from: collection)
+            db.fetchData(ofType: Todo.State.self, from: collection, userID: userID)
                 .map(Action.didFetchTodos)
                 .eraseToEffect()
         }
