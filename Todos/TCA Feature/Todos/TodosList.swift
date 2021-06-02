@@ -10,34 +10,28 @@ import ComposableArchitecture
 import FirebaseFirestore
 import FirebaseFirestoreSwift
 
-struct Todo: Equatable, Identifiable, Codable {
-    @DocumentID var id: String?
-    @ServerTimestamp var createdAt: Date?
-    var description: String
-    var completed: Bool = false
-}
-
 struct TodosList {
     struct State: Equatable {
-        var todos = [Todo]()
+        var todos: [Todo.State] = []
         var error: Firestore.DBError?
     }
     
     enum Action: Equatable {
         case onAppear
-        
         case fetchTodos
+        case todos(index: Int, action: Todo.Action)
         case createTodo
-        case remove(Todo)
-        case toggleCompleted(Todo)
+        case removeTodo(Todo.State)
+        case toggleCompleted(Todo.State)
+        case updateTodoText(Todo.State, String)
         case clearCompleted
-        case updateTodoText(Todo, String)
-
-        case didFetchTodos      (Result<[Todo], Firestore.DBError>)
-        case didCreateTodo      (Result<Bool,   Firestore.DBError>)
-        case didRemoveTodo      (Result<Bool,   Firestore.DBError>)
-        case didRemoveCompleted (Result<Bool,   Firestore.DBError>)
-        case didUpdateTodo      (Result<Bool,   Firestore.DBError>)
+        
+        // results
+        case didFetchTodos(Result<[Todo.State], Firestore.DBError>)
+        case didCreateTodo(Result<Bool, Firestore.DBError>)
+        case didRemoveTodo(Result<Bool, Firestore.DBError>)
+        case didRemoveCompleted(Result<Bool, Firestore.DBError>)
+        case didUpdateTodo(Result<Bool, Firestore.DBError>)
     }
     
     struct Environment {
@@ -45,30 +39,30 @@ struct TodosList {
         let collection = "todos"
         
         var fetchData: Effect<Action, Never> {
-            db.fetchData(ofType: Todo.self, from: collection)
+            db.fetchData(ofType: Todo.State.self, from: collection)
                 .map(Action.didFetchTodos)
                 .eraseToEffect()
         }
         
-        func addTodo(_ todo: Todo) -> Effect<Action, Never> {
+        func addTodo(_ todo: Todo.State) -> Effect<Action, Never> {
             db.add(todo, to: collection)
                 .map(Action.didCreateTodo)
                 .eraseToEffect()
         }
         
-        func removeTodo(_ todo: Todo) -> Effect<Action, Never> {
+        func removeTodo(_ todo: Todo.State) -> Effect<Action, Never> {
             db.remove(todo.id!, from: collection)
                 .map(Action.didRemoveTodo)
                 .eraseToEffect()
         }
         
-        func removeTodos(_ todos: [Todo]) -> Effect<Action, Never> {
+        func removeTodos(_ todos: [Todo.State]) -> Effect<Action, Never> {
             db.remove(todos.map(\.id!), from: collection)
                 .map(Action.didRemoveTodo)
                 .eraseToEffect()
         }
         
-        func updateTodo(_ oldTodo: Todo, to newTodo: Todo) -> Effect<Action, Never> {
+        func updateTodo(_ oldTodo: Todo.State, to newTodo: Todo.State) -> Effect<Action, Never> {
             db.set(oldTodo.id!, to: newTodo, in: collection)
                 .map(Action.didUpdateTodo)
                 .eraseToEffect()
@@ -78,6 +72,11 @@ struct TodosList {
 
 extension TodosList {
     static let reducer = Reducer<State, Action, Environment>.combine(
+        Todo.reducer.forEach(
+            state: \.todos,
+            action: /Action.todos(index:action:),
+            environment: { _ in () }
+        ),
         
         Reducer { state, action, environment in
             switch action {
@@ -88,10 +87,13 @@ extension TodosList {
             case .fetchTodos:
                 return environment.fetchData
                 
-            case .createTodo:
-                return environment.addTodo(Todo.init(description: "Title"))
+            case let .todos(index, action):
+                return .none
                 
-            case let .remove(book):
+            case .createTodo:
+                return environment.addTodo(Todo.State())
+                
+            case let .removeTodo(book):
                 return environment.removeTodo(book)
                 
             case let .toggleCompleted(book):
@@ -127,6 +129,7 @@ extension TodosList {
                 newTodo.description = text
                 
                 return environment.updateTodo(todo, to: newTodo)
+                
             }
         }
         .debug()
@@ -139,4 +142,43 @@ extension TodosList {
         reducer: reducer,
         environment: .init()
     )
+}
+
+// MARK:- TodosListView
+
+import SwiftUI
+import ComposableArchitecture
+
+struct TodosListView: View {
+    let store: Store<TodosList.State, TodosList.Action>
+    
+    var body: some View {
+        WithViewStore(store) { viewStore in
+            List {
+                ForEachStore(store.scope(
+                    state: \.todos,
+                    action: TodosList.Action.todos(index:action:)
+                ), content: TodoView.init)
+            }
+            .onAppear() {
+                viewStore.send(.onAppear)
+            }
+            .toolbar {
+                ToolbarItem {
+                    Button("Add") { viewStore.send(.createTodo) }
+                }
+                ToolbarItem {
+                    Button("Clear Completed") {
+                        viewStore.send(.clearCompleted)
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct TodosListView_Previews: PreviewProvider {
+    static var previews: some View {
+        TodosListView(store: TodosList.defaultStore)
+    }
 }
