@@ -26,10 +26,10 @@ struct TodosListView: View {
                     VStack(alignment: .leading) {
                         Text(book.description)
                             .font(.headline)
-                        Text(book.author)
-                            .font(.subheadline)
-                        Text("\(book.numberOfPages) pages")
-                            .font(.subheadline)
+//                        Text(book.author)
+//                            .font(.subheadline)
+//                        Text("\(book.numberOfPages) pages")
+//                            .font(.subheadline)
                     }
                     .opacity(book.completed ? 0.25 : 1)
                 }

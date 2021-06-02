@@ -41,7 +41,7 @@ struct TodosList {
     
     struct Environment {
         let db = Firestore.firestore()
-        let collection = "books"
+        let collection = "todos"
         
         var fetchData: Effect<Action, Never> {
             db.fetchData(ofType: Todo.self, from: collection)
