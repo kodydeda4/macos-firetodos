@@ -88,8 +88,7 @@ extension TodosList {
                 return environment.fetchData
                 
             case let .todos(index, action):
-                let todo = state.todos[index]
-                return Effect(value: .updateTodo(todo))
+                return Effect(value: .updateTodo(state.todos[index]))
                 
             case .createTodo:
                 return environment.addTodo(Todo.State())
