@@ -14,10 +14,9 @@ struct TodosListView: View {
     var body: some View {
         WithViewStore(store) { viewStore in
             List(viewStore.todos) { book in
-                
                 VStack {
                     HStack {
-                        Button<Image>(book.completed ? "largecircle.fill.circle" : "circle") {
+                        Button<Image>(book.completed ? .largecircleFillCircle : .circle) {
                             viewStore.send(.toggleCompleted(book))
                         }
                         .buttonStyle(PlainButtonStyle())
@@ -29,8 +28,6 @@ struct TodosListView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     Divider()
                 }
-                
-                
             }
             .onAppear() {
                 viewStore.send(.onAppear)
