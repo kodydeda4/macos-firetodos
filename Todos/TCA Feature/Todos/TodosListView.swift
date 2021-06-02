@@ -13,17 +13,17 @@ struct TodosListView: View {
     
     var body: some View {
         WithViewStore(store) { viewStore in
-            List(viewStore.todos) { book in
+            List(viewStore.todos) { todo in
                 VStack {
                     HStack {
-                        Button<Image>(book.completed ? .largecircleFillCircle : .circle) {
-                            viewStore.send(.toggleCompleted(book))
+                        Button<Image>(todo.completed ? .largecircleFillCircle : .circle) {
+                            viewStore.send(.toggleCompleted(todo))
                         }
                         .buttonStyle(PlainButtonStyle())
                         .foregroundColor(.accentColor)
                         
-                        Text(book.description)
-                            .opacity(book.completed ? 0.25 : 1)
+                        Text(todo.description)
+                            .opacity(todo.completed ? 0.25 : 1)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     Divider()
@@ -34,7 +34,7 @@ struct TodosListView: View {
             }
             .toolbar {
                 ToolbarItem {
-                    Button("Add") { viewStore.send(.addBook) }
+                    Button("Add") { viewStore.send(.createTodo) }
                 }
                 ToolbarItem {
                     Button("Clear Completed") {

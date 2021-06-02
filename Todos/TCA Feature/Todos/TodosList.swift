@@ -26,17 +26,17 @@ struct TodosList {
     enum Action: Equatable {
         case onAppear
         
-        case fetchBooks
-        case addBook
-        case removeBook(Todo)
+        case fetchTodos
+        case createTodo
+        case remove(Todo)
         case toggleCompleted(Todo)
         case clearCompleted
 
-        case didFetchBooks  (Result<[Todo], Firestore.DBError>)
-        case didAddBook     (Result<Bool,   Firestore.DBError>)
-        case didRemoveBook  (Result<Bool,   Firestore.DBError>)
-        case didRemoveBooks (Result<Bool,   Firestore.DBError>)
-        case didUpdateBook  (Result<Bool,   Firestore.DBError>)
+        case didFetchTodos      (Result<[Todo], Firestore.DBError>)
+        case didCreateTodo      (Result<Bool,   Firestore.DBError>)
+        case didRemoveTodo      (Result<Bool,   Firestore.DBError>)
+        case didRemoveCompleted (Result<Bool,   Firestore.DBError>)
+        case didUpdateTodo      (Result<Bool,   Firestore.DBError>)
     }
     
     struct Environment {
@@ -45,31 +45,31 @@ struct TodosList {
         
         var fetchData: Effect<Action, Never> {
             db.fetchData(ofType: Todo.self, from: collection)
-                .map(Action.didFetchBooks)
+                .map(Action.didFetchTodos)
                 .eraseToEffect()
         }
         
-        func addBook(_ book: Todo) -> Effect<Action, Never> {
-            db.add(book, to: collection)
-                .map(Action.didAddBook)
+        func addTodo(_ todo: Todo) -> Effect<Action, Never> {
+            db.add(todo, to: collection)
+                .map(Action.didCreateTodo)
                 .eraseToEffect()
         }
         
-        func removeBook(_ book: Todo) -> Effect<Action, Never> {
-            db.remove(book.id!, from: collection)
-                .map(Action.didRemoveBook)
+        func removeTodo(_ todo: Todo) -> Effect<Action, Never> {
+            db.remove(todo.id!, from: collection)
+                .map(Action.didRemoveTodo)
                 .eraseToEffect()
         }
         
-        func removeBooks(_ books: [Todo]) -> Effect<Action, Never> {
-            db.remove(books.map(\.id!), from: collection)
-                .map(Action.didRemoveBook)
+        func removeTodos(_ todos: [Todo]) -> Effect<Action, Never> {
+            db.remove(todos.map(\.id!), from: collection)
+                .map(Action.didRemoveTodo)
                 .eraseToEffect()
         }
         
-        func updateBook(_ oldBook: Todo, to newBook: Todo) -> Effect<Action, Never> {
-            db.set(oldBook.id!, to: newBook, in: collection)
-                .map(Action.didUpdateBook)
+        func updateTodo(_ oldTodo: Todo, to newTodo: Todo) -> Effect<Action, Never> {
+            db.set(oldTodo.id!, to: newTodo, in: collection)
+                .map(Action.didUpdateTodo)
                 .eraseToEffect()
         }
     }
@@ -82,42 +82,42 @@ extension TodosList {
             switch action {
             
             case .onAppear:
-                return Effect(value: .fetchBooks)
+                return Effect(value: .fetchTodos)
                 
-            case .fetchBooks:
+            case .fetchTodos:
                 return environment.fetchData
                 
-            case .addBook:
-                return environment.addBook(Todo(description: "Title"))
+            case .createTodo:
+                return environment.addTodo(Todo.init(description: "Title"))
                 
-            case let .removeBook(book):
-                return environment.removeBook(book)
+            case let .remove(book):
+                return environment.removeTodo(book)
                 
             case let .toggleCompleted(book):
                 var book2 = book
                 book2.completed.toggle()
                 
-                return environment.updateBook(book, to: book2)
+                return environment.updateTodo(book, to: book2)
                 
             case .clearCompleted:
-                return environment.removeBooks(state.todos.filter(\.completed))
+                return environment.removeTodos(state.todos.filter(\.completed))
 
             // Result
-            case let .didFetchBooks(.success(books)):
+            case let .didFetchTodos(.success(books)):
                 state.todos = books
                 return .none
                 
-            case .didAddBook         (.success),
-                 .didRemoveBook      (.success),
-                 .didRemoveBooks     (.success),
-                 .didUpdateBook      (.success):
+            case .didCreateTodo          (.success),
+                 .didRemoveTodo          (.success),
+                 .didRemoveCompleted     (.success),
+                 .didUpdateTodo          (.success):
                 return .none
 
-            case let .didFetchBooks  (.failure(error)),
-                 let .didAddBook     (.failure(error)),
-                 let .didRemoveBook  (.failure(error)),
-                 let .didRemoveBooks (.failure(error)),
-                 let .didUpdateBook  (.failure(error)):
+            case let .didFetchTodos      (.failure(error)),
+                 let .didCreateTodo      (.failure(error)),
+                 let .didRemoveTodo      (.failure(error)),
+                 let .didRemoveCompleted (.failure(error)),
+                 let .didUpdateTodo      (.failure(error)):
                 state.error = error
                 return .none
             }
