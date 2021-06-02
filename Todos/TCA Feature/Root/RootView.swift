@@ -14,7 +14,7 @@ struct RootView: View {
     var body: some View {
         WithViewStore(store) { viewStore in
             if !viewStore.authentication.loggedIn {
-                UserAuthenticationView(store: store.scope(state: \.authentication, action: Root.Action.authentication))
+                AuthenticationView(store: store.scope(state: \.authentication, action: Root.Action.authentication))
                 
             } else {
                 TodosListView(store: store.scope(state: \.todosList, action: Root.Action.todosList))

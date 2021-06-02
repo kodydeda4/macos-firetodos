@@ -24,12 +24,21 @@ struct Authentication {
         case updatePassword(String)
         case loginButtonTapped
         case loginButtonTappedResult(Result<Bool, FirestoreError>)
+        
+        case signInAnonymouslyButtonTapped
+        case signInAnonymouslyButtonTappedResult(Result<Bool, FirestoreError>)
     }
     
     struct Environment {
         func signIn(email: String, password: String) -> Effect<Action, Never> {
             Firestore.signIn(email, password)
                 .map(Action.loginButtonTappedResult)
+                .eraseToEffect()
+        }
+        
+        var signInAnonymously: Effect<Action, Never> {
+            Firestore.signInAnonymously()
+                .map(Action.signInAnonymouslyButtonTappedResult)
                 .eraseToEffect()
         }
     }
@@ -56,6 +65,18 @@ extension Authentication {
             return .none
             
         case let .loginButtonTappedResult(.failure(error)):
+            state.error = error
+            state.attempted = true
+            return .none
+            
+        case .signInAnonymouslyButtonTapped:
+            return environment.signInAnonymously
+            
+        case .signInAnonymouslyButtonTappedResult(.success):
+            state.loggedIn.toggle()
+            return .none
+            
+        case let .signInAnonymouslyButtonTappedResult(.failure(error)):
             state.error = error
             state.attempted = true
             return .none

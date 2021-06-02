@@ -113,6 +113,22 @@ extension Firestore {
         
         return rv.eraseToAnyPublisher()
     }
+    
+    static func signInAnonymously() -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
+        let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
+        
+        Auth.auth().signInAnonymously { result, error in
+            print(result.debugDescription)
+            
+            if let error = error {
+                rv.send(.failure(FirestoreError(error)))
+            } else {
+                rv.send(.success(true))
+            }
+        }
+
+        return rv.eraseToAnyPublisher()
+    }
 }
 
 

@@ -1,5 +1,5 @@
 //
-//  UserAuthenticationView.swift
+//  AuthenticationView.swift
 //  Todos
 //
 //  Created by Kody Deda on 6/2/21.
@@ -8,7 +8,7 @@
 import SwiftUI
 import ComposableArchitecture
 
-struct UserAuthenticationView: View {
+struct AuthenticationView: View {
     let store: Store<Authentication.State, Authentication.Action>
     
     var body: some View {
@@ -23,6 +23,8 @@ struct UserAuthenticationView: View {
                         .foregroundColor(.red)
                     
                     Button("Login with email") { viewStore.send(.loginButtonTapped) }
+                    
+                    Button("Sign In Anonymously") { viewStore.send(.signInAnonymouslyButtonTapped) }
                 }
                 .padding(60)
             }
@@ -30,8 +32,8 @@ struct UserAuthenticationView: View {
     }
 }
 
-struct UserAuthentication_Previews: PreviewProvider {
+struct Authentication_Previews: PreviewProvider {
     static var previews: some View {
-        UserAuthenticationView(store: Authentication.defaultStore)
+        AuthenticationView(store: Authentication.defaultStore)
     }
 }
