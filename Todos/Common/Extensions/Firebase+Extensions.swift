@@ -99,6 +99,20 @@ extension Firestore {
         }
         return rv.eraseToAnyPublisher()
     }
+    
+    static func signIn(_ email: String, _ password: String) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
+        let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
+        
+        Auth.auth().signIn(withEmail: email, password: password) { result, error in
+            if let error = error {
+                rv.send(.failure(FirestoreError(error)))
+            } else {
+                rv.send(.success(true))
+            }
+        }
+        
+        return rv.eraseToAnyPublisher()
+    }
 }
 
 

@@ -16,6 +16,7 @@ struct UserAuthentication {
         var password = ""
         var loggedIn = false
         var error: FirestoreError?
+        var failedLoginAttempt = false
     }
     
     enum Action: Equatable {
@@ -26,18 +27,10 @@ struct UserAuthentication {
     }
     
     struct Environment {
-        func auth(email: String, password: String) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
-            let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
-            
-            Auth.auth().signIn(withEmail: email, password: password) { result, error in
-                if let error = error {
-                    rv.send(.failure(FirestoreError(error)))
-                } else {
-                    rv.send(.success(true))
-                }
-            }
-            
-            return rv.eraseToAnyPublisher()
+        func signIn(email: String, password: String) -> Effect<Action, Never> {
+            Firestore.signIn(email, password)
+                .map(Action.loginButtonTappedResult)
+                .eraseToEffect()
         }
     }
 }
@@ -57,9 +50,7 @@ extension UserAuthentication {
                 return .none
                 
             case .loginButtonTapped:
-                return environment.auth(email: state.email, password: state.password)
-                    .map(Action.loginButtonTappedResult)
-                    .eraseToEffect()
+                return environment.signIn(email: state.email, password: state.password)
 
             case .loginButtonTappedResult(.success):
                 state.loggedIn.toggle()
@@ -67,7 +58,7 @@ extension UserAuthentication {
                 
             case let .loginButtonTappedResult(.failure(error)):
                 state.error = error
-                print(error.localizedDescription)
+                state.failedLoginAttempt = true
                 return .none
             }
         }

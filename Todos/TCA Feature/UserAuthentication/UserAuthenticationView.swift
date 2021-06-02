@@ -15,16 +15,16 @@ struct UserAuthenticationView: View {
         WithViewStore(store) { viewStore in
             List {
                 VStack {
-                TextField("Email", text: viewStore.binding(get: \.email, send: UserAuthentication.Action.updateEmail))
-                TextField("Password", text: viewStore.binding(get: \.password, send: UserAuthentication.Action.updatePassword))
+                    TextField("Email", text: viewStore.binding(get: \.email, send: UserAuthentication.Action.updateEmail))
+                    TextField("Password", text: viewStore.binding(get: \.password, send: UserAuthentication.Action.updatePassword))
+                    
+                    Text("Wrong password. Try again or click Forgot password to reset it.")
+                        .opacity(viewStore.failedLoginAttempt ? 1 : 0)
+                        .foregroundColor(.red)
+                    
+                    Button("Login with email") { viewStore.send(.loginButtonTapped) }
                 }
-            }
-            .toolbar {
-                ToolbarItem {
-                    Button("Login") {
-                        viewStore.send(.loginButtonTapped)
-                    }
-                }
+                .padding(60)
             }
         }
     }
