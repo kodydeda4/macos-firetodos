@@ -22,7 +22,7 @@ struct TodoView: View {
                     .foregroundColor(.accentColor)
                     
                     TextField("Description", text: viewStore.binding(get: \.description, send: Todo.Action.updateText))
-                        .opacity(viewStore.completed ? 0.25 : 1)
+                        .disabled(viewStore.completed)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 Divider()
