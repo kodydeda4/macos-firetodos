@@ -17,7 +17,7 @@
 		334BFBD82667DC2300F7952C /* FirebaseFirestoreSwift-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = 334BFBD72667DC2300F7952C /* FirebaseFirestoreSwift-Beta */; };
 		334BFBDA2667DC4A00F7952C /* Firebase+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BFBD92667DC4A00F7952C /* Firebase+Extensions.swift */; };
 		334BFBDC2667DCD200F7952C /* Root.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BFBDB2667DCD200F7952C /* Root.swift */; };
-		334BFBE02667DEAA00F7952C /* UserAuthentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BFBDF2667DEAA00F7952C /* UserAuthentication.swift */; };
+		334BFBE02667DEAA00F7952C /* Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BFBDF2667DEAA00F7952C /* Authentication.swift */; };
 		334BFBE72667DF0000F7952C /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BFBE62667DF0000F7952C /* RootView.swift */; };
 		334BFBEB2667DFCD00F7952C /* UserAuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BFBEA2667DFCD00F7952C /* UserAuthenticationView.swift */; };
 		3364064F2667E2CC00545A25 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3364064E2667E2CC00545A25 /* GoogleService-Info.plist */; };
@@ -39,7 +39,7 @@
 		334BFBC92667DB8500F7952C /* Todos.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Todos.entitlements; sourceTree = "<group>"; };
 		334BFBD92667DC4A00F7952C /* Firebase+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Firebase+Extensions.swift"; sourceTree = "<group>"; };
 		334BFBDB2667DCD200F7952C /* Root.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Root.swift; sourceTree = "<group>"; };
-		334BFBDF2667DEAA00F7952C /* UserAuthentication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAuthentication.swift; sourceTree = "<group>"; };
+		334BFBDF2667DEAA00F7952C /* Authentication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authentication.swift; sourceTree = "<group>"; };
 		334BFBE62667DF0000F7952C /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		334BFBEA2667DFCD00F7952C /* UserAuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAuthenticationView.swift; sourceTree = "<group>"; };
 		3364064E2667E2CC00545A25 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -120,7 +120,7 @@
 				334BFBE32667DEC500F7952C /* Root */,
 				336406572667F3BA00545A25 /* Todo */,
 				334BFBE42667DEC900F7952C /* TodosList */,
-				334BFBE52667DECF00F7952C /* UserAuthentication */,
+				334BFBE52667DECF00F7952C /* Authentication */,
 			);
 			path = "TCA Feature";
 			sourceTree = "<group>";
@@ -143,13 +143,13 @@
 			path = TodosList;
 			sourceTree = "<group>";
 		};
-		334BFBE52667DECF00F7952C /* UserAuthentication */ = {
+		334BFBE52667DECF00F7952C /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
-				334BFBDF2667DEAA00F7952C /* UserAuthentication.swift */,
+				334BFBDF2667DEAA00F7952C /* Authentication.swift */,
 				334BFBEA2667DFCD00F7952C /* UserAuthenticationView.swift */,
 			);
-			path = UserAuthentication;
+			path = Authentication;
 			sourceTree = "<group>";
 		};
 		336406572667F3BA00545A25 /* Todo */ = {
@@ -252,7 +252,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				334BFBE02667DEAA00F7952C /* UserAuthentication.swift in Sources */,
+				334BFBE02667DEAA00F7952C /* Authentication.swift in Sources */,
 				334BFBEB2667DFCD00F7952C /* UserAuthenticationView.swift in Sources */,
 				336406592667F3C400545A25 /* TodoView.swift in Sources */,
 				3364065B2667F3E600545A25 /* TodosListView.swift in Sources */,

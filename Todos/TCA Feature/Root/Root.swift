@@ -10,12 +10,12 @@ import ComposableArchitecture
 
 struct Root {
     struct State: Equatable {
-        var userAuthentication = UserAuthentication.State()
+        var authentication = Authentication.State()
         var todosList = TodosList.State()
     }
     
     enum Action: Equatable {
-        case userAuthentication(UserAuthentication.Action)
+        case authentication(Authentication.Action)
         case todosList(TodosList.Action)
     }
     
@@ -26,9 +26,9 @@ struct Root {
 
 extension Root {
     static let reducer = Reducer<State, Action, Environment>.combine(
-        UserAuthentication.reducer.pullback(
-            state: \.userAuthentication,
-            action: /Action.userAuthentication,
+        Authentication.reducer.pullback(
+            state: \.authentication,
+            action: /Action.authentication,
             environment: { _ in .init() }
         ),
         TodosList.reducer.pullback(

@@ -10,7 +10,7 @@ import ComposableArchitecture
 import Firebase
 import Combine
 
-struct UserAuthentication {
+struct Authentication {
     struct State: Equatable {
         var email = ""
         var password = ""
@@ -35,7 +35,7 @@ struct UserAuthentication {
     }
 }
 
-extension UserAuthentication {
+extension Authentication {
     static let reducer = Reducer<State, Action, Environment>.combine(
         // pullbacks
         Reducer { state, action, environment in
@@ -65,7 +65,7 @@ extension UserAuthentication {
     )
 }
 
-extension UserAuthentication {
+extension Authentication {
     static let defaultStore = Store(
         initialState: .init(),
         reducer: reducer,
