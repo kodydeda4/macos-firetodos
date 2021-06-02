@@ -28,6 +28,22 @@ extension Firestore {
         case set
         case remove
         case login
+        
+        var description: String {
+            switch self {
+            
+            case .fetch:
+                return "Could not fetch data from Firestore."
+            case .add:
+                return "Could not add data to Firestore."
+            case .set:
+                return "Could not update data in Firestore."
+            case .remove:
+                return "Could not remove data from Firestore."
+            case .login:
+                return "Could not log into Firestore."
+            }
+        }
     }
 
     func fetchData<A>(ofType: A.Type, from collection: String) -> AnyPublisher<Result<[A], DBError>, Never> where A: Codable {

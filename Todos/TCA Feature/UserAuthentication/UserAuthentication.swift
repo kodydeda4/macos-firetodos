@@ -68,6 +68,7 @@ extension UserAuthentication {
                 
             case let .loginButtonTappedResult(.failure(error)):
                 state.error = error
+                print(error.localizedDescription)
                 return .none
             }
         }
