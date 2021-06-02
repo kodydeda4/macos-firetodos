@@ -15,24 +15,22 @@ struct TodosListView: View {
         WithViewStore(store) { viewStore in
             List(viewStore.todos) { book in
                 
-                HStack {
-                    Button(action: { viewStore.send(.toggleCompleted(book)) }) {
-                        Image(systemName: book.completed ? "largecircle.fill.circle" : "circle")
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    
-                    Button("remove") { viewStore.send(.removeBook(book)) }
-
-                    VStack(alignment: .leading) {
+                VStack {
+                    HStack {
+                        Button(action: { viewStore.send(.toggleCompleted(book)) }) {
+                            Image(systemName: book.completed ? "largecircle.fill.circle" : "circle")
+                                .foregroundColor(.accentColor)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                                                
                         Text(book.description)
-                            .font(.headline)
-//                        Text(book.author)
-//                            .font(.subheadline)
-//                        Text("\(book.numberOfPages) pages")
-//                            .font(.subheadline)
+                            .opacity(book.completed ? 0.25 : 1)
                     }
-                    .opacity(book.completed ? 0.25 : 1)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    Divider()
                 }
+                
+                
             }
             .onAppear() {
                 viewStore.send(.onAppear)
