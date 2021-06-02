@@ -15,6 +15,12 @@ struct TodosListView: View {
     var body: some View {
         WithViewStore(store) { viewStore in
             List {
+                Text("Todos")
+                    .font(.system(.title, design: .rounded))
+                    .bold()
+                    .foregroundColor(.accentColor)
+                    .padding(.bottom)
+                
                 ForEachStore(store.scope(
                     state: \.todos,
                     action: TodosList.Action.todos(index:action:)

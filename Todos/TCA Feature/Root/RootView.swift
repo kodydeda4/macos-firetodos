@@ -13,15 +13,13 @@ struct RootView: View {
     
     var body: some View {
         WithViewStore(store) { viewStore in
-            NavigationView {
-                List {}
-                TodosListView(
-                    store: store.scope(
-                        state: \.todosList,
-                        action: Root.Action.todosList
-                    )
+            TodosListView(
+                store: store.scope(
+                    state: \.todosList,
+                    action: Root.Action.todosList
                 )
-            }
+            )
+            .navigationTitle("")
         }
     }
 }

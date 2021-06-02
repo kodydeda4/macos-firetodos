@@ -16,8 +16,7 @@ struct TodosApp: App {
     }
     var body: some Scene {
         WindowGroup {
-            //RootView(store: Root.defaultStore)
-            TodosListView(store: TodosList.defaultStore)
+            RootView(store: Root.defaultStore)
         }
     }
 }
