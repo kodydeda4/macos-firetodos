@@ -17,12 +17,12 @@ struct TodosListView: View {
                 
                 VStack {
                     HStack {
-                        Button(action: { viewStore.send(.toggleCompleted(book)) }) {
-                            Image(systemName: book.completed ? "largecircle.fill.circle" : "circle")
-                                .foregroundColor(.accentColor)
+                        Button<Image>(book.completed ? "largecircle.fill.circle" : "circle") {
+                            viewStore.send(.toggleCompleted(book))
                         }
                         .buttonStyle(PlainButtonStyle())
-                                                
+                        .foregroundColor(.accentColor)
+                        
                         Text(book.description)
                             .opacity(book.completed ? 0.25 : 1)
                     }

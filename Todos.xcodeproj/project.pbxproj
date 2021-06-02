@@ -22,6 +22,7 @@
 		334BFBE92667DF2D00F7952C /* TodosListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BFBE82667DF2D00F7952C /* TodosListView.swift */; };
 		334BFBEB2667DFCD00F7952C /* UserAuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BFBEA2667DFCD00F7952C /* UserAuthenticationView.swift */; };
 		3364064F2667E2CC00545A25 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3364064E2667E2CC00545A25 /* GoogleService-Info.plist */; };
+		336406512667E48A00545A25 /* Button+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 336406502667E48A00545A25 /* Button+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,7 @@
 		334BFBE82667DF2D00F7952C /* TodosListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodosListView.swift; sourceTree = "<group>"; };
 		334BFBEA2667DFCD00F7952C /* UserAuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAuthenticationView.swift; sourceTree = "<group>"; };
 		3364064E2667E2CC00545A25 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		336406502667E48A00545A25 /* Button+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Button+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +101,7 @@
 			isa = PBXGroup;
 			children = (
 				334BFBD92667DC4A00F7952C /* Firebase+Extensions.swift */,
+				336406502667E48A00545A25 /* Button+Extensions.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -222,6 +225,7 @@
 			files = (
 				334BFBE02667DEAA00F7952C /* UserAuthentication.swift in Sources */,
 				334BFBEB2667DFCD00F7952C /* UserAuthenticationView.swift in Sources */,
+				336406512667E48A00545A25 /* Button+Extensions.swift in Sources */,
 				334BFBDA2667DC4A00F7952C /* Firebase+Extensions.swift in Sources */,
 				334BFBE72667DF0000F7952C /* RootView.swift in Sources */,
 				334BFBDC2667DCD200F7952C /* Root.swift in Sources */,
