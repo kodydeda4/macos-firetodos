@@ -6,12 +6,18 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
+import Firebase
 
 @main
 struct TodosApp: App {
+    init() {
+        FirebaseApp.configure()
+    }
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            //RootView(store: Root.defaultStore)
+            TodosListView(store: TodosList.defaultStore)
         }
     }
 }
