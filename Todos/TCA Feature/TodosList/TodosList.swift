@@ -13,7 +13,7 @@ import FirebaseFirestoreSwift
 struct TodosList {
     struct State: Equatable {
         var todos: [Todo.State] = []
-        var error: Firestore.DBError?
+        var error: FirestoreError?
     }
     
     enum Action: Equatable {
@@ -27,11 +27,11 @@ struct TodosList {
         case clearCompleted
         
         // results
-        case didFetchTodos      (Result<[Todo.State], Firestore.DBError>)
-        case didCreateTodo      (Result<Bool, Firestore.DBError>)
-        case didRemoveTodo      (Result<Bool, Firestore.DBError>)
-        case didRemoveCompleted (Result<Bool, Firestore.DBError>)
-        case didUpdateTodo      (Result<Bool, Firestore.DBError>)
+        case didFetchTodos      (Result<[Todo.State], FirestoreError>)
+        case didCreateTodo      (Result<Bool, FirestoreError>)
+        case didRemoveTodo      (Result<Bool, FirestoreError>)
+        case didRemoveCompleted (Result<Bool, FirestoreError>)
+        case didUpdateTodo      (Result<Bool, FirestoreError>)
     }
     
     struct Environment {

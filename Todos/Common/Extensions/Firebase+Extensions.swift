@@ -21,33 +21,11 @@ import Combine
  
  ------------------------------------------------------------------------------------------*/
 
-extension Firestore {
-    enum DBError: Error, Equatable {
-        case fetch
-        case add
-        case set
-        case remove
-        case login
-        
-        var description: String {
-            switch self {
-            
-            case .fetch:
-                return "Could not fetch data from Firestore."
-            case .add:
-                return "Could not add data to Firestore."
-            case .set:
-                return "Could not update data in Firestore."
-            case .remove:
-                return "Could not remove data from Firestore."
-            case .login:
-                return "Could not log into Firestore."
-            }
-        }
-    }
 
-    func fetchData<A>(ofType: A.Type, from collection: String) -> AnyPublisher<Result<[A], DBError>, Never> where A: Codable {
-        let rv = PassthroughSubject<Result<[A], DBError>, Never>()
+extension Firestore {
+
+    func fetchData<A>(ofType: A.Type, from collection: String) -> AnyPublisher<Result<[A], FirestoreError>, Never> where A: Codable {
+        let rv = PassthroughSubject<Result<[A], FirestoreError>, Never>()
         
         self.collection(collection).addSnapshotListener { querySnapshot, error in
             if let values = querySnapshot?
@@ -56,53 +34,49 @@ extension Firestore {
                 
                 rv.send(.success(values))
                 
-            } else {
-                rv.send(.failure(.fetch))
+            } else if let error = error {
+                rv.send(.failure(FirestoreError(error)))
             }
         }
-        
         return rv.eraseToAnyPublisher()
     }
     
-    func add<A>(_ value: A, to collection: String) -> AnyPublisher<Result<Bool, DBError>, Never> where A: Codable {
-        let rv = PassthroughSubject<Result<Bool, DBError>, Never>()
+    func add<A>(_ value: A, to collection: String) -> AnyPublisher<Result<Bool, FirestoreError>, Never> where A: Codable {
+        let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
         
         do {
             let _ = try self.collection(collection).addDocument(from: value)
             rv.send(.success(true))
         }
         catch {
-            rv.send(.failure(.add))
+            rv.send(.failure(FirestoreError(error)))
         }
         
         return rv.eraseToAnyPublisher()
     }
     
-    func remove(_ documentID: String, from collection: String) -> AnyPublisher<Result<Bool, DBError>, Never> {
-        let rv = PassthroughSubject<Result<Bool, DBError>, Never>()
+    func remove(_ documentID: String, from collection: String) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
+        let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
         
         self.collection(collection).document(documentID).delete { error in
-            switch error {
-            case .none:
+            if let error = error {
+                rv.send(.failure(FirestoreError(error)))
+            } else {
                 rv.send(.success(true))
-            case .some:
-                rv.send(.failure(.remove))
             }
         }
-        
         return rv.eraseToAnyPublisher()
     }
     
-    func remove(_ documentIDs: [String], from collection: String) -> AnyPublisher<Result<Bool, DBError>, Never> {
-        let rv = PassthroughSubject<Result<Bool, DBError>, Never>()
+    func remove(_ documentIDs: [String], from collection: String) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
+        let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
         
         documentIDs.forEach { id in
             self.collection(collection).document(id).delete { error in
-                switch error {
-                case .none:
+                if let error = error {
+                    rv.send(.failure(FirestoreError(error)))
+                } else {
                     rv.send(.success(true))
-                case .some:
-                    rv.send(.failure(.remove))
                 }
             }
         }
@@ -110,8 +84,8 @@ extension Firestore {
         return rv.eraseToAnyPublisher()
     }
     
-    func set<A>(_ documentID: String, to value: A, in collection: String) -> AnyPublisher<Result<Bool, DBError>, Never> where A: Codable {
-        let rv = PassthroughSubject<Result<Bool, DBError>, Never>()
+    func set<A>(_ documentID: String, to value: A, in collection: String) -> AnyPublisher<Result<Bool, FirestoreError>, Never> where A: Codable {
+        let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
         do {
             try self
                 .collection(collection)
@@ -121,7 +95,7 @@ extension Firestore {
         }
         catch {
             print(error)
-            rv.send(.failure(.set))
+            rv.send(.failure(FirestoreError(error)))
         }
         return rv.eraseToAnyPublisher()
     }

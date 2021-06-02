@@ -15,26 +15,25 @@ struct UserAuthentication {
         var email = ""
         var password = ""
         var loggedIn = false
-        var error: Firestore.DBError?
+        var error: FirestoreError?
     }
     
     enum Action: Equatable {
         case updateEmail(String)
         case updatePassword(String)
         case loginButtonTapped
-        case loginButtonTappedResult(Result<Bool, Firestore.DBError>)
+        case loginButtonTappedResult(Result<Bool, FirestoreError>)
     }
     
     struct Environment {
-        func auth(email: String, password: String) -> AnyPublisher<Result<Bool, Firestore.DBError>, Never> {
-            let rv = PassthroughSubject<Result<Bool, Firestore.DBError>, Never>()
+        func auth(email: String, password: String) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
+            let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
             
             Auth.auth().signIn(withEmail: email, password: password) { result, error in
-                switch error {
-                case .none:
+                if let error = error {
+                    rv.send(.failure(FirestoreError(error)))
+                } else {
                     rv.send(.success(true))
-                case .some:
-                    rv.send(.failure(.login))
                 }
             }
             
