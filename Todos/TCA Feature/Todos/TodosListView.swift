@@ -22,7 +22,8 @@ struct TodosListView: View {
                         .buttonStyle(PlainButtonStyle())
                         .foregroundColor(.accentColor)
                         
-                        Text(todo.description)
+                        
+                        TextField("Description", text: .constant(todo.description))
                             .opacity(todo.completed ? 0.25 : 1)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)

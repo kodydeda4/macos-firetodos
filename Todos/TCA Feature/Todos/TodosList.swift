@@ -31,6 +31,7 @@ struct TodosList {
         case remove(Todo)
         case toggleCompleted(Todo)
         case clearCompleted
+        case updateTodoText(Todo, String)
 
         case didFetchTodos      (Result<[Todo], Firestore.DBError>)
         case didCreateTodo      (Result<Bool,   Firestore.DBError>)
@@ -120,6 +121,12 @@ extension TodosList {
                  let .didUpdateTodo      (.failure(error)):
                 state.error = error
                 return .none
+                
+            case let .updateTodoText(todo, text):
+                var newTodo = todo
+                newTodo.description = text
+                
+                return environment.updateTodo(todo, to: newTodo)
             }
         }
         .debug()

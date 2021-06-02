@@ -13,7 +13,6 @@ import Combine
  SwiftUI: Fetching Data from Firestore in Real Time (April 2020)
  https://peterfriese.dev/swiftui-firebase-fetch-data/
  
- 
  SwiftUI: Mapping Firestore Documents using Swift Codable (May 2020)
  https://peterfriese.dev/swiftui-firebase-codable/
  
