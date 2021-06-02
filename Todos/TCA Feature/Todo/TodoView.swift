@@ -22,12 +22,12 @@ struct TodoView: View {
                     .foregroundColor(.accentColor)
                     
                     TextField("Description", text: viewStore.binding(get: \.description, send: Todo.Action.updateText))
-                        .disabled(viewStore.completed)
+                        .opacity(viewStore.completed ? 0.25 : 1)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 Divider()
             }
-
+            .padding(.bottom, 4)
         }
     }
 }
