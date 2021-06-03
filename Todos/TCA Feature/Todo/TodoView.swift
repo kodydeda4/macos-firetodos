@@ -19,7 +19,7 @@ struct TodoView: View {
                         viewStore.send(.toggleCompleted)
                     }
                     .buttonStyle(PlainButtonStyle())
-                    .foregroundColor(.accentColor)
+                    .foregroundColor(.appColor)
                     
                     TextField("Description", text: viewStore.binding(get: \.description, send: Todo.Action.updateText))
                         .opacity(viewStore.completed ? 0.25 : 1)

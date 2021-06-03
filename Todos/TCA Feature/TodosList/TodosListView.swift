@@ -18,7 +18,7 @@ struct TodosListView: View {
                 Text("Todos")
                     .font(.system(.title, design: .rounded))
                     .bold()
-                    .foregroundColor(.accentColor)
+                    .foregroundColor(.appColor)
                     .padding(.bottom)
                 
                 ForEachStore(store.scope(
@@ -30,6 +30,9 @@ struct TodosListView: View {
                 viewStore.send(.onAppear)
             }
             .toolbar {
+                ToolbarItem {
+                    Spacer()
+                }
                 ToolbarItem {
                     Button("Add") { viewStore.send(.createTodo) }
                 }

@@ -93,19 +93,6 @@ extension Authentication {
         case .signOut:
             state.loggedIn = false
             return .none
-//            return environment.signOut
-            
-//        case .signOutResult(.success):
-//            state.loggedIn = false
-//            print(state.loggedIn)
-//            return .none
-//
-//        case let .signOutResult(.failure(error)):
-//            state.loggedIn = false
-//            state.error = error
-//            print(state.loggedIn)
-//            return .none
-        
         }
     }
 }

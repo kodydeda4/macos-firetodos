@@ -13,53 +13,12 @@ struct AuthenticationView: View {
     
     var body: some View {
         WithViewStore(store) { viewStore in
-//            List {
-//                VStack {
-//                    Text("Welcome Back")
-//                        .font(.system(.title, design: .rounded))
-//                        .bold()
-//                        .foregroundColor(.accentColor)
-//                        .padding(.bottom)
-//
-//                    Button("Log in with Apple") {
-//
-//                    }
-//                    .buttonStyle(RoundedRectangleButtonStyle())
-//
-//                    HStack {
-//                        Rectangle()
-//                            .frame(height: 1)
-//                        Text("OR")
-//                        Rectangle()
-//                            .frame(height: 1)
-//                    }
-//
-//                    TextField("Email", text: viewStore.binding(get: \.email, send: Authentication.Action.updateEmail))
-//                    TextField("Password", text: viewStore.binding(get: \.password, send: Authentication.Action.updatePassword))
-//
-//                    Text("Wrong password. Try again or click Forgot password to reset it.")
-//                        .opacity(viewStore.attempted ? 1 : 0)
-//                        .foregroundColor(.red)
-//
-//                    Button("Login with email") { viewStore.send(.loginButtonTapped) }
-//                        .buttonStyle(RoundedRectangleButtonStyle())
-//
-//                    Button("Sign In Anonymously") { viewStore.send(.signInAnonymouslyButtonTapped) }
-//                        .buttonStyle(RoundedRectangleButtonStyle())
-//                }
-//
-//                //.frame(width: 450)
-//                //.frame(maxWidth: 500)
-//            }
-////            .padding(150)
-            
-
             HStack(spacing: 0) {
                 VStack {
                     Spacer(minLength: 0)
                     
                     //Icon
-                    Image(systemSymbol: .map)
+                    Image("icon2")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 100, height: 100)
@@ -153,10 +112,29 @@ struct AuthenticationView: View {
                             .foregroundColor(.white)
                             .padding(.vertical, 10)
                             .padding(.horizontal)
-                            .background(Color.blue)
+                            .background(Color.appColor)
                             .cornerRadius(4)
                         }
                         .buttonStyle(PlainButtonStyle())
+                        
+                        // Login Button
+                        Button(action: { viewStore.send(.signInAnonymouslyButtonTapped) }) {
+                            HStack {
+                                Spacer()
+                                
+                                Text("Continue as Guest")
+                                Spacer()
+                                Image(systemSymbol: .arrowRight)
+                                
+                            }
+                            .foregroundColor(.white)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal)
+                            .background(Color.appColor)
+                            .cornerRadius(4)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+
                         
                         
                         // Signup Button
@@ -166,33 +144,14 @@ struct AuthenticationView: View {
                             
                             Button(action: {}) {
                                 Text("Sign Up")
-                                    .foregroundColor(.accentColor)
+                                    .foregroundColor(.appColor)
                                     .underline()
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
                         //.padding(.top, 10)
-                        
-                        Button(action: { viewStore.send(.signInAnonymouslyButtonTapped) }) {
-                            Text("Or login as a guest")
-                        }
-                  
-                        
-                        
-                        
-                        
                     }
                     .padding(.top)
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-  
-                    
                     Spacer(minLength: 0)
                 }
                 .padding(.horizontal, 50)
@@ -201,14 +160,14 @@ struct AuthenticationView: View {
                 
                 VStack {
                     Spacer()
-                    Image(systemSymbol: .houseFill)
+                    Image("working")
                         .resizable()
                         .scaledToFit()
                         .padding(.leading, -35)
                     
                     Spacer()
                 }
-                .background(Color.blue)
+                .background(Color.appColor)
             }
             .ignoresSafeArea()
             //.frame(width: 800, height: 600)
