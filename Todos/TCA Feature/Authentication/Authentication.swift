@@ -12,7 +12,7 @@ import Combine
 
 struct Authentication {
     struct State: Equatable {
-        var loggedIn = false
+        var signedIn = false
         var attempted = false
         var error: FirestoreError?
         var email = String.init()
@@ -72,7 +72,7 @@ extension Authentication {
             return environment.signIn(email: state.email, password: state.password)
             
         case .signInWithEmailButtonTappedResult(.success):
-            state.loggedIn.toggle()
+            state.signedIn.toggle()
             return .none
             
         case let .signInWithEmailButtonTappedResult(.failure(error)):
@@ -84,7 +84,7 @@ extension Authentication {
             return environment.signInAnonymously
             
         case .signInAnonymouslyButtonTappedResult(.success):
-            state.loggedIn.toggle()
+            state.signedIn.toggle()
             return .none
             
         case let .signInAnonymouslyButtonTappedResult(.failure(error)):
@@ -93,7 +93,7 @@ extension Authentication {
             return .none
             
         case .signOut:
-            state.loggedIn = false
+            state.signedIn = false
             return .none
 
 
