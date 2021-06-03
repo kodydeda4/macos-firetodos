@@ -117,15 +117,15 @@ struct AuthenticationView: View {
                         }
                         .buttonStyle(PlainButtonStyle())
                         
-                        // Login Button
+                        // Continue as Guest
                         Button(action: { viewStore.send(.signInAnonymouslyButtonTapped) }) {
                             HStack {
                                 Spacer()
-                                
+
                                 Text("Continue as Guest")
                                 Spacer()
                                 Image(systemSymbol: .arrowRight)
-                                
+
                             }
                             .foregroundColor(.white)
                             .padding(.vertical, 10)
@@ -135,7 +135,6 @@ struct AuthenticationView: View {
                         }
                         .buttonStyle(PlainButtonStyle())
 
-                        
                         
                         // Signup Button
                         HStack {

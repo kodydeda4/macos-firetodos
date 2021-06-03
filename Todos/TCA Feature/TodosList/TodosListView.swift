@@ -26,6 +26,7 @@ struct TodosListView: View {
                     action: TodosList.Action.todos(index:action:)
                 ), content: TodoView.init)
             }
+            .alert(store.scope(state: \.alert), dismiss: .signOutAlertDismissed)
             .onAppear() {
                 viewStore.send(.onAppear)
             }
@@ -43,7 +44,7 @@ struct TodosListView: View {
                 }
                 ToolbarItem {
                     Button("Sign out") {
-                        viewStore.send(.signOutButtonTapped)
+                        viewStore.send(.createSignOutAlert)
                     }
                 }
             }

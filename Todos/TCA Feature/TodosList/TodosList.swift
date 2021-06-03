@@ -16,13 +16,16 @@ struct TodosList {
     struct State: Equatable {
         var todos: [Todo.State] = []
         var error: FirestoreError?
+        var alert: AlertState<TodosList.Action>?
     }
     
     enum Action: Equatable {
         case onAppear
         case fetchTodos
         case todos(index: Int, action: Todo.Action)
-        case signOutButtonTapped
+        case createSignOutAlert
+        case confirmSignOutAlert
+        case signOutAlertDismissed
         
         case createTodo
         case removeTodo(Todo.State)
@@ -91,7 +94,20 @@ extension TodosList {
             case .fetchTodos:
                 return environment.fetchData
                 
-            case .signOutButtonTapped:
+            case .createSignOutAlert:
+                state.alert = .init(
+                    title: TextState("Sign out?"),
+                    message: TextState("Description foo bar goes here."),
+                    primaryButton: .destructive(TextState("Confirm"), send: .confirmSignOutAlert),
+                    secondaryButton: .cancel()
+                )
+                return .none
+                
+            case .signOutAlertDismissed:
+                state.alert = nil
+                return .none
+                
+            case .confirmSignOutAlert:
                 return .none
                 
             case let .todos(index, action):
@@ -129,7 +145,6 @@ extension TodosList {
             :
                 state.error = error
                 return .none
-                
             }
         }
     )

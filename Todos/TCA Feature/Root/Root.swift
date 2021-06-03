@@ -38,7 +38,7 @@ extension Root {
             case let .todosList(subaction):
                 switch subaction {
 
-                case .signOutButtonTapped:
+                case .confirmSignOutAlert:
                     return Effect(value: .authentication(.signOut))
 
                 default:
