@@ -43,7 +43,7 @@ struct TodosList {
         
         
         var fetchData: Effect<Action, Never> {
-            db.fetchData(ofType: Todo.State.self, from: collection, userID: userID)
+            db.fetchData(ofType: Todo.State.self, from: collection, for: userID)
                 .map(Action.didFetchTodos)
                 .eraseToEffect()
         }

@@ -16,7 +16,7 @@ import Combine
  SwiftUI: Mapping Firestore Documents using Swift Codable (May 2020)
  https://peterfriese.dev/swiftui-firebase-codable/
  
- Mapping Firestore Data in Swift
+ Mapping Firestore Data in Swift (March 2021)
  https://peterfriese.dev/firestore-codable-the-comprehensive-guide/
  
  ------------------------------------------------------------------------------------------*/
@@ -24,7 +24,7 @@ import Combine
 
 extension Firestore {
 
-    func fetchData<A>(ofType: A.Type, from collection: String, userID: String) -> AnyPublisher<Result<[A], FirestoreError>, Never> where A: Codable {
+    func fetchData<A>(ofType: A.Type, from collection: String, for userID: String) -> AnyPublisher<Result<[A], FirestoreError>, Never> where A: Codable {
         let rv = PassthroughSubject<Result<[A], FirestoreError>, Never>()
         
         self.collection(collection)
@@ -49,8 +49,6 @@ extension Firestore {
         let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
         
         do {
-//            var addedTask = value
-//
             let _ = try self.collection(collection).addDocument(from: value)
             rv.send(.success(true))
         }
