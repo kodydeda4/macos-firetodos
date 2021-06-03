@@ -29,15 +29,6 @@ struct AuthenticationView: View {
                         .fontWeight(.heavy)
                         .padding(.vertical, 10)
                     
-                    // Apple
-                    SignInWithAppleToFirebase({ response in
-                        if response == .success {
-                            print("logged into Firebase through Apple!")
-                        } else if response == .error {
-                            print("error. Maybe the user cancelled or there's no internet")
-                        }
-                    })
-                    
                     // Google Login
                     Button(action: {}) {
                         HStack {
