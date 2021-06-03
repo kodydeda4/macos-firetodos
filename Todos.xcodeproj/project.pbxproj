@@ -187,8 +187,8 @@
 		33A9C86726693104008C2D6E /* SignInWithAppleToFirebase */ = {
 			isa = PBXGroup;
 			children = (
-				33A9C86826693104008C2D6E /* CredentialStorage */,
 				33A9C86D26693104008C2D6E /* SignInWithAppleToFirebase.swift */,
+				33A9C86826693104008C2D6E /* CredentialStorage */,
 			);
 			path = SignInWithAppleToFirebase;
 			sourceTree = "<group>";

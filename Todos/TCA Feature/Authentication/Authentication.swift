@@ -12,7 +12,7 @@ import Combine
 
 struct Authentication {
     struct State: Equatable {
-        var signedIn = false
+        var loggedIn = false
         var attempted = false
         var error: FirestoreError?
         var email = String.init()
@@ -22,26 +22,28 @@ struct Authentication {
     enum Action: Equatable {
         case updateEmail(String)
         case updatePassword(String)
-        case loginButtonTapped
-        case signInEmailResult(Result<Bool, FirestoreError>)
         
+        // SignIn
+        case signInWithEmailButtonTapped
         case signInAnonymouslyButtonTapped
-        case signInAnonymouslyResult(Result<Bool, FirestoreError>)
-        case signOut
-//        case signOutResult(Result<Bool, FirestoreError>)
         
+        // Results
+        case signInWithEmailButtonTappedResult(Result<Bool, FirestoreError>)
+        case signInAnonymouslyButtonTappedResult(Result<Bool, FirestoreError>)
+        
+        case signOut
     }
     
     struct Environment {
         func signIn(email: String, password: String) -> Effect<Action, Never> {
             Firestore.signIn(email, password)
-                .map(Action.signInEmailResult)
+                .map(Action.signInWithEmailButtonTappedResult)
                 .eraseToEffect()
         }
         
         var signInAnonymously: Effect<Action, Never> {
             Firestore.signInAnonymously()
-                .map(Action.signInAnonymouslyResult)
+                .map(Action.signInAnonymouslyButtonTappedResult)
                 .eraseToEffect()
         }
         
@@ -66,28 +68,34 @@ extension Authentication {
             state.password = value
             return .none
             
-        case .loginButtonTapped:
+        case .signInWithEmailButtonTapped:
             return environment.signIn(email: state.email, password: state.password)
+            
+        case .signInWithEmailButtonTappedResult(.success):
+            state.loggedIn.toggle()
+            return .none
+            
+        case let .signInWithEmailButtonTappedResult(.failure(error)):
+            state.error = error
+            state.attempted = true
+            return .none
             
         case .signInAnonymouslyButtonTapped:
             return environment.signInAnonymously
             
+        case .signInAnonymouslyButtonTappedResult(.success):
+            state.loggedIn.toggle()
+            return .none
+            
+        case let .signInAnonymouslyButtonTappedResult(.failure(error)):
+            state.error = error
+            state.attempted = true
+            return .none
+            
         case .signOut:
-            state.signedIn = false
+            state.loggedIn = false
             return .none
-            
-        // result
-        case .signInEmailResult           (.success),
-             .signInAnonymouslyResult     (.success):
-            state = Authentication.State()
-            state.signedIn.toggle()
-            return .none
-            
-        case let .signInAnonymouslyResult (.failure(error)),
-             let .signInEmailResult       (.failure(error)):
-            state = Authentication.State()
-            state.signedIn.toggle()
-            return .none
+
 
         }
     }

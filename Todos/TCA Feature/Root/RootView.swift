@@ -13,7 +13,7 @@ struct RootView: View {
     
     var body: some View {
         WithViewStore(store) { viewStore in
-            if viewStore.authentication.signedIn {
+            if viewStore.authentication.loggedIn {
                 TodosListView(store: store.scope(state: \.todosList, action: Root.Action.todosList))
                     .navigationTitle("")
 //                    .toolbar {
