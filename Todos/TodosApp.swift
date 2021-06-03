@@ -18,5 +18,7 @@ struct TodosApp: App {
         WindowGroup {
             RootView(store: Root.defaultStore)
         }
+        .windowStyle(HiddenTitleBarWindowStyle())
     }
 }
+

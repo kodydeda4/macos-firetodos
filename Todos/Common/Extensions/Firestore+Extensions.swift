@@ -21,6 +21,17 @@ import Combine
  
  ------------------------------------------------------------------------------------------*/
 
+struct FirestoreError: Error, Equatable {
+    static func == (lhs: FirestoreError, rhs: FirestoreError) -> Bool {
+        lhs.error.localizedDescription == rhs.error.localizedDescription
+    }
+    
+    var error: Error
+    
+    init(_ error: Error) {
+        self.error = error
+    }
+}
 
 extension Firestore {
 
