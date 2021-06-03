@@ -28,6 +28,11 @@
 		3364065B2667F3E600545A25 /* TodosListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3364065A2667F3E600545A25 /* TodosListView.swift */; };
 		33A9C83A26691448008C2D6E /* Textfield+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A9C83926691448008C2D6E /* Textfield+Extensions.swift */; };
 		33A9C83C26691D31008C2D6E /* Color+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A9C83B26691D31008C2D6E /* Color+Extensions.swift */; };
+		33A9C86E26693104008C2D6E /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A9C86926693104008C2D6E /* UserData.swift */; };
+		33A9C86F26693104008C2D6E /* UserDataKeychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A9C86A26693104008C2D6E /* UserDataKeychain.swift */; };
+		33A9C87026693104008C2D6E /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A9C86B26693104008C2D6E /* Keychain.swift */; };
+		33A9C87126693104008C2D6E /* SharedWebCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A9C86C26693104008C2D6E /* SharedWebCredential.swift */; };
+		33A9C87226693104008C2D6E /* SignInWithAppleToFirebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A9C86D26693104008C2D6E /* SignInWithAppleToFirebase.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +55,11 @@
 		3364065A2667F3E600545A25 /* TodosListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodosListView.swift; sourceTree = "<group>"; };
 		33A9C83926691448008C2D6E /* Textfield+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Textfield+Extensions.swift"; sourceTree = "<group>"; };
 		33A9C83B26691D31008C2D6E /* Color+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extensions.swift"; sourceTree = "<group>"; };
+		33A9C86926693104008C2D6E /* UserData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserData.swift; sourceTree = "<group>"; };
+		33A9C86A26693104008C2D6E /* UserDataKeychain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDataKeychain.swift; sourceTree = "<group>"; };
+		33A9C86B26693104008C2D6E /* Keychain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
+		33A9C86C26693104008C2D6E /* SharedWebCredential.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedWebCredential.swift; sourceTree = "<group>"; };
+		33A9C86D26693104008C2D6E /* SignInWithAppleToFirebase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInWithAppleToFirebase.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +120,7 @@
 		334BFBE12667DEBB00F7952C /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				33A9C86726693104008C2D6E /* SignInWithAppleToFirebase */,
 				33A34E7D26681D51005EFC79 /* Extensions */,
 			);
 			path = Common;
@@ -171,6 +182,26 @@
 				33A9C83B26691D31008C2D6E /* Color+Extensions.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		33A9C86726693104008C2D6E /* SignInWithAppleToFirebase */ = {
+			isa = PBXGroup;
+			children = (
+				33A9C86826693104008C2D6E /* CredentialStorage */,
+				33A9C86D26693104008C2D6E /* SignInWithAppleToFirebase.swift */,
+			);
+			path = SignInWithAppleToFirebase;
+			sourceTree = "<group>";
+		};
+		33A9C86826693104008C2D6E /* CredentialStorage */ = {
+			isa = PBXGroup;
+			children = (
+				33A9C86926693104008C2D6E /* UserData.swift */,
+				33A9C86A26693104008C2D6E /* UserDataKeychain.swift */,
+				33A9C86B26693104008C2D6E /* Keychain.swift */,
+				33A9C86C26693104008C2D6E /* SharedWebCredential.swift */,
+			);
+			path = CredentialStorage;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -255,9 +286,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				33A9C87226693104008C2D6E /* SignInWithAppleToFirebase.swift in Sources */,
 				334BFBE02667DEAA00F7952C /* Authentication.swift in Sources */,
 				33A9C83A26691448008C2D6E /* Textfield+Extensions.swift in Sources */,
+				33A9C86E26693104008C2D6E /* UserData.swift in Sources */,
 				334BFBEB2667DFCD00F7952C /* AuthenticationView.swift in Sources */,
+				33A9C87126693104008C2D6E /* SharedWebCredential.swift in Sources */,
+				33A9C86F26693104008C2D6E /* UserDataKeychain.swift in Sources */,
+				33A9C87026693104008C2D6E /* Keychain.swift in Sources */,
 				336406592667F3C400545A25 /* TodoView.swift in Sources */,
 				3364065B2667F3E600545A25 /* TodosListView.swift in Sources */,
 				336406512667E48A00545A25 /* Button+Extensions.swift in Sources */,
