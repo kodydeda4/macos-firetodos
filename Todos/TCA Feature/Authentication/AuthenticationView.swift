@@ -7,6 +7,8 @@
 
 import SwiftUI
 import ComposableArchitecture
+import AuthenticationServices
+
 
 struct AuthenticationView: View {
     let store: Store<Authentication.State, Authentication.Action>
@@ -29,33 +31,12 @@ struct AuthenticationView: View {
                         .fontWeight(.heavy)
                         .padding(.vertical, 10)
                     
-                    SignInWithAppleButtonView()
-                    
-                    // Google Login
-                    Button(action: {}) {
-                        HStack {
-                            Image("google")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 25, height: 25)
-                            
-                            Spacer(minLength: 0)
-                            Text("Log in with Google")
-                                .foregroundColor(.black)
-                            
-                            Spacer(minLength: 0)
-                        }
-                        .padding(.vertical, 8)
-                        .padding(.horizontal)
-                        .background(Color.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 4))
-                        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 5, y: 5)
-                        .shadow(color: Color.black.opacity(0.1), radius: 5, x: -5, y: -5)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    .padding(.vertical)
-                    
-                    
+                    // SignInWithAppleButton
+                    SignInWithAppleButton(
+                        onRequest:    { viewStore.send(.appleSignIn_onRequest($0)) },
+                        onCompletion: { viewStore.send(.appleSignIn_onCompletion($0.mapError(FirestoreError.init))) }
+                    )
+
                     // OR
                     HStack {
                         Rectangle()

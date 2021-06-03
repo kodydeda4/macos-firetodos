@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3335D7C6266971C5003F2091 /* AppleSignInButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3335D7C5266971C5003F2091 /* AppleSignInButton.swift */; };
+		3302589F26697FA000541E85 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3302589E26697FA000541E85 /* String+Extensions.swift */; };
 		334BFBC02667DB8300F7952C /* TodosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BFBBF2667DB8300F7952C /* TodosApp.swift */; };
 		334BFBC22667DB8300F7952C /* TodosList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BFBC12667DB8300F7952C /* TodosList.swift */; };
 		334BFBC42667DB8500F7952C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 334BFBC32667DB8500F7952C /* Assets.xcassets */; };
@@ -32,7 +32,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3335D7C5266971C5003F2091 /* AppleSignInButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppleSignInButton.swift; path = "../../../../../../Library/Mobile Documents/com~apple~CloudDocs/AppleSignInButton.swift"; sourceTree = "<group>"; };
+		3302589E26697FA000541E85 /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		334BFBBC2667DB8300F7952C /* Todos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Todos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		334BFBBF2667DB8300F7952C /* TodosApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodosApp.swift; sourceTree = "<group>"; };
 		334BFBC12667DB8300F7952C /* TodosList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodosList.swift; sourceTree = "<group>"; };
@@ -151,7 +151,6 @@
 			children = (
 				334BFBDF2667DEAA00F7952C /* Authentication.swift */,
 				334BFBEA2667DFCD00F7952C /* AuthenticationView.swift */,
-				3335D7C5266971C5003F2091 /* AppleSignInButton.swift */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
@@ -172,6 +171,7 @@
 				336406502667E48A00545A25 /* Button+Extensions.swift */,
 				33A9C83926691448008C2D6E /* Textfield+Extensions.swift */,
 				33A9C83B26691D31008C2D6E /* Color+Extensions.swift */,
+				3302589E26697FA000541E85 /* String+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -262,12 +262,12 @@
 				33A9C83A26691448008C2D6E /* Textfield+Extensions.swift in Sources */,
 				334BFBEB2667DFCD00F7952C /* AuthenticationView.swift in Sources */,
 				336406592667F3C400545A25 /* TodoView.swift in Sources */,
-				3335D7C6266971C5003F2091 /* AppleSignInButton.swift in Sources */,
 				3364065B2667F3E600545A25 /* TodosListView.swift in Sources */,
 				336406512667E48A00545A25 /* Button+Extensions.swift in Sources */,
 				334BFBDA2667DC4A00F7952C /* Firestore+Extensions.swift in Sources */,
 				33A9C83C26691D31008C2D6E /* Color+Extensions.swift in Sources */,
 				334BFBE72667DF0000F7952C /* RootView.swift in Sources */,
+				3302589F26697FA000541E85 /* String+Extensions.swift in Sources */,
 				334BFBDC2667DCD200F7952C /* Root.swift in Sources */,
 				334BFBC22667DB8300F7952C /* TodosList.swift in Sources */,
 				334BFBC02667DB8300F7952C /* TodosApp.swift in Sources */,
