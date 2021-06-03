@@ -16,14 +16,6 @@ struct RootView: View {
             if viewStore.authentication.signedIn {
                 TodosListView(store: store.scope(state: \.todosList, action: Root.Action.todosList))
                     .navigationTitle("")
-//                    .toolbar {
-//                        ToolbarItem {
-//                            Button("Sign Out") {
-//                                viewStore.send(.signOut)
-//                            }
-//                        }
-//                    }
-
 
             } else {
                 AuthenticationView(store: store.scope(state: \.authentication, action: Root.Action.authentication))

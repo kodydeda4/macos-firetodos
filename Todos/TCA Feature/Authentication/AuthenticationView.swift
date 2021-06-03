@@ -29,6 +29,8 @@ struct AuthenticationView: View {
                         .fontWeight(.heavy)
                         .padding(.vertical, 10)
                     
+                    SignInWithAppleButtonView()
+                    
                     // Google Login
                     Button(action: {}) {
                         HStack {
