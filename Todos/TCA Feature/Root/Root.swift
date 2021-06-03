@@ -18,14 +18,10 @@ struct Root {
         case authentication(Authentication.Action)
         case todosList(TodosList.Action)
     }
-    
-    struct Environment {
-        
-    }
 }
 
 extension Root {
-    static let reducer = Reducer<State, Action, Environment>.combine(
+    static let reducer = Reducer<State, Action, Void>.combine(
         Authentication.reducer.pullback(
             state: \.authentication,
             action: /Action.authentication,
@@ -36,22 +32,33 @@ extension Root {
             action: /Action.todosList,
             environment: { _ in .init() }
         ),
-        Reducer { state, action, environment in
+        Reducer { state, action, _ in
             switch action {
             
-            default:
+            case let .todosList(subaction):
+                switch subaction {
+
+                case .signOutButtonTapped:
+                    return Effect(value: .authentication(.signOut))
+
+                default:
+                    break
+                }
                 return .none
                 
+            default:
+                return .none
             }
         }
     )
+    .debug()
 }
 
 extension Root {
     static let defaultStore = Store(
         initialState: .init(),
         reducer: reducer,
-        environment: .init()
+        environment: ()
     )
 }
 

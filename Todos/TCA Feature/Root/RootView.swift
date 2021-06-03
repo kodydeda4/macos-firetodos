@@ -13,12 +13,20 @@ struct RootView: View {
     
     var body: some View {
         WithViewStore(store) { viewStore in
-            if !viewStore.authentication.loggedIn {
-                AuthenticationView(store: store.scope(state: \.authentication, action: Root.Action.authentication))
-                
-            } else {
+            if viewStore.authentication.loggedIn {
                 TodosListView(store: store.scope(state: \.todosList, action: Root.Action.todosList))
                     .navigationTitle("")
+//                    .toolbar {
+//                        ToolbarItem {
+//                            Button("Sign Out") {
+//                                viewStore.send(.signOut)
+//                            }
+//                        }
+//                    }
+
+
+            } else {
+                AuthenticationView(store: store.scope(state: \.authentication, action: Root.Action.authentication))
             }
         }
     }
@@ -30,4 +38,6 @@ struct RootView_Previews: PreviewProvider {
         RootView(store: Root.defaultStore)
     }
 }
+
+
 

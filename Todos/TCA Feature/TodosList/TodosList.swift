@@ -22,6 +22,7 @@ struct TodosList {
         case onAppear
         case fetchTodos
         case todos(index: Int, action: Todo.Action)
+        case signOutButtonTapped
         
         case createTodo
         case removeTodo(Todo.State)
@@ -40,7 +41,6 @@ struct TodosList {
         let db = Firestore.firestore()
         let collection = "todos"
         let userID = Auth.auth().currentUser!.uid
-        
         
         var fetchData: Effect<Action, Never> {
             db.fetchData(ofType: Todo.State.self, from: collection, for: userID)
@@ -91,6 +91,9 @@ extension TodosList {
             case .fetchTodos:
                 return environment.fetchData
                 
+            case .signOutButtonTapped:
+                return .none
+                
             case let .todos(index, action):
                 return Effect(value: .updateTodo(state.todos[index]))
                 
@@ -114,19 +117,21 @@ extension TodosList {
             case .didCreateTodo          (.success),
                  .didRemoveTodo          (.success),
                  .didRemoveCompleted     (.success),
-                 .didUpdateTodo          (.success):
+                 .didUpdateTodo          (.success)
+            :
                 return .none
 
             case let .didFetchTodos      (.failure(error)),
                  let .didCreateTodo      (.failure(error)),
                  let .didRemoveTodo      (.failure(error)),
                  let .didRemoveCompleted (.failure(error)),
-                 let .didUpdateTodo      (.failure(error)):
+                 let .didUpdateTodo      (.failure(error))
+            :
                 state.error = error
                 return .none
+                
             }
         }
-        .debug()
     )
 }
 

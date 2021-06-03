@@ -133,6 +133,19 @@ extension Firestore {
 
         return rv.eraseToAnyPublisher()
     }
+    
+    static func signOut() -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
+        let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
+        
+        do {
+            try Auth.auth().signOut()
+            rv.send(.success(true))
+        } catch {
+            rv.send(.failure(FirestoreError(error)))
+        }
+            
+        return rv.eraseToAnyPublisher()
+    }
 }
 
 

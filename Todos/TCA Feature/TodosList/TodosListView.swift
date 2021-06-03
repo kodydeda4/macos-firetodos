@@ -38,6 +38,11 @@ struct TodosListView: View {
                         viewStore.send(.clearCompleted)
                     }
                 }
+                ToolbarItem {
+                    Button("Sign out") {
+                        viewStore.send(.signOutButtonTapped)
+                    }
+                }
             }
         }
     }

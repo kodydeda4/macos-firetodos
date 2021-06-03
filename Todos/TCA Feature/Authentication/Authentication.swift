@@ -27,6 +27,9 @@ struct Authentication {
         
         case signInAnonymouslyButtonTapped
         case signInAnonymouslyButtonTappedResult(Result<Bool, FirestoreError>)
+        case signOut
+//        case signOutResult(Result<Bool, FirestoreError>)
+        
     }
     
     struct Environment {
@@ -41,6 +44,12 @@ struct Authentication {
                 .map(Action.signInAnonymouslyButtonTappedResult)
                 .eraseToEffect()
         }
+        
+//        var signOut: Effect<Action, Never> {
+//            Firestore.signOut()
+//                .map(Action.signOutResult)
+//                .eraseToEffect()
+//        }
     }
 }
 
@@ -80,6 +89,23 @@ extension Authentication {
             state.error = error
             state.attempted = true
             return .none
+            
+        case .signOut:
+            state.loggedIn = false
+            return .none
+//            return environment.signOut
+            
+//        case .signOutResult(.success):
+//            state.loggedIn = false
+//            print(state.loggedIn)
+//            return .none
+//
+//        case let .signOutResult(.failure(error)):
+//            state.loggedIn = false
+//            state.error = error
+//            print(state.loggedIn)
+//            return .none
+        
         }
     }
 }
