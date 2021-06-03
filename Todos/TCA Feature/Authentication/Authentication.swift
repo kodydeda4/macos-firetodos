@@ -18,7 +18,7 @@ struct Authentication {
         var error: FirestoreError?
         var email = String.init()
         var password = String.init()
-        var currentNonce: String?
+        var currentNonce = String.randomNonce()
     }
     
     enum Action: Equatable {
@@ -28,6 +28,7 @@ struct Authentication {
         // SignIn
         case signInWithEmailButtonTapped
         case signInAnonymouslyButtonTapped
+        
         case appleSignIn_onRequest(ASAuthorizationAppleIDRequest)
         case appleSignIn_onCompletion(Result<ASAuthorization, FirestoreError>)
         
@@ -52,61 +53,10 @@ struct Authentication {
                 .eraseToEffect()
         }
         
-//        var signOut: Effect<Action, Never> {
-//            Firestore.signOut()
-//                .map(Action.signOutResult)
-//                .eraseToEffect()
-//        }
-        
-        func foo(currentNonce: String?, result: Result<ASAuthorization, FirestoreError>) -> Effect<Action, Never> {
-            let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
-
-            switch result {
-            
-            case let .success(authResults):
-                
-                switch authResults.credential {
-                
-                case let appleIDCredential as ASAuthorizationAppleIDCredential:
-                    
-                    guard let nonce = currentNonce,
-                          let appleIDToken = appleIDCredential.identityToken,
-                          let idTokenString = String(data: appleIDToken, encoding: .utf8)
-                    
-                    else { fatalError("FatalError: Apple authenticatication failed.") }
-                    
-                    
-                    //Create Firebase request
-                    let credential = OAuthProvider.credential(
-                        withProviderID: "apple.com",
-                        idToken: idTokenString,
-                        rawNonce: nonce
-                    )
-                    
-                    //Send Request
-                    Auth.auth().signIn(with: credential) { (authResult, error) in
-                        if let error = error {
-                            rv.send(.failure(FirestoreError(error)))
-                            return
-                        }
-                        rv.send(.success(true))
-                    }
-                    
-                default:
-                    break
-                    
-                }
-                
-            case let .failure(error):
-                print(error.localizedDescription)
-                break
-            }
-            
-            return rv.eraseToAnyPublisher()
+        func signInWithApple(currentNonce: String, result: Result<ASAuthorization, FirestoreError>) -> Effect<Action, Never> {
+            Firestore.handleAppleSignInResult(currentNonce: currentNonce, result: result)
                 .map(Action.signInAppleButtonTappedResult)
                 .eraseToEffect()
-
-
         }
     }
 }
@@ -153,14 +103,15 @@ extension Authentication {
             return .none
 
         case let .appleSignIn_onRequest(request):
-            let nonce = String.randomNonceString();
-            state.currentNonce = nonce;
-            request.requestedScopes = [.fullName, .email];
-            request.nonce = nonce.hash
+            state.currentNonce = String.randomNonce()
+            
+            request.requestedScopes = [.fullName, .email]
+            request.nonce = String.hash(input: state.currentNonce)
+            
             return .none
             
         case let .appleSignIn_onCompletion(result):
-            return environment.foo(currentNonce: state.currentNonce, result: result)
+            return environment.signInWithApple(currentNonce: state.currentNonce, result: result)
             
         case .signInAppleButtonTappedResult(.success):
             state.signedIn.toggle()

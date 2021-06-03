@@ -34,6 +34,7 @@ struct FirestoreError: Error, Equatable {
     }
 }
 
+/// MARK:- Collections
 extension Firestore {
 
     func fetchData<A>(ofType: A.Type, from collection: String, for userID: String) -> AnyPublisher<Result<[A], FirestoreError>, Never> where A: Codable {
@@ -115,6 +116,10 @@ extension Firestore {
         }
         return rv.eraseToAnyPublisher()
     }
+}
+
+/// MARK:- SignIn
+extension Firestore {
     
     static func signIn(_ email: String, _ password: String) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
         let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
@@ -158,6 +163,60 @@ extension Firestore {
             
         return rv.eraseToAnyPublisher()
     }
+    
+    static func handleAppleSignInResult(
+        currentNonce: String,
+        result: Result<ASAuthorization, FirestoreError>
+        
+    ) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
+        
+        let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
+
+        switch result {
+        
+        case let .success(authResults):
+            
+            switch authResults.credential {
+            
+            case let appleIDCredential as ASAuthorizationAppleIDCredential:
+                
+                guard //let nonce = currentNonce,
+                      let appleIDToken = appleIDCredential.identityToken,
+                      let idTokenString = String(data: appleIDToken, encoding: .utf8)
+                
+                 else { fatalError("FatalError: Apple authenticatication failed.") }
+                
+                
+                Auth.auth().signIn(
+                    with: OAuthProvider.credential(
+                        withProviderID: "apple.com",
+                        idToken: idTokenString,
+                        rawNonce: currentNonce
+                        
+                    )) { authResult, error in
+                    
+                    switch error {
+                    
+                    case .none:
+                        rv.send(.success(true))
+                        
+                    case let .some(error):
+                        rv.send(.failure(FirestoreError(error)))
+                    }
+                }
+                
+            default:
+                break
+                
+            }
+            
+        case let .failure(error):
+            print(error.localizedDescription)
+            break
+        }
+        return rv.eraseToAnyPublisher()
+    }
+
 }
 
 
