@@ -30,13 +30,8 @@ struct AuthenticationView: View {
                         .fontWeight(.heavy)
                         .padding(.vertical, 10)
                     
-                    // SignInWithAppleButton
-//                    SignInWithAppleButton(
-//                        onRequest:    { viewStore.send(.appleSignIn_onRequest($0)) },
-//                        onCompletion: { viewStore.send(.appleSignIn_onCompletion($0.mapError(FirestoreError.init))) }
-//                    )
                     
-                    SignInWithAppleButton({ viewStore.send(.signInAppleButtonTappedResult($0)) })
+                    SignInWithAppleButton({ viewStore.send(.handleAppleSignInResult($0.mapError(FirestoreError.init))) })
 
                     
                     

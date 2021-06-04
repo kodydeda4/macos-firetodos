@@ -15,11 +15,11 @@ extension SignInWithAppleButton {
     static var currentNonce = String.randomNonce()
     
     init(
-        _ f: @escaping (Result<Bool, FirestoreError>) -> Void
+        _ f: @escaping (Result<Bool, Error>) -> Void
     ) {
         self.init(
             onRequest: SignInWithAppleButton.handleRequest,
-            onCompletion: { f(handleAppleSignInResult(currentNonce: SignInWithAppleButton.currentNonce, result: $0.mapError(FirestoreError.init))) }
+            onCompletion: { f(handleAppleSignInResult(currentNonce: SignInWithAppleButton.currentNonce, result: $0)) }
             
         )
     }
@@ -43,10 +43,15 @@ func handleAppleSignInResult(
     currentNonce: String,
     result: Result<ASAuthorization, Error>
 
-) -> Result<Bool, FirestoreError> {
+) -> Result<Bool, Error> {
+    
+    struct FSE: Error {
+        var error: Error?
+    }
+    
 
-//    let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
-    var rv: Result<Bool, FirestoreError>?
+    let rv = CurrentValueSubject<Result<Bool, FSE>, Never>(.failure(.init()))
+//    var rv: Result<Bool, Error>?
     
 
     switch result {
@@ -74,12 +79,12 @@ func handleAppleSignInResult(
                 switch error {
 
                 case .none:
-                    rv = .success(true)
-                    //rv.send(.success(true))
+//                    rv = .success(true)
+                    rv.send(.success(true))
 
                 case let .some(error):
-                    rv = .failure(FirestoreError(error))
-                    //rv.send(.failure(FirestoreError(error)))
+//                    rv = .failure(error)
+                    rv.send(.failure(FSE(error: error)))
                 }
             }
 
@@ -93,15 +98,17 @@ func handleAppleSignInResult(
         break
     }
     
-    if let rv = rv {
-        return rv
-    } else {
-        return .success(false)
-    }
-    
 
     
-//    return rv
+//    if let rv = rv {
+//        return rv
+//    } else {
+//        return .success(false)
+//    }
+    
+    
+
+    return rv.value
 }
 
 extension SignInWithAppleButton {
