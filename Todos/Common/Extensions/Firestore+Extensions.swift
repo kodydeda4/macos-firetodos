@@ -8,6 +8,7 @@
 import Firebase
 import Combine
 import AuthenticationServices
+import SwiftUI
 
 /*------------------------------------------------------------------------------------------
  
@@ -166,7 +167,6 @@ extension Firestore {
     }
     
     static func handleAppleSignInResult(
-        currentNonce: String,
         result: Result<ASAuthorization, FirestoreError>
         
     ) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
@@ -181,8 +181,7 @@ extension Firestore {
             
             case let appleIDCredential as ASAuthorizationAppleIDCredential:
                 
-                guard //let nonce = currentNonce,
-                      let appleIDToken = appleIDCredential.identityToken,
+                guard let appleIDToken = appleIDCredential.identityToken,
                       let idTokenString = String(data: appleIDToken, encoding: .utf8)
                 
                  else { fatalError("FatalError: Apple authenticatication failed.") }
@@ -192,7 +191,7 @@ extension Firestore {
                     with: OAuthProvider.credential(
                         withProviderID: "apple.com",
                         idToken: idTokenString,
-                        rawNonce: currentNonce
+                        rawNonce: SignInWithAppleButton.currentNonce
                         
                     )) { authResult, error in
                     

@@ -18,7 +18,6 @@ struct Authentication {
         var error: FirestoreError?
         var email = String.init()
         var password = String.init()
-//        var currentNonce = String.randomNonce()
     }
     
     enum Action: Equatable {
@@ -28,21 +27,14 @@ struct Authentication {
         // SignIn
         case signInWithEmailButtonTapped
         case signInAnonymouslyButtonTapped
-        
-//        case appleSignIn_onRequest(ASAuthorizationAppleIDRequest)
-//        case appleSignIn_onCompletion(Result<ASAuthorization, FirestoreError>)
+        case signInWithAppleButtonTapped(Result<ASAuthorization, FirestoreError>)
+
         
         // Results
         case signInWithEmailButtonTappedResult(Result<Bool, FirestoreError>)
         case signInAnonymouslyButtonTappedResult(Result<Bool, FirestoreError>)
-        
-        
-        
-        case handleAppleSignInResult(Result<Bool, FirestoreError>)
-        
-        
-        
-        
+        case signInWithAppleButtonTappedResult(Result<Bool, FirestoreError>)
+
         case signOut
     }
     
@@ -59,11 +51,11 @@ struct Authentication {
                 .eraseToEffect()
         }
         
-//        func signInWithApple(currentNonce: String, result: Result<ASAuthorization, FirestoreError>) -> Effect<Action, Never> {
-//            Firestore.handleAppleSignInResult(currentNonce: currentNonce, result: result)
-//                .map(Action.signInAppleButtonTappedResult)
-//                .eraseToEffect()
-//        }
+        func signInWithApple(result: Result<ASAuthorization, FirestoreError>) -> Effect<Action, Never> {
+            Firestore.handleAppleSignInResult(result: result)
+                .map(Action.signInWithAppleButtonTappedResult)
+                .eraseToEffect()
+        }
     }
 }
 
@@ -108,22 +100,14 @@ extension Authentication {
             state.signedIn = false
             return .none
 
-//        case let .appleSignIn_onRequest(request):
-//            state.currentNonce = String.randomNonce()
-//            
-//            request.requestedScopes = [.fullName, .email]
-//            request.nonce = String.hash(input: state.currentNonce)
-//            
-//            return .none
-//            
-//        case let .appleSignIn_onCompletion(result):
-//            return environment.signInWithApple(currentNonce: state.currentNonce, result: result)
+        case let .signInWithAppleButtonTapped(result):
+            return environment.signInWithApple(result: result)
             
-        case .handleAppleSignInResult(.success):
+        case .signInWithAppleButtonTappedResult(.success):
             state.signedIn.toggle()
             return .none
             
-        case let .handleAppleSignInResult(.failure(error)):
+        case let .signInWithAppleButtonTappedResult(.failure(error)):
             state.error = error
             state.attempted = true
             return .none

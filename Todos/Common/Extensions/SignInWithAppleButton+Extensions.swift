@@ -1,16 +1,39 @@
 //
-//  String+Extensions.swift
+//  SignIn.swift
 //  Todos
 //
-//  Created by Kody Deda on 6/3/21.
+//  Created by Kody Deda on 6/4/21.
 //
 
-import CryptoKit
+import SwiftUI
+import ComposableArchitecture
+import Combine
 import AuthenticationServices
+import CryptoKit
+import Firebase
 
-// String+Extensions
-extension String {
+
+extension SignInWithAppleButton {
+    static var currentNonce = SignInWithAppleButton.randomNonce()
     
+    init(
+        action: @escaping ((Result<ASAuthorization, Error>) -> Void)
+    ) {
+        self.init(
+            onRequest: SignInWithAppleButton.handleRequest,
+            onCompletion: { action($0) }
+        )
+    }
+    
+    static func handleRequest(_ request: ASAuthorizationAppleIDRequest) {
+        SignInWithAppleButton.currentNonce = SignInWithAppleButton.randomNonce()
+        request.requestedScopes = [.fullName, .email]
+        request.nonce = SignInWithAppleButton.hash(input: SignInWithAppleButton.currentNonce)
+        
+    }
+}
+
+extension SignInWithAppleButton {
     static func randomNonce(length: Int = 32) -> String {
         precondition(length > 0)
         let charset: Array<Character> =
