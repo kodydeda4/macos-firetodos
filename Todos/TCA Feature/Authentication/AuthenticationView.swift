@@ -9,7 +9,6 @@ import SwiftUI
 import ComposableArchitecture
 import AuthenticationServices
 
-
 struct AuthenticationView: View {
     let store: Store<Authentication.State, Authentication.Action>
     
@@ -53,8 +52,8 @@ struct AuthenticationView: View {
                     
                     
                     Group {
-                        // Email & Password
 
+                        // Email & Password
                         TextField("Email", text: viewStore.binding(get: \.email, send: Authentication.Action.updateEmail))
                             .textFieldStyle(PlainTextFieldStyle())
                             .padding(.vertical, 10)
@@ -66,7 +65,7 @@ struct AuthenticationView: View {
                             .padding(.vertical, 10)
                             .padding(.horizontal)
                             .background(RoundedRectangle(cornerRadius: 2).stroke(Color.gray.opacity(0.7), lineWidth: 1))
-                            //.padding(.top)
+
                         
                         // Stay Logged in
                         HStack {
