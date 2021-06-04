@@ -66,7 +66,9 @@ struct Firebase {
     
     /// Sign into Firebase using an AppleIDCredential.
     static func signIn(
-        using appleID: ASAuthorizationAppleIDCredential
+        using appleID: ASAuthorizationAppleIDCredential,
+        with nonce: String = SignInWithAppleButton.currentNonce
+        
     ) -> AnyPublisher<Result<Bool, FirebaseError>, Never> {
         
         let rv = PassthroughSubject<Result<Bool, FirebaseError>, Never>()
@@ -81,7 +83,7 @@ struct Firebase {
             with: OAuthProvider.credential(
                 withProviderID: "apple.com",
                 idToken: idTokenString,
-                rawNonce: SignInWithAppleButton.currentNonce
+                rawNonce: nonce
                 
             )) { authResult, error in
             
