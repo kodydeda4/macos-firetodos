@@ -37,6 +37,9 @@ struct Authentication {
         case signInAnonymouslyButtonTappedResult(Result<Bool, FirestoreError>)
         case signInAppleButtonTappedResult(Result<Bool, FirestoreError>)
         
+        
+        
+        
         case signOut
     }
     

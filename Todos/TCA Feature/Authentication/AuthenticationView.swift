@@ -31,11 +31,15 @@ struct AuthenticationView: View {
                         .padding(.vertical, 10)
                     
                     // SignInWithAppleButton
-                    SignInWithAppleButton(
-                        onRequest:    { viewStore.send(.appleSignIn_onRequest($0)) },
-                        onCompletion: { viewStore.send(.appleSignIn_onCompletion($0.mapError(FirestoreError.init))) }
-                    )
+//                    SignInWithAppleButton(
+//                        onRequest:    { viewStore.send(.appleSignIn_onRequest($0)) },
+//                        onCompletion: { viewStore.send(.appleSignIn_onCompletion($0.mapError(FirestoreError.init))) }
+//                    )
+                    
+                    SignInWithAppleButton({ viewStore.send(.signInAppleButtonTappedResult($0)) })
 
+                    
+                    
                     // OR
                     HStack {
                         Rectangle()

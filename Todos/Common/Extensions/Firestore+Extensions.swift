@@ -32,6 +32,7 @@ struct FirestoreError: Error, Equatable {
     init(_ error: Error) {
         self.error = error
     }
+
 }
 
 /// MARK:- Collections
