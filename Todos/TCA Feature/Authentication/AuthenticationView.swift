@@ -30,13 +30,9 @@ struct AuthenticationView: View {
                         .fontWeight(.heavy)
                         .padding(.vertical, 10)
                     
-                    
-//                    SignInWithAppleButton(action: {
-//                        viewStore.send(.signInWithAppleButtonTapped($0.mapError(FirestoreError.init)))
-//                    })
-                    
+                                        
                     SignInWithAppleButton(action: {
-                        viewStore.send(.signInWithAppleButtonTappedV2($0))
+                        viewStore.send(.signInButtonTapped_Apple($0))
                     })
 
                                         
@@ -87,7 +83,7 @@ struct AuthenticationView: View {
                         .padding(.top)
                         
                         // Login Button
-                        Button(action: { viewStore.send(.signInWithEmailButtonTapped) }) {
+                        Button(action: { viewStore.send(.signInButtonTapped_Email) }) {
                             HStack {
                                 Spacer()
                                 
@@ -105,7 +101,7 @@ struct AuthenticationView: View {
                         .buttonStyle(PlainButtonStyle())
                         
                         // Continue as Guest
-                        Button(action: { viewStore.send(.signInAnonymouslyButtonTapped) }) {
+                        Button(action: { viewStore.send(.signInButtonTapped_Anonymous) }) {
                             HStack {
                                 Spacer()
 

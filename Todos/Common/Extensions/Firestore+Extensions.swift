@@ -120,9 +120,10 @@ extension Firestore {
     }
 }
 
-/// MARK:- SignIn
+/// MARK:- SignIn Methods
 extension Firestore {
     
+    /// Sign into Firebase using an email & password.
     static func signIn(_ email: String, _ password: String) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
         let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
         
@@ -137,7 +138,8 @@ extension Firestore {
         return rv.eraseToAnyPublisher()
     }
     
-    static func signInAnonymously() -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
+    /// Sign into Firebase anonymously.
+    static func signIn() -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
         let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
         
         Auth.auth().signInAnonymously { result, error in
@@ -153,6 +155,41 @@ extension Firestore {
         return rv.eraseToAnyPublisher()
     }
     
+    
+    /// Sign into Firebase using an AppleIDCredential.
+    static func signIn(
+        using appleIDCredental: ASAuthorizationAppleIDCredential
+    ) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
+        
+        let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
+        
+        guard let appleIDToken = appleIDCredental.identityToken,
+              let idTokenString = String(data: appleIDToken, encoding: .utf8)
+        
+        else { fatalError("FatalError: Apple authenticatication failed.") }
+        
+        Auth.auth().signIn(
+            with: OAuthProvider.credential(
+                withProviderID: "apple.com",
+                idToken: idTokenString,
+                rawNonce: SignInWithAppleButton.currentNonce
+                
+            )) { authResult, error in
+            
+            switch error {
+            
+            case .none:
+                rv.send(.success(true))
+                
+            case let .some(error):
+                rv.send(.failure(FirestoreError(error)))
+            }
+        }
+        
+        return rv.eraseToAnyPublisher()
+    }
+    
+    /// Sign out of Firebase.
     static func signOut() -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
         let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
         
@@ -165,96 +202,6 @@ extension Firestore {
             
         return rv.eraseToAnyPublisher()
     }
-    
-    
-    static func handleAppleSignInResult(
-        credential: ASAuthorizationAppleIDCredential
-        
-    ) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
-        
-        let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
-
-            
-                
-        guard let appleIDToken = credential.identityToken,
-                      let idTokenString = String(data: appleIDToken, encoding: .utf8)
-                
-                 else { fatalError("FatalError: Apple authenticatication failed.") }
-                
-                
-                Auth.auth().signIn(
-                    with: OAuthProvider.credential(
-                        withProviderID: "apple.com",
-                        idToken: idTokenString,
-                        rawNonce: SignInWithAppleButton.currentNonce
-                        
-                    )) { authResult, error in
-                    
-                    switch error {
-                    
-                    case .none:
-                        rv.send(.success(true))
-                        
-                    case let .some(error):
-                        rv.send(.failure(FirestoreError(error)))
-                    }
-                }
-                
-        return rv.eraseToAnyPublisher()
-    }
-
-    
-    static func handleAppleSignInResult(
-        result: Result<ASAuthorization, FirestoreError>
-        
-    ) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
-        
-        let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
-
-        switch result {
-        
-        case let .success(authResults):
-            
-            switch authResults.credential {
-            
-            case let appleIDCredential as ASAuthorizationAppleIDCredential:
-                
-                guard let appleIDToken = appleIDCredential.identityToken,
-                      let idTokenString = String(data: appleIDToken, encoding: .utf8)
-                
-                 else { fatalError("FatalError: Apple authenticatication failed.") }
-                
-                
-                Auth.auth().signIn(
-                    with: OAuthProvider.credential(
-                        withProviderID: "apple.com",
-                        idToken: idTokenString,
-                        rawNonce: SignInWithAppleButton.currentNonce
-                        
-                    )) { authResult, error in
-                    
-                    switch error {
-                    
-                    case .none:
-                        rv.send(.success(true))
-                        
-                    case let .some(error):
-                        rv.send(.failure(FirestoreError(error)))
-                    }
-                }
-                
-            default:
-                break
-                
-            }
-            
-        case let .failure(error):
-            print(error.localizedDescription)
-            break
-        }
-        return rv.eraseToAnyPublisher()
-    }
-
 }
 
 
