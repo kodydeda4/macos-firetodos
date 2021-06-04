@@ -12,7 +12,7 @@ import CryptoKit
 extension SignInWithAppleButton {
     
     /// String associating client session with ID token
-    static private(set) var currentNonce = randomNonce()
+    static private var currentNonce = randomNonce()
 
     /// Attempts Apple sign-in and passes id and nonce to `onCompletion` for API validation.
     init(onCompletion loginUsing: @escaping (((ASAuthorizationAppleIDCredential), String) -> Void)) {
@@ -74,7 +74,7 @@ fileprivate func getAppleIDCredential(
 }
 
 
-/// Generates a String that associates client session with ID token.
+/// Generates random `nonce` String that associates client session with ID token.
 fileprivate func randomNonce(length: Int = 32) -> String {
     precondition(length > 0)
     let charset: Array<Character> =
