@@ -26,7 +26,7 @@ struct FirestoreError: Error, Equatable {
 /// MARK:- Manage Collections
 extension Firestore {
 
-    /// Fetch user documents from Firebase collection.
+    /// Fetch user documents from Firestore collection.
     func fetchData<A>(ofType: A.Type, from collection: String, for userID: String) -> AnyPublisher<Result<[A], FirestoreError>, Never> where A: Codable {
         let rv = PassthroughSubject<Result<[A], FirestoreError>, Never>()
         
@@ -48,7 +48,7 @@ extension Firestore {
         return rv.eraseToAnyPublisher()
     }
     
-    /// Add document to Firebase collection.
+    /// Add document to Firestore collection.
     func add<A>(_ value: A, to collection: String) -> AnyPublisher<Result<Bool, FirestoreError>, Never> where A: Codable {
         let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
         
@@ -63,7 +63,7 @@ extension Firestore {
         return rv.eraseToAnyPublisher()
     }
     
-    /// Remove a document from a Firebase collection.
+    /// Remove a document from a Firestore collection.
     func remove(_ documentID: String, from collection: String) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
         let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
         
@@ -77,7 +77,7 @@ extension Firestore {
         return rv.eraseToAnyPublisher()
     }
     
-    /// Remove [document]'s from a Firebase collection.
+    /// Remove [document]'s from a Firestore collection.
     func remove(_ documentIDs: [String], from collection: String) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
         let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
         
@@ -94,7 +94,7 @@ extension Firestore {
         return rv.eraseToAnyPublisher()
     }
     
-    /// Set the value of a Firebase document.
+    /// Set the value of a Firestore document.
     func set<A>(_ documentID: String, to value: A, in collection: String) -> AnyPublisher<Result<Bool, FirestoreError>, Never> where A: Codable {
         let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
         do {
@@ -113,15 +113,36 @@ extension Firestore {
 }
 
 /// MARK:- SignIn Methods
-extension Firestore {
+
+enum FirebaseAuthentication: Equatable {
+    case anonymous
+    case email
+    case apple(ASAuthorizationAppleIDCredential)
+}
+
+struct FirebaseError: Error, Equatable {
+    static func == (lhs: FirebaseError, rhs: FirebaseError) -> Bool {
+        lhs.error.localizedDescription == rhs.error.localizedDescription
+    }
+    
+    var error: Error
+    
+    init(_ error: Error) {
+        self.error = error
+    }
+
+}
+
+struct Firebase {
+    
     
     /// Sign into Firebase using an email & password.
-    static func signIn(_ email: String, _ password: String) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
-        let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
+    static func signIn(_ email: String, _ password: String) -> AnyPublisher<Result<Bool, FirebaseError>, Never> {
+        let rv = PassthroughSubject<Result<Bool, FirebaseError>, Never>()
         
         Auth.auth().signIn(withEmail: email, password: password) { result, error in
             if let error = error {
-                rv.send(.failure(FirestoreError(error)))
+                rv.send(.failure(FirebaseError(error)))
             } else {
                 rv.send(.success(true))
             }
@@ -131,14 +152,14 @@ extension Firestore {
     }
     
     /// Sign into Firebase anonymously.
-    static func signIn() -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
-        let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
+    static func signIn() -> AnyPublisher<Result<Bool, FirebaseError>, Never> {
+        let rv = PassthroughSubject<Result<Bool, FirebaseError>, Never>()
         
         Auth.auth().signInAnonymously { result, error in
             print(result.debugDescription)
             
             if let error = error {
-                rv.send(.failure(FirestoreError(error)))
+                rv.send(.failure(FirebaseError(error)))
             } else {
                 rv.send(.success(true))
             }
@@ -151,9 +172,9 @@ extension Firestore {
     /// Sign into Firebase using an AppleIDCredential.
     static func signIn(
         using appleIDCredental: ASAuthorizationAppleIDCredential
-    ) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
+    ) -> AnyPublisher<Result<Bool, FirebaseError>, Never> {
         
-        let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
+        let rv = PassthroughSubject<Result<Bool, FirebaseError>, Never>()
         
         guard let appleIDToken = appleIDCredental.identityToken,
               let idTokenString = String(data: appleIDToken, encoding: .utf8)
@@ -174,7 +195,7 @@ extension Firestore {
                 rv.send(.success(true))
                 
             case let .some(error):
-                rv.send(.failure(FirestoreError(error)))
+                rv.send(.failure(FirebaseError(error)))
             }
         }
         
@@ -182,14 +203,14 @@ extension Firestore {
     }
     
     /// Sign out of Firebase.
-    static func signOut() -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
-        let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
+    static func signOut() -> AnyPublisher<Result<Bool, FirebaseError>, Never> {
+        let rv = PassthroughSubject<Result<Bool, FirebaseError>, Never>()
         
         do {
             try Auth.auth().signOut()
             rv.send(.success(true))
         } catch {
-            rv.send(.failure(FirestoreError(error)))
+            rv.send(.failure(FirebaseError(error)))
         }
             
         return rv.eraseToAnyPublisher()

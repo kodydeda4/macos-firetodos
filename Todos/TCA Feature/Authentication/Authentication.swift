@@ -11,11 +11,13 @@ import Firebase
 import Combine
 import AuthenticationServices
 
+
+
 struct Authentication {
     struct State: Equatable {
         var signedIn = false
         var attempted = false
-        var error: FirestoreError?
+        var error: FirebaseError?
         var email = String.init()
         var password = String.init()
     }
@@ -24,36 +26,28 @@ struct Authentication {
         case updateEmail(String)
         case updatePassword(String)
         
-        // SignIn
-        case signInButtonTapped_Anonymous
-        case signInButtonTapped_Email
-        case signInButtonTapped_Apple(ASAuthorizationAppleIDCredential)
-
-        
-        // Results
-        case signInResult_Anonymous (Result<Bool, FirestoreError>)
-        case signInResult_Email     (Result<Bool, FirestoreError>)
-        case signInResult_Apple     (Result<Bool, FirestoreError>)
+        case signInButtonTapped(FirebaseAuthentication)
+        case signInResult (Result<Bool, FirebaseError>)
 
         case signOut
     }
     
     struct Environment {
         var signIn: Effect<Action, Never> {
-            Firestore.signIn()
-                .map(Action.signInResult_Anonymous)
+            Firebase.signIn()
+                .map(Action.signInResult)
                 .eraseToEffect()
         }
 
-        func signIn(email: String, password: String) -> Effect<Action, Never> {
-            Firestore.signIn(email, password)
-                .map(Action.signInResult_Email)
+        func signIn(_ email: String, _ password: String) -> Effect<Action, Never> {
+            Firebase.signIn(email, password)
+                .map(Action.signInResult)
                 .eraseToEffect()
         }
         
         func signIn(using appleIDCredential: ASAuthorizationAppleIDCredential) -> Effect<Action, Never> {
-            Firestore.signIn(using: appleIDCredential)
-                .map(Action.signInResult_Apple)
+            Firebase.signIn(using: appleIDCredential)
+                .map(Action.signInResult)
                 .eraseToEffect()
         }
     }
@@ -72,44 +66,31 @@ extension Authentication {
             state.password = value
             return .none
             
-        case .signInButtonTapped_Email:
-            return environment.signIn(email: state.email, password: state.password)
+        case let .signInButtonTapped(authentication):
             
-        case .signInButtonTapped_Anonymous:
-            return environment.signIn
+            switch authentication {
             
+            case .anonymous:
+                return environment.signIn
+                
+            case .email:
+                return environment.signIn(state.email, state.password)
+                
+            case let .apple(token):
+                return environment.signIn(using: token)
+                
+            }
+
         case .signOut:
             state.signedIn = false
             return .none
 
-        case let .signInButtonTapped_Apple(appleIDCredential):
-            return environment.signIn(using: appleIDCredential)
-
-            
         // Results
-        case .signInResult_Anonymous(.success):
+        case .signInResult(.success):
             state.signedIn.toggle()
             return .none
             
-        case let .signInResult_Anonymous(.failure(error)):
-            state.error = error
-            state.attempted = true
-            return .none
-
-        case .signInResult_Email(.success):
-            state.signedIn.toggle()
-            return .none
-            
-        case let .signInResult_Email(.failure(error)):
-            state.error = error
-            state.attempted = true
-            return .none
-
-        case .signInResult_Apple(.success):
-            state.signedIn.toggle()
-            return .none
-            
-        case let .signInResult_Apple(.failure(error)):
+        case let .signInResult(.failure(error)):
             state.error = error
             state.attempted = true
             return .none

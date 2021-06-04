@@ -32,11 +32,10 @@ struct AuthenticationView: View {
                     
                                         
                     SignInWithAppleButton(action: {
-                        viewStore.send(.signInButtonTapped_Apple($0))
+                        viewStore.send(.signInButtonTapped(.apple($0)))
                     })
 
                                         
-                    
                     // OR
                     HStack {
                         Rectangle()
@@ -83,7 +82,7 @@ struct AuthenticationView: View {
                         .padding(.top)
                         
                         // Login Button
-                        Button(action: { viewStore.send(.signInButtonTapped_Email) }) {
+                        Button(action: { viewStore.send(.signInButtonTapped(.email)) }) {
                             HStack {
                                 Spacer()
                                 
@@ -101,7 +100,7 @@ struct AuthenticationView: View {
                         .buttonStyle(PlainButtonStyle())
                         
                         // Continue as Guest
-                        Button(action: { viewStore.send(.signInButtonTapped_Anonymous) }) {
+                        Button(action: { viewStore.send(.signInButtonTapped(.anonymous)) }) {
                             HStack {
                                 Spacer()
 
