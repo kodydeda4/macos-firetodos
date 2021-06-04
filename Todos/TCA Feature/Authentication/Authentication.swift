@@ -5,13 +5,8 @@
 //  Created by Kody Deda on 6/2/21.
 //
 
-import SwiftUI
 import ComposableArchitecture
-import Firebase
-import Combine
 import AuthenticationServices
-
-
 
 struct Authentication {
     struct State: Equatable {
@@ -25,10 +20,8 @@ struct Authentication {
     enum Action: Equatable {
         case updateEmail(String)
         case updatePassword(String)
-        
         case signInButtonTapped(FirebaseAuthentication)
-        case signInResult (Result<Bool, FirebaseError>)
-
+        case signInResult(Result<Bool, FirebaseError>)
         case signOut
     }
     
@@ -45,8 +38,8 @@ struct Authentication {
                 .eraseToEffect()
         }
         
-        func signIn(using appleIDCredential: ASAuthorizationAppleIDCredential) -> Effect<Action, Never> {
-            Firebase.signIn(using: appleIDCredential)
+        func signIn(using appleID: ASAuthorizationAppleIDCredential) -> Effect<Action, Never> {
+            Firebase.signIn(using: appleID)
                 .map(Action.signInResult)
                 .eraseToEffect()
         }
@@ -76,8 +69,8 @@ extension Authentication {
             case .email:
                 return environment.signIn(state.email, state.password)
                 
-            case let .apple(token):
-                return environment.signIn(using: token)
+            case let .apple(appleID):
+                return environment.signIn(using: appleID)
                 
             }
 
@@ -85,7 +78,6 @@ extension Authentication {
             state.signedIn = false
             return .none
 
-        // Results
         case .signInResult(.success):
             state.signedIn.toggle()
             return .none

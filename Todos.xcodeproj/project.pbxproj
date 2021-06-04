@@ -26,6 +26,7 @@
 		336406562667EE8900545A25 /* Todo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 336406552667EE8900545A25 /* Todo.swift */; };
 		336406592667F3C400545A25 /* TodoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 336406582667F3C400545A25 /* TodoView.swift */; };
 		3364065B2667F3E600545A25 /* TodosListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3364065A2667F3E600545A25 /* TodosListView.swift */; };
+		33754B15266AAAE60040963D /* Firebase+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33754B14266AAAE60040963D /* Firebase+Extensions.swift */; };
 		33A9C83A26691448008C2D6E /* Textfield+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A9C83926691448008C2D6E /* Textfield+Extensions.swift */; };
 		33A9C83C26691D31008C2D6E /* Color+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A9C83B26691D31008C2D6E /* Color+Extensions.swift */; };
 		33B1F0FF266A6D2B0095EA9D /* SignInWithAppleButton+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33B1F0FE266A6D2B0095EA9D /* SignInWithAppleButton+Extensions.swift */; };
@@ -49,6 +50,7 @@
 		336406552667EE8900545A25 /* Todo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Todo.swift; sourceTree = "<group>"; };
 		336406582667F3C400545A25 /* TodoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoView.swift; sourceTree = "<group>"; };
 		3364065A2667F3E600545A25 /* TodosListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodosListView.swift; sourceTree = "<group>"; };
+		33754B14266AAAE60040963D /* Firebase+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Firebase+Extensions.swift"; sourceTree = "<group>"; };
 		33A9C83926691448008C2D6E /* Textfield+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Textfield+Extensions.swift"; sourceTree = "<group>"; };
 		33A9C83B26691D31008C2D6E /* Color+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extensions.swift"; sourceTree = "<group>"; };
 		33B1F0FE266A6D2B0095EA9D /* SignInWithAppleButton+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SignInWithAppleButton+Extensions.swift"; sourceTree = "<group>"; };
@@ -164,14 +166,23 @@
 			path = Todo;
 			sourceTree = "<group>";
 		};
+		33754B16266AAB310040963D /* Firebase */ = {
+			isa = PBXGroup;
+			children = (
+				33754B14266AAAE60040963D /* Firebase+Extensions.swift */,
+				334BFBD92667DC4A00F7952C /* Firestore+Extensions.swift */,
+			);
+			path = Firebase;
+			sourceTree = "<group>";
+		};
 		33A34E7D26681D51005EFC79 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
 				33B1F0FE266A6D2B0095EA9D /* SignInWithAppleButton+Extensions.swift */,
-				334BFBD92667DC4A00F7952C /* Firestore+Extensions.swift */,
 				336406502667E48A00545A25 /* Button+Extensions.swift */,
 				33A9C83926691448008C2D6E /* Textfield+Extensions.swift */,
 				33A9C83B26691D31008C2D6E /* Color+Extensions.swift */,
+				33754B16266AAB310040963D /* Firebase */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -267,6 +278,7 @@
 				334BFBDA2667DC4A00F7952C /* Firestore+Extensions.swift in Sources */,
 				33B1F0FF266A6D2B0095EA9D /* SignInWithAppleButton+Extensions.swift in Sources */,
 				33A9C83C26691D31008C2D6E /* Color+Extensions.swift in Sources */,
+				33754B15266AAAE60040963D /* Firebase+Extensions.swift in Sources */,
 				334BFBE72667DF0000F7952C /* RootView.swift in Sources */,
 				334BFBDC2667DCD200F7952C /* Root.swift in Sources */,
 				334BFBC22667DB8300F7952C /* TodosList.swift in Sources */,
