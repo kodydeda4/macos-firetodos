@@ -166,6 +166,44 @@ extension Firestore {
         return rv.eraseToAnyPublisher()
     }
     
+    
+    static func handleAppleSignInResult(
+        credential: ASAuthorizationAppleIDCredential
+        
+    ) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
+        
+        let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
+
+            
+                
+        guard let appleIDToken = credential.identityToken,
+                      let idTokenString = String(data: appleIDToken, encoding: .utf8)
+                
+                 else { fatalError("FatalError: Apple authenticatication failed.") }
+                
+                
+                Auth.auth().signIn(
+                    with: OAuthProvider.credential(
+                        withProviderID: "apple.com",
+                        idToken: idTokenString,
+                        rawNonce: SignInWithAppleButton.currentNonce
+                        
+                    )) { authResult, error in
+                    
+                    switch error {
+                    
+                    case .none:
+                        rv.send(.success(true))
+                        
+                    case let .some(error):
+                        rv.send(.failure(FirestoreError(error)))
+                    }
+                }
+                
+        return rv.eraseToAnyPublisher()
+    }
+
+    
     static func handleAppleSignInResult(
         result: Result<ASAuthorization, FirestoreError>
         

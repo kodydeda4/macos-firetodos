@@ -28,6 +28,9 @@ struct Authentication {
         case signInWithEmailButtonTapped
         case signInAnonymouslyButtonTapped
         case signInWithAppleButtonTapped(Result<ASAuthorization, FirestoreError>)
+        
+        
+        case signInWithAppleButtonTappedV2(ASAuthorizationAppleIDCredential)
 
         
         // Results
@@ -56,6 +59,13 @@ struct Authentication {
                 .map(Action.signInWithAppleButtonTappedResult)
                 .eraseToEffect()
         }
+        
+        func signInWithApple(credential: ASAuthorizationAppleIDCredential) -> Effect<Action, Never> {
+            Firestore.handleAppleSignInResult(credential: credential)
+                .map(Action.signInWithAppleButtonTappedResult)
+                .eraseToEffect()
+        }
+
     }
 }
 
@@ -112,6 +122,8 @@ extension Authentication {
             state.attempted = true
             return .none
 
+        case let .signInWithAppleButtonTappedV2(credential):
+            return environment.signInWithApple(credential: credential)
         }
     }
 }

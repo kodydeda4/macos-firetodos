@@ -31,9 +31,14 @@ struct AuthenticationView: View {
                         .padding(.vertical, 10)
                     
                     
+//                    SignInWithAppleButton(action: {
+//                        viewStore.send(.signInWithAppleButtonTapped($0.mapError(FirestoreError.init)))
+//                    })
+                    
                     SignInWithAppleButton(action: {
-                        viewStore.send(.signInWithAppleButtonTapped($0.mapError(FirestoreError.init)))
+                        viewStore.send(.signInWithAppleButtonTappedV2($0))
                     })
+
                                         
                     
                     // OR
