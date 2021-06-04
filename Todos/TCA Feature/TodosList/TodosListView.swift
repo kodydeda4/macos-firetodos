@@ -26,9 +26,9 @@ struct TodosListView: View {
                     action: TodosList.Action.todos(index:action:)
                 ), content: TodoView.init)
             }
-            .alert(store.scope(state: \.alert), dismiss: .signOutAlertDismissed)
-            .onAppear() {
-                viewStore.send(.onAppear)
+            .alert(store.scope(state: \.alert), dismiss: .dismissSignOutAlert)
+            .onAppear {
+                viewStore.send(.fetchTodos)
             }
             .toolbar {
                 ToolbarItem {

@@ -11,12 +11,12 @@ import CryptoKit
 
 extension SignInWithAppleButton {
     
-    init(action: @escaping ((ASAuthorizationAppleIDCredential) -> Void)) {
+    init(action loginUsing: @escaping ((ASAuthorizationAppleIDCredential) -> Void)) {
         self.init(
             onRequest: SignInWithAppleButton.handleRequest,
             onCompletion: {
                 if let credental = SignInWithAppleButton.getAppleIDCredential(authorization: $0) {
-                    action(credental)
+                    loginUsing(credental)
                 }
             }
         )

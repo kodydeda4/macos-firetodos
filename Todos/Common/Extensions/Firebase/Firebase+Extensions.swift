@@ -28,7 +28,6 @@ struct FirebaseError: Error, Equatable {
     init(_ error: Error) {
         self.error = error
     }
-
 }
 
 struct Firebase {
@@ -74,6 +73,7 @@ struct Firebase {
         
         guard let appleIDToken = appleID.identityToken,
               let idTokenString = String(data: appleIDToken, encoding: .utf8)
+        
         
         else { fatalError("FatalError: Apple authenticatication failed.") }
         

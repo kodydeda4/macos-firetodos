@@ -21,12 +21,18 @@ struct FirestoreError: Error, Equatable {
 
 }
 
-/// MARK:- Manage Collections
+/// MARK:- Manage Firestore Collections
 extension Firestore {
 
-    /// Fetch user documents from Firestore collection.
-    func fetchData<A>(ofType: A.Type, from collection: String, for userID: String) -> AnyPublisher<Result<[A], FirestoreError>, Never> where A: Codable {
-        let rv = PassthroughSubject<Result<[A], FirestoreError>, Never>()
+    /// Fetch user-documents from collection.
+    func fetchData<Document>(
+        ofType: Document.Type,
+        from collection: String,
+        for userID: String
+        
+    ) -> AnyPublisher<Result<[Document], FirestoreError>, Never> where Document: Codable {
+        
+        let rv = PassthroughSubject<Result<[Document], FirestoreError>, Never>()
         
         self.collection(collection)
             .whereField("userID", isEqualTo: userID)
@@ -34,7 +40,7 @@ extension Firestore {
             
             if let values = querySnapshot?
                 .documents
-                .compactMap({ try? $0.data(as: A.self) }) {
+                .compactMap({ try? $0.data(as: Document.self) }) {
                 
                 rv.send(.success(values))
                 
@@ -46,12 +52,17 @@ extension Firestore {
         return rv.eraseToAnyPublisher()
     }
     
-    /// Add document to Firestore collection.
-    func add<A>(_ value: A, to collection: String) -> AnyPublisher<Result<Bool, FirestoreError>, Never> where A: Codable {
+    /// Add document to collection.
+    func add<Document>(
+        _ document: Document,
+        to collection: String
+    
+    ) -> AnyPublisher<Result<Bool, FirestoreError>, Never> where Document: Codable {
+        
         let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
         
         do {
-            let _ = try self.collection(collection).addDocument(from: value)
+            let _ = try self.collection(collection).addDocument(from: document)
             rv.send(.success(true))
         }
         catch {
@@ -61,8 +72,13 @@ extension Firestore {
         return rv.eraseToAnyPublisher()
     }
     
-    /// Remove a document from a Firestore collection.
-    func remove(_ documentID: String, from collection: String) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
+    /// Remove document from collection.
+    func remove(
+        _ documentID: String,
+        from collection: String
+    
+    ) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
+        
         let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
         
         self.collection(collection).document(documentID).delete { error in
@@ -75,8 +91,13 @@ extension Firestore {
         return rv.eraseToAnyPublisher()
     }
     
-    /// Remove [document]'s from a Firestore collection.
-    func remove(_ documentIDs: [String], from collection: String) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
+    /// Remove [document]'s from collection.
+    func remove(
+        _ documentIDs: [String],
+        from collection: String
+    
+    ) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
+        
         let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
         
         documentIDs.forEach { id in
@@ -92,8 +113,14 @@ extension Firestore {
         return rv.eraseToAnyPublisher()
     }
     
-    /// Set the value of a Firestore document.
-    func set<A>(_ documentID: String, to value: A, in collection: String) -> AnyPublisher<Result<Bool, FirestoreError>, Never> where A: Codable {
+    /// Set document to value.
+    func set<Document>(
+        _ documentID: String,
+        to value: Document,
+        in collection: String
+    
+    ) -> AnyPublisher<Result<Bool, FirestoreError>, Never> where Document: Codable {
+        
         let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
         do {
             try self
@@ -109,10 +136,6 @@ extension Firestore {
         return rv.eraseToAnyPublisher()
     }
 }
-
-
-
-
 
 /*------------------------------------------------------------------------------------------
  

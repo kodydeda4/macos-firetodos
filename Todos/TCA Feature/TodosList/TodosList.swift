@@ -20,24 +20,26 @@ struct TodosList {
     }
     
     enum Action: Equatable {
-        case onAppear
-        case fetchTodos
         case todos(index: Int, action: Todo.Action)
-        case createSignOutAlert
-        case confirmSignOutAlert
-        case signOutAlertDismissed
         
+        // firestore
+        case fetchTodos
         case createTodo
         case removeTodo(Todo.State)
         case updateTodo(Todo.State)
         case clearCompleted
         
         // results
-        case didFetchTodos      (Result<[Todo.State], FirestoreError>)
-        case didCreateTodo      (Result<Bool, FirestoreError>)
-        case didRemoveTodo      (Result<Bool, FirestoreError>)
-        case didRemoveCompleted (Result<Bool, FirestoreError>)
-        case didUpdateTodo      (Result<Bool, FirestoreError>)
+        case didFetchTodos     (Result<[Todo.State], FirestoreError>)
+        case didCreateTodo     (Result<Bool, FirestoreError>)
+        case didRemoveTodo     (Result<Bool, FirestoreError>)
+        case didClearCompleted (Result<Bool, FirestoreError>)
+        case didUpdateTodo     (Result<Bool, FirestoreError>)
+        
+        // alerts
+        case createSignOutAlert
+        case confirmSignOutAlert
+        case dismissSignOutAlert
     }
     
     struct Environment {
@@ -51,7 +53,7 @@ struct TodosList {
                 .eraseToEffect()
         }
         
-        func addTodo(_ todo: Todo.State) -> Effect<Action, Never> {
+        func createTodo(_ todo: Todo.State) -> Effect<Action, Never> {
             db.add(todo, to: collection)
                 .map(Action.didCreateTodo)
                 .eraseToEffect()
@@ -63,7 +65,7 @@ struct TodosList {
                 .eraseToEffect()
         }
         
-        func removeTodos(_ todos: [Todo.State]) -> Effect<Action, Never> {
+        func clearCompleted(_ todos: [Todo.State]) -> Effect<Action, Never> {
             db.remove(todos.map(\.id!), from: collection)
                 .map(Action.didRemoveTodo)
                 .eraseToEffect()
@@ -88,12 +90,47 @@ extension TodosList {
         Reducer { state, action, environment in
             switch action {
             
-            case .onAppear:
-                return Effect(value: .fetchTodos)
+            case let .todos(index, action):
+                return Effect(value: .updateTodo(state.todos[index]))
                 
+            // firestore
             case .fetchTodos:
                 return environment.fetchData
                 
+            case .createTodo:
+                return environment.createTodo(Todo.State())
+                
+            case let .removeTodo(todo):
+                return environment.removeTodo(todo)
+                
+            case let .updateTodo(todo):
+                return environment.updateTodo(todo)
+
+            case .clearCompleted:
+                return environment.clearCompleted(state.todos.filter(\.completed))
+
+            // results
+            case let .didFetchTodos(.success(todos)):
+                state.todos = todos
+                return .none
+                
+            case .didCreateTodo         (.success),
+                 .didRemoveTodo         (.success),
+                 .didClearCompleted     (.success),
+                 .didUpdateTodo         (.success):
+                
+                return .none
+
+            case let .didFetchTodos     (.failure(error)),
+                 let .didCreateTodo     (.failure(error)),
+                 let .didRemoveTodo     (.failure(error)),
+                 let .didClearCompleted (.failure(error)),
+                 let .didUpdateTodo     (.failure(error)):
+                
+                state.error = error
+                return .none
+                
+            // alerts
             case .createSignOutAlert:
                 state.alert = .init(
                     title: TextState("Sign out?"),
@@ -103,48 +140,13 @@ extension TodosList {
                 )
                 return .none
                 
-            case .signOutAlertDismissed:
+            case .dismissSignOutAlert:
                 state.alert = nil
                 return .none
                 
             case .confirmSignOutAlert:
                 return .none
                 
-            case let .todos(index, action):
-                return Effect(value: .updateTodo(state.todos[index]))
-                
-            case .createTodo:
-                return environment.addTodo(Todo.State())
-                
-            case let .removeTodo(todo):
-                return environment.removeTodo(todo)
-                
-            case let .updateTodo(todo):
-                return environment.updateTodo(todo)
-
-            case .clearCompleted:
-                return environment.removeTodos(state.todos.filter(\.completed))
-
-            // Result
-            case let .didFetchTodos(.success(todos)):
-                state.todos = todos
-                return .none
-                
-            case .didCreateTodo          (.success),
-                 .didRemoveTodo          (.success),
-                 .didRemoveCompleted     (.success),
-                 .didUpdateTodo          (.success)
-            :
-                return .none
-
-            case let .didFetchTodos      (.failure(error)),
-                 let .didCreateTodo      (.failure(error)),
-                 let .didRemoveTodo      (.failure(error)),
-                 let .didRemoveCompleted (.failure(error)),
-                 let .didUpdateTodo      (.failure(error))
-            :
-                state.error = error
-                return .none
             }
         }
     )
