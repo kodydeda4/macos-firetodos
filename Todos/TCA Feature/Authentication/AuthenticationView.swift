@@ -30,7 +30,7 @@ struct AuthenticationView: View {
                         .fontWeight(.heavy)
                         .padding(.vertical, 10)
                     
-                                        
+                    //SignInWithAppleButton
                     SignInWithAppleButton(action: {
                         viewStore.send(.signInButtonTapped(.apple($0)))
                     })
