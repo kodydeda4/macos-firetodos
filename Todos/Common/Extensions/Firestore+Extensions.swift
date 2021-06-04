@@ -5,23 +5,10 @@
 //  Created by Kody Deda on 6/2/21.
 //
 
-import Firebase
-import Combine
-import AuthenticationServices
 import SwiftUI
-
-/*------------------------------------------------------------------------------------------
- 
- SwiftUI: Fetching Data from Firestore in Real Time (April 2020)
- https://peterfriese.dev/swiftui-firebase-fetch-data/
- 
- SwiftUI: Mapping Firestore Documents using Swift Codable (May 2020)
- https://peterfriese.dev/swiftui-firebase-codable/
- 
- Mapping Firestore Data in Swift (March 2021)
- https://peterfriese.dev/firestore-codable-the-comprehensive-guide/
- 
- ------------------------------------------------------------------------------------------*/
+import Combine
+import Firebase
+import AuthenticationServices
 
 struct FirestoreError: Error, Equatable {
     static func == (lhs: FirestoreError, rhs: FirestoreError) -> Bool {
@@ -36,9 +23,10 @@ struct FirestoreError: Error, Equatable {
 
 }
 
-/// MARK:- Collections
+/// MARK:- Manage Collections
 extension Firestore {
 
+    /// Fetch user documents from Firebase collection.
     func fetchData<A>(ofType: A.Type, from collection: String, for userID: String) -> AnyPublisher<Result<[A], FirestoreError>, Never> where A: Codable {
         let rv = PassthroughSubject<Result<[A], FirestoreError>, Never>()
         
@@ -60,6 +48,7 @@ extension Firestore {
         return rv.eraseToAnyPublisher()
     }
     
+    /// Add document to Firebase collection.
     func add<A>(_ value: A, to collection: String) -> AnyPublisher<Result<Bool, FirestoreError>, Never> where A: Codable {
         let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
         
@@ -74,6 +63,7 @@ extension Firestore {
         return rv.eraseToAnyPublisher()
     }
     
+    /// Remove a document from a Firebase collection.
     func remove(_ documentID: String, from collection: String) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
         let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
         
@@ -87,6 +77,7 @@ extension Firestore {
         return rv.eraseToAnyPublisher()
     }
     
+    /// Remove [document]'s from a Firebase collection.
     func remove(_ documentIDs: [String], from collection: String) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
         let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
         
@@ -103,6 +94,7 @@ extension Firestore {
         return rv.eraseToAnyPublisher()
     }
     
+    /// Set the value of a Firebase document.
     func set<A>(_ documentID: String, to value: A, in collection: String) -> AnyPublisher<Result<Bool, FirestoreError>, Never> where A: Codable {
         let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
         do {
@@ -206,3 +198,17 @@ extension Firestore {
 
 
 
+/*------------------------------------------------------------------------------------------
+ 
+ Extra Notes.
+ 
+ SwiftUI: Fetching Data from Firestore in Real Time (April 2020)
+ https://peterfriese.dev/swiftui-firebase-fetch-data/
+ 
+ SwiftUI: Mapping Firestore Documents using Swift Codable (May 2020)
+ https://peterfriese.dev/swiftui-firebase-codable/
+ 
+ Mapping Firestore Data in Swift (March 2021)
+ https://peterfriese.dev/firestore-codable-the-comprehensive-guide/
+ 
+ ------------------------------------------------------------------------------------------*/

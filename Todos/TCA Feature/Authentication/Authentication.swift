@@ -75,18 +75,18 @@ extension Authentication {
         case .signInButtonTapped_Email:
             return environment.signIn(email: state.email, password: state.password)
             
-        case .signInResult_Email(.success):
-            state.signedIn.toggle()
-            return .none
-            
-        case let .signInResult_Email(.failure(error)):
-            state.error = error
-            state.attempted = true
-            return .none
-            
         case .signInButtonTapped_Anonymous:
             return environment.signIn
             
+        case .signOut:
+            state.signedIn = false
+            return .none
+
+        case let .signInButtonTapped_Apple(appleIDCredential):
+            return environment.signIn(using: appleIDCredential)
+
+            
+        // Results
         case .signInResult_Anonymous(.success):
             state.signedIn.toggle()
             return .none
@@ -95,9 +95,14 @@ extension Authentication {
             state.error = error
             state.attempted = true
             return .none
+
+        case .signInResult_Email(.success):
+            state.signedIn.toggle()
+            return .none
             
-        case .signOut:
-            state.signedIn = false
+        case let .signInResult_Email(.failure(error)):
+            state.error = error
+            state.attempted = true
             return .none
 
         case .signInResult_Apple(.success):
@@ -108,9 +113,6 @@ extension Authentication {
             state.error = error
             state.attempted = true
             return .none
-
-        case let .signInButtonTapped_Apple(appleIDCredential):
-            return environment.signIn(using: appleIDCredential)
         }
     }
 }
