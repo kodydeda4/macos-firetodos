@@ -20,6 +20,7 @@ struct Authentication {
     enum Action: Equatable {
         case updateEmail(String)
         case updatePassword(String)
+        
         case signInButtonTapped(FirebaseAuthentication)
         case signInResult(Result<Bool, FirebaseError>)
         case signOut
@@ -36,7 +37,7 @@ struct Authentication {
             _ email: String,
             _ password: String
         ) -> Effect<Action, Never> {
-            Firebase.signIn(using: email, and: password)
+            Firebase.signIn(with: email, and: password)
                 .map(Action.signInResult)
                 .eraseToEffect()
         }
@@ -66,7 +67,6 @@ extension Authentication {
             return .none
             
         case let .signInButtonTapped(authentication):
-            
             switch authentication {
             
             case .anonymous:
@@ -78,7 +78,7 @@ extension Authentication {
             case let .apple(appleID, nonce):
                 return environment.signIn(appleID, nonce)
             }
-
+            
         case .signOut:
             state.signedIn = false
             return .none

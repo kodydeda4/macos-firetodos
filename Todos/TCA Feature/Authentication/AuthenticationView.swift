@@ -31,7 +31,7 @@ struct AuthenticationView: View {
                         .padding(.vertical, 10)
                     
                     //SignInWithAppleButton
-                    SignInWithAppleButton(action: {
+                    SignInWithAppleButton(onCompletion: {
                         viewStore.send(.signInButtonTapped(.apple(id: $0, nonce: $1)))
                     })
 

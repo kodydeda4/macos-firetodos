@@ -50,7 +50,7 @@ struct Firebase {
     }
         
     /// Sign into Firebase using an email & password.
-    static func signIn(using email: String, and password: String) -> AnyPublisher<Result<Bool, FirebaseError>, Never> {
+    static func signIn(with email: String, and password: String) -> AnyPublisher<Result<Bool, FirebaseError>, Never> {
         let rv = PassthroughSubject<Result<Bool, FirebaseError>, Never>()
         
         Auth.auth().signIn(withEmail: email, password: password) { result, error in
@@ -64,10 +64,10 @@ struct Firebase {
         return rv.eraseToAnyPublisher()
     }
     
-    /// Sign into Firebase using appleID and nonce.
+    /// Sign into Firebase after using appleID and nonce.
     ///
     /// - Parameters:
-    ///   - appleID: Credential that results from a successful Apple ID authentication.
+    ///   - appleID: Credential from a successful Apple ID authentication.
     ///   - nonce:   String that associates client session with ID token.
 
     static func signIn(
@@ -80,7 +80,6 @@ struct Firebase {
         
         guard let appleIDToken = appleID.identityToken,
               let idTokenString = String(data: appleIDToken, encoding: .utf8)
-        
         
         else { fatalError("FatalError: Apple authenticatication failed.") }
         
