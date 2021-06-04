@@ -14,7 +14,7 @@ import AuthenticationServices
 enum FirebaseAuthentication: Equatable {
     case anonymous
     case email
-    case apple(ASAuthorizationAppleIDCredential)
+    case apple(id: ASAuthorizationAppleIDCredential, nonce: String)
 }
 
 /// Firebase Errors.
@@ -50,7 +50,7 @@ struct Firebase {
     }
         
     /// Sign into Firebase using an email & password.
-    static func signIn(_ email: String, _ password: String) -> AnyPublisher<Result<Bool, FirebaseError>, Never> {
+    static func signIn(using email: String, and password: String) -> AnyPublisher<Result<Bool, FirebaseError>, Never> {
         let rv = PassthroughSubject<Result<Bool, FirebaseError>, Never>()
         
         Auth.auth().signIn(withEmail: email, password: password) { result, error in
@@ -64,10 +64,15 @@ struct Firebase {
         return rv.eraseToAnyPublisher()
     }
     
-    /// Sign into Firebase using an AppleIDCredential.
+    /// Sign into Firebase using appleID and nonce.
+    ///
+    /// - Parameters:
+    ///   - appleID: Credential that results from a successful Apple ID authentication.
+    ///   - nonce:   String that associates client session with ID token.
+
     static func signIn(
         using appleID: ASAuthorizationAppleIDCredential,
-        with nonce: String = SignInWithAppleButton.currentNonce
+        and nonce: String
         
     ) -> AnyPublisher<Result<Bool, FirebaseError>, Never> {
         

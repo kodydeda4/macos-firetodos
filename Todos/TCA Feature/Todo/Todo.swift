@@ -8,11 +8,7 @@
 import SwiftUI
 import ComposableArchitecture
 
-// 57 minutes
-// https://www.youtube.com/watch?v=HDde7TqKCpk&t=2051s
-
 import Firebase
-import FirebaseFirestore
 import FirebaseFirestoreSwift
 
 struct Todo {

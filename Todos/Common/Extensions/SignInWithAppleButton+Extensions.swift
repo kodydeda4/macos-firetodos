@@ -11,12 +11,12 @@ import CryptoKit
 
 extension SignInWithAppleButton {
     
-    init(action loginUsing: @escaping ((ASAuthorizationAppleIDCredential) -> Void)) {
+    init(action loginUsing: @escaping (((ASAuthorizationAppleIDCredential), String) -> Void)) {
         self.init(
             onRequest: SignInWithAppleButton.handleRequest,
             onCompletion: {
                 if let credental = SignInWithAppleButton.getAppleIDCredential(authorization: $0) {
-                    loginUsing(credental)
+                    loginUsing(credental, SignInWithAppleButton.currentNonce)
                 }
             }
         )
@@ -24,7 +24,7 @@ extension SignInWithAppleButton {
 }
 
 extension SignInWithAppleButton {
-    static var currentNonce = SignInWithAppleButton.randomNonce()
+    static private(set) var currentNonce = SignInWithAppleButton.randomNonce()
     
     static func handleRequest(_ request: ASAuthorizationAppleIDRequest) {
         SignInWithAppleButton.currentNonce = SignInWithAppleButton.randomNonce()

@@ -32,14 +32,20 @@ struct Authentication {
                 .eraseToEffect()
         }
 
-        func signIn(_ email: String, _ password: String) -> Effect<Action, Never> {
-            Firebase.signIn(email, password)
+        func signIn(
+            _ email: String,
+            _ password: String
+        ) -> Effect<Action, Never> {
+            Firebase.signIn(using: email, and: password)
                 .map(Action.signInResult)
                 .eraseToEffect()
         }
         
-        func signIn(using appleID: ASAuthorizationAppleIDCredential) -> Effect<Action, Never> {
-            Firebase.signIn(using: appleID)
+        func signIn(
+            _ appleID: ASAuthorizationAppleIDCredential,
+            _ nonce: String
+        ) -> Effect<Action, Never> {
+            Firebase.signIn(using: appleID, and: nonce)
                 .map(Action.signInResult)
                 .eraseToEffect()
         }
@@ -69,9 +75,8 @@ extension Authentication {
             case .email:
                 return environment.signIn(state.email, state.password)
                 
-            case let .apple(appleID):
-                return environment.signIn(using: appleID)
-                
+            case let .apple(appleID, nonce):
+                return environment.signIn(appleID, nonce)
             }
 
         case .signOut:
