@@ -2,7 +2,6 @@
 
 ![banner](https://user-images.githubusercontent.com/45678211/119984333-48f24e80-bf8f-11eb-858f-32b666702f6a.png)
 
-
 ## About
 
 `Firetodos` is a Todo's app for macOS that implements Firebase authentication and the Cloud Firestore database.
@@ -86,7 +85,7 @@ struct AuthenticationView: View {
 }
 ```
 
-## 📝 Firebase CreateTodo
+## 📝 Firestore CreateTodo
 
 <img width="1039" alt="todos" src="https://user-images.githubusercontent.com/45678211/121011959-392ff280-c765-11eb-96bc-7ed6a68201a5.png">
 
@@ -149,3 +148,6 @@ struct TodosListView: View {
 }
 ```
 
+## Important
+
+Firebase projects require a GoogleServiceInfo.plist file to run. You'll have to create your own project in Firebase console and then copy the generated file into your project in Xcode.
