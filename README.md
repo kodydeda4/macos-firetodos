@@ -28,7 +28,7 @@ Firetodos features custom Firebase methods which return `AnyPublisher<Result, Ne
 
 <img width="1039" alt="done" src="https://user-images.githubusercontent.com/45678211/121011961-39c88900-c765-11eb-959f-c9e2a283f7f7.png">
 
-### TCA Feature - State, Action, Environment
+### TCA Implementation
 
 ```swift
 struct Authentication {
@@ -90,7 +90,7 @@ struct AuthenticationView: View {
 
 <img width="1039" alt="todos" src="https://user-images.githubusercontent.com/45678211/121011959-392ff280-c765-11eb-96bc-7ed6a68201a5.png">
 
-### TCA Feature - State, Action, Environment
+### TCA Implementation
 
 ```swift
 struct TodosList {
