@@ -134,7 +134,6 @@ extension TodosList {
             case .createSignOutAlert:
                 state.alert = .init(
                     title: TextState("Sign out?"),
-                    message: TextState("Description foo bar goes here."),
                     primaryButton: .destructive(TextState("Confirm"), send: .confirmSignOutAlert),
                     secondaryButton: .cancel()
                 )
