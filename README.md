@@ -7,13 +7,11 @@
 `Firetodos` is a Todo's app for macOS that implements Firebase authentication and the Cloud Firestore database.
 It features Anonymous, Email, and Apple Sign In methods, as well as simplified and abstracted Firestore methods that are mapped to TCA Effects.
 
-<img width="1039" alt="onboard" src="https://user-images.githubusercontent.com/45678211/121011965-3af9b600-c765-11eb-9797-cbd90dea2195.png">
-
-## TCA Effects & Firebase
+### TCA Effects & Firebase
 
 The Effect type encapsulates a unit of work that can be run in the outside world, and can feed data back to the Store. It is the perfect place to do side effects, such as network requests, saving/loading from disk, creating timers, interacting with dependencies, and more.
 
-### Implementation
+#### Implementation
 
 Firetodos features custom Firebase methods which return `AnyPublisher<Result, Never>` types that get mapped to TCA Effects.
 
@@ -22,6 +20,7 @@ Firetodos features custom Firebase methods which return `AnyPublisher<Result, Ne
 3. The environment executes a Firestore function which returns an AnyPublisher<Result, Never>.
 4. The Publisher gets mapped to an action and erased to an Effect.
 5. The Effect is returned by the environment and handled in the Reducer.
+
 
 ## 🔥 Firebase Authentication
 
