@@ -87,10 +87,11 @@ struct AuthenticationView: View {
 
 ## 📝 Firestore CreateTodo
 
-`Firetodos` implementation of adding a Todo to a TodoList using Firestore.
-
 <img width="1039" alt="todos" src="https://user-images.githubusercontent.com/45678211/121011959-392ff280-c765-11eb-96bc-7ed6a68201a5.png">
 
+### TCA Implementation
+
+The example below shows the `Firetodos` implementation of adding a Todo to a TodoList using Firestore.
 
 ```swift
 struct TodosList {
@@ -154,6 +155,7 @@ struct TodosListView: View {
 The example below shows how a Firestore method can be abstracted into an Effect.
 
 ### Extension
+
 ```swift
 extension Firestore {
     func fetchData<Document>(
@@ -196,7 +198,6 @@ struct Environment {
     }
 }
 ``` 
-
 
 ## Important
 
