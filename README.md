@@ -3,16 +3,12 @@
 ![banner](https://user-images.githubusercontent.com/45678211/119984333-48f24e80-bf8f-11eb-858f-32b666702f6a.png)
 
 
-## About Firetodos
+## About
 
 `Firetodos` is a Todo's app for macOS that implements Firebase authentication and the Cloud Firestore database.
-It features Anonymous, Email, and Apple Sign In methods, as well as simplified and abstracted Firestore methods.
+It features Anonymous, Email, and Apple Sign In methods, as well as simplified and abstracted Firestore methods that are mapped to TCA Effects.
 
 <img width="1039" alt="onboard" src="https://user-images.githubusercontent.com/45678211/121011965-3af9b600-c765-11eb-9797-cbd90dea2195.png">
-
-<img width="1039" alt="done" src="https://user-images.githubusercontent.com/45678211/121011961-39c88900-c765-11eb-959f-c9e2a283f7f7.png">
-
-<img width="1039" alt="todos" src="https://user-images.githubusercontent.com/45678211/121011959-392ff280-c765-11eb-96bc-7ed6a68201a5.png">
 
 ## TCA Effects & Firebase
 
@@ -28,9 +24,73 @@ Firetodos features custom Firebase methods which return `AnyPublisher<Result, Ne
 4. The Publisher gets mapped to an action and erased to an Effect.
 5. The Effect is returned by the environment and handled in the Reducer.
 
-### Example
+## 🔥 Firebase Authentication
 
-#### State
+<img width="1039" alt="done" src="https://user-images.githubusercontent.com/45678211/121011961-39c88900-c765-11eb-959f-c9e2a283f7f7.png">
+
+### TCA Feature - State, Action, Environment
+
+```swift
+struct Authentication {
+    struct State: Equatable {
+        var signedIn = false
+        var error: FirebaseError?
+    }
+    
+    enum Action: Equatable {
+        case signInWithAppleButtonTapped(id: ASAuthorizationAppleIDCredential, nonce: String)
+        case signInResult(Result<Bool, FirebaseError>)
+    }
+    
+    struct Environment {
+        func signIn(
+            _ appleID: ASAuthorizationAppleIDCredential,
+            _ nonce: String
+        ) -> Effect<Action, Never> {
+            Firebase.signIn(using: appleID, and: nonce)
+                .map(Action.signInResult)
+                .eraseToEffect()
+        }
+    }
+}
+
+extension Authentication {
+    static let reducer = Reducer<State, Action, Environment> { state, action, environment in
+        
+        switch action {
+            
+        case let .signInWithAppleButtonTapped(appleID, nonce):
+            return environment.signIn(appleID, nonce)
+            
+        case .signInResult(.success):
+            state.signedIn.toggle()
+            return .none
+            
+        case let .signInResult(.failure(error)):
+            state.error = error
+            return .none
+        }
+    }
+}
+
+struct AuthenticationView: View {
+    let store: Store<Authentication.State, Authentication.Action>
+    
+    var body: some View {
+        WithViewStore(store) { viewStore in
+            SignInWithAppleButton() {
+                viewStore.send(.signInWithAppleButtonTapped(id: $0, nonce: $1))
+            }
+        }
+    }
+}
+```
+
+## 📝 Firebase CreateTodo
+
+<img width="1039" alt="todos" src="https://user-images.githubusercontent.com/45678211/121011959-392ff280-c765-11eb-96bc-7ed6a68201a5.png">
+
+### TCA Feature - State, Action, Environment
 
 ```swift
 struct TodosList {
@@ -75,12 +135,7 @@ extension TodosList {
         }
     )
 }
-```
 
-#### View
-
-```swift
-// View
 struct TodosListView: View {
     let store: Store<TodosList.State, TodosList.Action>
     
@@ -94,15 +149,3 @@ struct TodosListView: View {
 }
 ```
 
-
-
-
-
-## Code
-
-
-
-****
-## Reset Defaults
-
-Switch back to default icons at any time. Click "Select Modified", then "Reset".
