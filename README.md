@@ -21,7 +21,7 @@ Firetodos features custom Firebase methods which return `AnyPublisher<Result, Ne
 4. The Publisher gets mapped to an action and erased to an Effect.
 5. The Effect is returned by the environment and handled in the Reducer.
 
-## 🔥 Firebase Authentication
+## 🔒 Firebase Authentication
 
 <img width="1039" alt="done" src="https://user-images.githubusercontent.com/45678211/121011961-39c88900-c765-11eb-959f-c9e2a283f7f7.png">
 
@@ -149,6 +149,55 @@ struct TodosListView: View {
     }
 }
 ```
+
+## 🔥 Firestore Extensions
+
+The example below shows how a Firestore method can be abstracted into an Effect.
+
+### Firestore Extension
+```swift
+extension Firestore {
+    func fetchData<Document>(
+        ofType: Document.Type,
+        from collection: String,
+        for userID: String
+        
+    ) -> AnyPublisher<Result<[Document], FirestoreError>, Never> where Document: Codable {
+        
+        let rv = PassthroughSubject<Result<[Document], FirestoreError>, Never>()
+        
+        self.collection(collection)
+            .whereField("userID", isEqualTo: userID)
+            .addSnapshotListener { querySnapshot, error in
+            
+            if let values = querySnapshot?
+                .documents
+                .compactMap({ try? $0.data(as: Document.self) }) {
+                
+                rv.send(.success(values))
+                
+            } else if let error = error {
+                rv.send(.failure(FirestoreError(error)))
+                print(error.localizedDescription)
+            }
+        }
+        return rv.eraseToAnyPublisher()
+    }
+}
+```
+
+### Environment Method
+
+```swift
+struct Environment {
+    var fetchData: Effect<Action, Never> {
+        db.fetchData(ofType: Todo.State.self, from: collection, for: userID)
+            .map(Action.didFetchTodos)
+            .eraseToEffect()
+    }
+}
+``` 
+
 
 ## Important
 
