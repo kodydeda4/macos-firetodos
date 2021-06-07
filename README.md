@@ -1,6 +1,6 @@
 # 🔥 Firetodos
 
-![banner](https://user-images.githubusercontent.com/45678211/121033999-aac66b80-c77a-11eb-85ac-21761193f177.png)
+![banner](https://user-images.githubusercontent.com/45678211/121034384-faa53280-c77a-11eb-88b9-847ed91b00ca.png)
 
 ## About
 
