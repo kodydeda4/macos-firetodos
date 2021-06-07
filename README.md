@@ -21,12 +21,13 @@ Firetodos features custom Firebase methods which return `AnyPublisher<Result, Ne
 4. The Publisher gets mapped to an action and erased to an Effect.
 5. The Effect is returned by the environment and handled in the Reducer.
 
-
 ## 🔥 Firebase Authentication
 
 <img width="1039" alt="done" src="https://user-images.githubusercontent.com/45678211/121011961-39c88900-c765-11eb-959f-c9e2a283f7f7.png">
 
 ### TCA Implementation
+
+The example below shows the `Firetodos` implementation of the AppleSignInButton with Firebase.
 
 ```swift
 struct Authentication {
@@ -90,6 +91,8 @@ struct AuthenticationView: View {
 
 ### TCA Implementation
 
+The example below shows the `Firetodos` implementation of adding a Todo to a TodoList using Firestore.
+
 ```swift
 struct TodosList {
     struct State: Equatable {
@@ -149,4 +152,5 @@ struct TodosListView: View {
 
 ## Important
 
-Firebase projects require a GoogleServiceInfo.plist file to run. You'll have to create your own project in Firebase console and then copy the generated file into your project in Xcode.
+Firetodos does not use the Firebase Cocoa Pods. However, Firebase projects do require a GoogleServiceInfo.plist file to run. You'll have to create your own project in Firebase console and then copy the generated file into your project in Xcode.
+
