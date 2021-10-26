@@ -8,12 +8,12 @@
 import ComposableArchitecture
 
 struct UserState: Equatable {
-  var todosList = TodosList.State()
+  var todosList = TodoListState()
   var alert: AlertState<UserAction>?
 }
 
 enum UserAction: Equatable {
-  case todosList(TodosList.Action)
+  case todosList(TodoListAction)
   
   // alerts
   case createSignOutAlert
@@ -26,7 +26,7 @@ struct UserEnvironment {
 }
 
 let userReducer = Reducer<UserState, UserAction, UserEnvironment>.combine(
-  TodosList.reducer.pullback(
+  todoListReducer.pullback(
     state: \.todosList,
     action: /UserAction.todosList,
     environment: { _ in .init() }

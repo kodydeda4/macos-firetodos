@@ -9,7 +9,7 @@ import SwiftUI
 import ComposableArchitecture
 
 struct TodoView: View {
-  let store: Store<Todo.State, Todo.Action>
+  let store: Store<TodoState, TodoAction>
   
   var body: some View {
     WithViewStore(store) { viewStore in
@@ -21,7 +21,7 @@ struct TodoView: View {
           .buttonStyle(PlainButtonStyle())
           .foregroundColor(.appColor)
           
-          TextField("Description", text: viewStore.binding(get: \.text, send: Todo.Action.updateText))
+          TextField("Description", text: viewStore.binding(get: \.text, send: TodoAction.updateText))
             .opacity(viewStore.done ? 0.25 : 1)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -34,6 +34,6 @@ struct TodoView: View {
 
 struct TodoView_Previews: PreviewProvider {
   static var previews: some View {
-    TodoView(store: Todo.defaultStore)
+    TodoView(store: TodoState.defaultStore)
   }
 }
