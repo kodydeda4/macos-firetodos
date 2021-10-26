@@ -9,7 +9,7 @@
 import SwiftUI
 import ComposableArchitecture
 
-struct TodosListView: View {
+struct TodoListView: View {
   let store: Store<TodoListState, TodoListAction>
   
   var body: some View {
@@ -54,6 +54,6 @@ struct TodosListView: View {
 
 struct TodosListView_Previews: PreviewProvider {
   static var previews: some View {
-    TodosListView(store: TodoListState.defaultStore)
+    TodoListView(store: TodoListState.defaultStore)
   }
 }

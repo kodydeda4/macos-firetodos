@@ -22,14 +22,14 @@ enum UserAction: Equatable {
 }
 
 struct UserEnvironment {
-  
+  var client: UserClient
 }
 
 let userReducer = Reducer<UserState, UserAction, UserEnvironment>.combine(
   todoListReducer.pullback(
     state: \.todosList,
     action: /UserAction.todosList,
-    environment: { _ in .init() }
+    environment: { .init(client: $0.client) }
   ),
 
   Reducer { state, action, environment in
@@ -60,6 +60,6 @@ extension UserState {
   static let defaultStore = Store(
     initialState: .init(),
     reducer: userReducer,
-    environment: .init()
+    environment: .init(client: .live)
   )
 }

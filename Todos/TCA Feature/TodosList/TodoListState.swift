@@ -30,7 +30,7 @@ enum TodoListAction: Equatable {
 }
 
 struct TodoListEnvironment {
-  let client: UserClient = .live
+  let client: UserClient
   let mainQueue: AnySchedulerOf<DispatchQueue> = .main
 }
 
@@ -106,6 +106,6 @@ extension TodoListState {
   static let defaultStore = Store(
     initialState: .init(),
     reducer: todoListReducer,
-    environment: .init()
+    environment: .init(client: .live)
   )
 }

@@ -10,7 +10,6 @@ import ComposableArchitecture
 enum RootState: Equatable {
   case authentication(AuthenticationState)
   case user(UserState)
-  
 }
 
 enum RootAction: Equatable {
@@ -19,19 +18,19 @@ enum RootAction: Equatable {
 }
 
 struct RootEnvironment {
-  //var client: UserClient
+  let client: UserClient
 }
 
 let rootReducer = Reducer<RootState, RootAction, RootEnvironment>.combine(
   authenticationReducer.pullback(
     state: /RootState.authentication,
     action: /RootAction.authentication,
-    environment: { _ in .init() }
+    environment: { .init(client: $0.client) }
   ),
   userReducer.pullback(
     state: /RootState.user,
     action: /RootAction.user,
-    environment: { _ in .init()}
+    environment: { .init(client: $0.client) }
   ),
   Reducer { state, action, environment in
     switch action {
@@ -71,7 +70,6 @@ extension RootState {
         password: "123123"
       )),
     reducer: rootReducer,
-    environment: .init()
-    //    environment: .init(client: .live)
+    environment: .init(client: .live)
   )
 }

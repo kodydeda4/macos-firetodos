@@ -23,6 +23,8 @@ enum AuthenticationAction: BindableAction, Equatable {
 }
 
 struct AuthenticationEnvironment {
+  let client: UserClient
+
   var signIn: Effect<AuthenticationAction, Never> {
     Firebase.signIn()
       .map(AuthenticationAction.signInResult)
@@ -48,7 +50,6 @@ struct AuthenticationEnvironment {
   }
 }
 
-
 let authenticationReducer = Reducer<AuthenticationState, AuthenticationAction, AuthenticationEnvironment> { state, action, environment in
   
   switch action {
@@ -73,12 +74,12 @@ let authenticationReducer = Reducer<AuthenticationState, AuthenticationAction, A
     return .none
   }
 }
-  .binding()
+.binding()
 
 extension AuthenticationState {
   static let defaultStore = Store(
     initialState: .init(),
     reducer: authenticationReducer,
-    environment: .init()
+    environment: .init(client: .live)
   )
 }

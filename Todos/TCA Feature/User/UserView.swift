@@ -13,7 +13,7 @@ struct UserView: View {
   
   var body: some View {
     WithViewStore(store) { viewStore in
-      TodosListView(
+      TodoListView(
         store: store.scope(
           state: \.todosList,
           action: UserAction.todosList
