@@ -35,11 +35,6 @@ struct TodosList {
     case didRemoveTodo     (Result<Bool, FirestoreError>)
     case didClearCompleted (Result<Bool, FirestoreError>)
     case didUpdateTodo     (Result<Bool, FirestoreError>)
-    
-    // alerts
-    case createSignOutAlert
-    case confirmSignOutAlert
-    case dismissSignOutAlert
   }
   
   struct Environment {
@@ -130,21 +125,6 @@ extension TodosList {
         state.error = error
         return .none
         
-        // alerts
-      case .createSignOutAlert:
-        state.alert = .init(
-          title: TextState("Sign out?"),
-          primaryButton: .destructive(TextState("Confirm"), send: .confirmSignOutAlert),
-          secondaryButton: .cancel()
-        )
-        return .none
-        
-      case .dismissSignOutAlert:
-        state.alert = nil
-        return .none
-        
-      case .confirmSignOutAlert:
-        return .none
         
       }
     }

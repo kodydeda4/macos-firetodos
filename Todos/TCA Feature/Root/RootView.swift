@@ -46,8 +46,8 @@ struct RootView: View {
         AuthenticationView(store: $0)
           .navigationTitle("")
       }
-      CaseLet(state: /RootState.todosList, action: RootAction.todosList) {
-        TodosListView(store: $0)
+      CaseLet(state: /RootState.user, action: RootAction.user) {
+        UserView(store: $0)
       }
     }
   }
