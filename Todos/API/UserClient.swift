@@ -102,7 +102,7 @@ extension UserClient {
       do {
         let _ = try Firestore.firestore()
           .collection("todos")
-          .addDocument(from: TodoState())
+          .addDocument(from: TodoState(userID: Auth.auth().currentUser!.uid, text: "Untitled"))
         
         rv.send(true)
       }

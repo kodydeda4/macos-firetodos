@@ -11,10 +11,10 @@ import Firebase
 import FirebaseFirestoreSwift
 
 struct TodoState: Equatable, Identifiable, Codable {
-  @DocumentID      var id: String?
+  @DocumentID var id: String?
   @ServerTimestamp var timestamp: Date?
-  var userID: String? = Auth.auth().currentUser?.uid
-  var text: String = "Untitled"
+  let userID: String
+  var text: String
   var done: Bool = false
 }
 
@@ -27,7 +27,7 @@ enum TodoAction: BindableAction, Equatable {
 
 let todoReducer = Reducer<TodoState, TodoAction, Void> { state, action, _ in
   switch action {
-  
+    
   case .binding:
     return .none
     
@@ -46,7 +46,10 @@ let todoReducer = Reducer<TodoState, TodoAction, Void> { state, action, _ in
 
 extension TodoState {
   static let defaultStore = Store(
-    initialState: .init(),
+    initialState: .init(
+      userID: "GxscCXP9odUQucq6A5cBXJEiTBd2",
+      text: "Untitled"
+    ),
     reducer: todoReducer,
     environment: ()
   )
