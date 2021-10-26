@@ -5,7 +5,6 @@
 //  Created by Kody Deda on 6/2/21.
 //
 
-
 import SwiftUI
 import ComposableArchitecture
 
@@ -43,9 +42,9 @@ struct TodoListView: View {
           }
         }
         ToolbarItem {
-          Button("Sign out") {
-            //viewStore.send(.createSignOutAlert)
-          }
+//          Button("Sign out") {
+//            viewStore.send(.confirmSignOutAlert)
+//          }
         }
       }
     }

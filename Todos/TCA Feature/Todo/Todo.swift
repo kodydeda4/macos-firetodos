@@ -7,10 +7,8 @@
 
 import SwiftUI
 import ComposableArchitecture
-
 import Firebase
 import FirebaseFirestoreSwift
-
 
 struct TodoState: Equatable, Identifiable, Codable {
   @DocumentID var id: String?
@@ -25,7 +23,6 @@ enum TodoAction: Equatable {
   case deleteButonTapped
   case updateText(String)
 }
-
 
 let todoReducer = Reducer<TodoState, TodoAction, Void> { state, action, _ in
   switch action {

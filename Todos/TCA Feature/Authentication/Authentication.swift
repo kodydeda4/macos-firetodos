@@ -24,30 +24,7 @@ enum AuthenticationAction: BindableAction, Equatable {
 
 struct AuthenticationEnvironment {
   let client: UserClient
-
-  var signIn: Effect<AuthenticationAction, Never> {
-    Firebase.signIn()
-      .map(AuthenticationAction.signInResult)
-      .eraseToEffect()
-  }
-  
-  func signIn(
-    _ email: String,
-    _ password: String
-  ) -> Effect<AuthenticationAction, Never> {
-    Firebase.signIn(with: email, and: password)
-      .map(AuthenticationAction.signInResult)
-      .eraseToEffect()
-  }
-  
-  func signIn(
-    _ appleID: ASAuthorizationAppleIDCredential,
-    _ nonce: String
-  ) -> Effect<AuthenticationAction, Never> {
-    Firebase.signIn(using: appleID, and: nonce)
-      .map(AuthenticationAction.signInResult)
-      .eraseToEffect()
-  }
+  let scheduler: AnySchedulerOf<DispatchQueue>
 }
 
 let authenticationReducer = Reducer<AuthenticationState, AuthenticationAction, AuthenticationEnvironment> { state, action, environment in
@@ -58,13 +35,22 @@ let authenticationReducer = Reducer<AuthenticationState, AuthenticationAction, A
     return .none
     
   case .signInAnonymously:
-    return environment.signIn
+    return environment.client.signInAnonymously()
+      .receive(on: environment.scheduler)
+      .catchToEffect()
+      .map(AuthenticationAction.signInResult)
     
   case .signInWithEmail:
-    return environment.signIn(state.email, state.password)
+    return environment.client.signInEmailPassword(state.email,state.password)
+      .receive(on: environment.scheduler)
+      .catchToEffect()
+      .map(AuthenticationAction.signInResult)
     
   case let .signInWithApple(appleID, nonce):
-    return environment.signIn(appleID, nonce)
+    return environment.client.signInApple(appleID, nonce)
+      .receive(on: environment.scheduler)
+      .catchToEffect()
+      .map(AuthenticationAction.signInResult)
     
   case .signInResult(.success):
     return .none
@@ -74,12 +60,12 @@ let authenticationReducer = Reducer<AuthenticationState, AuthenticationAction, A
     return .none
   }
 }
-.binding()
+  .binding()
 
 extension AuthenticationState {
   static let defaultStore = Store(
     initialState: .init(),
     reducer: authenticationReducer,
-    environment: .init(client: .live)
+    environment: .init(client: .live, scheduler: .main)
   )
 }

@@ -19,18 +19,19 @@ enum RootAction: Equatable {
 
 struct RootEnvironment {
   let client: UserClient
+  let scheduler: AnySchedulerOf<DispatchQueue>
 }
 
 let rootReducer = Reducer<RootState, RootAction, RootEnvironment>.combine(
   authenticationReducer.pullback(
     state: /RootState.authentication,
     action: /RootAction.authentication,
-    environment: { .init(client: $0.client) }
+    environment: { .init(client: $0.client, scheduler: $0.scheduler) }
   ),
   userReducer.pullback(
     state: /RootState.user,
     action: /RootAction.user,
-    environment: { .init(client: $0.client) }
+    environment: { .init(client: $0.client, scheduler: $0.scheduler) }
   ),
   Reducer { state, action, environment in
     switch action {
@@ -50,7 +51,7 @@ let rootReducer = Reducer<RootState, RootAction, RootEnvironment>.combine(
     case let .user(subaction):
       switch subaction {
         
-      case .confirmSignOutAlert:
+      case .signOut:
         state = .authentication(.init())
         return .none
         
@@ -70,6 +71,6 @@ extension RootState {
         password: "123123"
       )),
     reducer: rootReducer,
-    environment: .init(client: .live)
+    environment: .init(client: .live, scheduler: .main)
   )
 }

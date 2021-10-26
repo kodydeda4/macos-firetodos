@@ -14,44 +14,30 @@ struct UserState: Equatable {
 
 enum UserAction: Equatable {
   case todosList(TodoListAction)
-  
-  // alerts
-  case createSignOutAlert
-  case confirmSignOutAlert
-  case dismissSignOutAlert
+  case signOut
 }
 
 struct UserEnvironment {
-  var client: UserClient
+  let client: UserClient
+  let scheduler: AnySchedulerOf<DispatchQueue>
 }
 
 let userReducer = Reducer<UserState, UserAction, UserEnvironment>.combine(
   todoListReducer.pullback(
     state: \.todosList,
     action: /UserAction.todosList,
-    environment: { .init(client: $0.client) }
+    environment: { .init(client: $0.client, scheduler: $0.scheduler) }
   ),
-
-  Reducer { state, action, environment in
   
-    switch action {
+  Reducer { state, action, environment in
     
+    switch action {
+      
     case let .todosList(subaction):
-      //...
       return .none
       
-      // alerts
-    case .createSignOutAlert:
-      state.alert = AlertState(title: TextState("Sign out?"))
+    case .signOut:
       return .none
-      
-    case .dismissSignOutAlert:
-      state.alert = nil
-      return .none
-      
-    case .confirmSignOutAlert:
-      return .none
-      
     }
   }
 )
@@ -60,6 +46,6 @@ extension UserState {
   static let defaultStore = Store(
     initialState: .init(),
     reducer: userReducer,
-    environment: .init(client: .live)
+    environment: .init(client: .live, scheduler: .main)
   )
 }

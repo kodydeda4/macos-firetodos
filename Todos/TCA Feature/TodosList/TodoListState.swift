@@ -31,7 +31,7 @@ enum TodoListAction: Equatable {
 
 struct TodoListEnvironment {
   let client: UserClient
-  let mainQueue: AnySchedulerOf<DispatchQueue> = .main
+  let scheduler: AnySchedulerOf<DispatchQueue>
 }
 
 let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment>.combine(
@@ -55,31 +55,31 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
     // firestore
     case .fetchTodos:
       return environment.client.fetchTodos()
-        .receive(on: environment.mainQueue)
+        .receive(on: environment.scheduler)
         .catchToEffect()
         .map(TodoListAction.didFetchTodos)
       
     case .createTodo:
       return environment.client.createTodo()
-        .receive(on: environment.mainQueue)
+        .receive(on: environment.scheduler)
         .catchToEffect()
         .map(TodoListAction.didFirestoreCRUD)
       
     case let .removeTodo(todo):
       return environment.client.removeTodo(todo)
-        .receive(on: environment.mainQueue)
+        .receive(on: environment.scheduler)
         .catchToEffect()
         .map(TodoListAction.didFirestoreCRUD)
       
     case let .updateTodo(todo):
       return environment.client.updateTodo(todo)
-        .receive(on: environment.mainQueue)
+        .receive(on: environment.scheduler)
         .catchToEffect()
         .map(TodoListAction.didFirestoreCRUD)
       
     case .clearCompleted:
       return environment.client.removeTodos(state.todos.filter(\.done))
-        .receive(on: environment.mainQueue)
+        .receive(on: environment.scheduler)
         .catchToEffect()
         .map(TodoListAction.didFirestoreCRUD)
       
@@ -97,7 +97,7 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       
     case let .didFirestoreCRUD(.failure(error)):
       state.error = error
-      return .none
+      return .none      
     }
   }
 )
@@ -106,6 +106,6 @@ extension TodoListState {
   static let defaultStore = Store(
     initialState: .init(),
     reducer: todoListReducer,
-    environment: .init(client: .live)
+    environment: .init(client: .live, scheduler: .main)
   )
 }
