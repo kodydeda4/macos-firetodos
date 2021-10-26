@@ -5,60 +5,72 @@
 //  Created by Kody Deda on 6/2/21.
 //
 
-import SwiftUI
 import ComposableArchitecture
 
-struct Root {
-  struct State: Equatable {
-    var authentication = Authentication.State()
-    var todosList = TodosList.State()
-  }
-  
-  enum Action: Equatable {
-    case authentication(Authentication.Action)
-    case todosList(TodosList.Action)
-  }
+enum RootState: Equatable {
+  case authentication(Authentication.State)
+  case todosList(TodosList.State)
 }
 
-extension Root {
-  static let reducer = Reducer<State, Action, Void>.combine(
-    Authentication.reducer.pullback(
-      state: \.authentication,
-      action: /Action.authentication,
-      environment: { _ in .init() }
-    ),
-    TodosList.reducer.pullback(
-      state: \.todosList,
-      action: /Action.todosList,
-      environment: { _ in .init() }
-    ),
-    Reducer { state, action, _ in
-      switch action {
+enum RootAction: Equatable {
+  case authentication(Authentication.Action)
+  case todosList(TodosList.Action)
+}
+
+struct RootEnvironment {
+  //var client: UserClient
+}
+
+let rootReducer = Reducer<RootState, RootAction, RootEnvironment>.combine(
+  Authentication.reducer.pullback(
+    state: /RootState.authentication,
+    action: /RootAction.authentication,
+    environment: { _ in .init() }
+  ),
+  TodosList.reducer.pullback(
+    state: /RootState.todosList,
+    action: /RootAction.todosList,
+    environment: { _ in .init() }
+  ),
+  Reducer { state, action, environment in
+    switch action {
+      
+    case let .authentication(subaction):
+      switch subaction {
         
-      case let .todosList(subaction):
-        switch subaction {
-          
-        case .confirmSignOutAlert:
-          return Effect(value: .authentication(.signOut))
-          
-        default:
-          break
-        }
-        return .none
+      case .signInResult(.success):
+        state = .todosList(.init())
         
       default:
-        return .none
+        break
       }
+      return .none
+      
+    case let .todosList(subaction):
+      switch subaction {
+        
+      case .confirmSignOutAlert:
+        return Effect(value: .authentication(.signOut))
+        
+      default:
+        break
+        
+        
+      }
+      return .none
     }
-  )
-    .debug()
-}
+  }
+)
 
-extension Root {
+extension RootState {
   static let defaultStore = Store(
-    initialState: .init(),
-    reducer: reducer,
-    environment: ()
+    initialState: .authentication(
+      .init(
+        email: "test@email.com",
+        password: "123123"
+      )),
+    reducer: rootReducer,
+    environment: .init()
+    //    environment: .init(client: .live)
   )
 }
-
