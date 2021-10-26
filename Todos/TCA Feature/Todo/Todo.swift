@@ -13,12 +13,13 @@ import FirebaseFirestoreSwift
 struct TodoState: Equatable, Identifiable, Codable {
   @DocumentID var id: String?
   @ServerTimestamp var timestamp: Date?
-  var text: String = "Untitled"
+  @BindableState var text: String = "Untitled"
   var done: Bool = false
   var userID: String? = Auth.auth().currentUser?.uid
 }
 
-enum TodoAction: Equatable {
+enum TodoAction: BindableAction, Equatable {
+  case binding(BindingAction<TodoState>)
   case toggleCompleted
   case deleteButonTapped
   case updateText(String)
@@ -26,6 +27,9 @@ enum TodoAction: Equatable {
 
 let todoReducer = Reducer<TodoState, TodoAction, Void> { state, action, _ in
   switch action {
+  
+  case .binding:
+    return .none
     
   case .toggleCompleted:
     state.done.toggle()

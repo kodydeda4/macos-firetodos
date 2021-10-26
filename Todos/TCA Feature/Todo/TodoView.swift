@@ -24,6 +24,11 @@ struct TodoView: View {
           TextField("Description", text: viewStore.binding(get: \.text, send: TodoAction.updateText))
             .opacity(viewStore.done ? 0.25 : 1)
           
+//          Toggle("", isOn: viewStore.binding(\.$done))
+          
+//          TextField("Description", text: viewStore.binding(\.$text))
+//            .opacity(viewStore.done ? 0.25 : 1)
+          
           Button("delete") {
             viewStore.send(.deleteButonTapped)
           }
