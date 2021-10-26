@@ -12,7 +12,7 @@ import FirebaseFirestoreSwift
 
 struct TodoState: Equatable, Identifiable, Codable {
   @DocumentID var id: String?
-  @ServerTimestamp var timestamp: Date?
+  let timestamp: Date
   let userID: String
   var text: String
   var done: Bool = false
@@ -47,6 +47,7 @@ let todoReducer = Reducer<TodoState, TodoAction, Void> { state, action, _ in
 extension TodoState {
   static let defaultStore = Store(
     initialState: .init(
+      timestamp: Date(),
       userID: "GxscCXP9odUQucq6A5cBXJEiTBd2",
       text: "Untitled"
     ),
