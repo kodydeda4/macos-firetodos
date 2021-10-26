@@ -12,39 +12,39 @@ import Firebase
 import FirebaseFirestoreSwift
 
 struct Todo {
-    struct State: Equatable, Identifiable, Codable {
-        @DocumentID var id: String?
-        @ServerTimestamp var createdAt: Date?
-        var description: String = "Untitled"
-        var completed: Bool = false
-        var userID: String? = Auth.auth().currentUser?.uid
-    }
-    
-    enum Action: Equatable {
-        case toggleCompleted
-        case updateText(String)
-    }
+  struct State: Equatable, Identifiable, Codable {
+    @DocumentID var id: String?
+    @ServerTimestamp var timestamp: Date?
+    var text: String = "Untitled"
+    var done: Bool = false
+    var userID: String? = Auth.auth().currentUser?.uid
+  }
+  
+  enum Action: Equatable {
+    case toggleCompleted
+    case updateText(String)
+  }
 }
 
 extension Todo {
-    static let reducer = Reducer<State, Action, Void> { state, action, _ in
-        switch action {
-                    
-        case .toggleCompleted:
-            state.completed.toggle()
-            return .none
-            
-        case let .updateText(text):
-            state.description = text
-            return .none
-        }
+  static let reducer = Reducer<State, Action, Void> { state, action, _ in
+    switch action {
+      
+    case .toggleCompleted:
+      state.done.toggle()
+      return .none
+      
+    case let .updateText(text):
+      state.text = text
+      return .none
     }
+  }
 }
 
 extension Todo {
-    static let defaultStore = Store(
-        initialState: .init(),
-        reducer: reducer,
-        environment: ()
-    )
+  static let defaultStore = Store(
+    initialState: .init(),
+    reducer: reducer,
+    environment: ()
+  )
 }

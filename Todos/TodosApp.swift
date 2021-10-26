@@ -11,14 +11,14 @@ import Firebase
 
 @main
 struct TodosApp: App {
-    init() {
-        FirebaseApp.configure()
+  init() {
+    FirebaseApp.configure()
+  }
+  var body: some Scene {
+    WindowGroup {
+      RootView(store: Root.defaultStore)
     }
-    var body: some Scene {
-        WindowGroup {
-            RootView(store: Root.defaultStore)
-        }
-        .windowStyle(HiddenTitleBarWindowStyle())
-    }
+    .windowStyle(HiddenTitleBarWindowStyle())
+  }
 }
 

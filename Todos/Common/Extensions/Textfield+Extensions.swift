@@ -9,8 +9,8 @@ import SwiftUI
 
 // Hides Textfield Halo Ring
 extension NSTextField {
-    open override var focusRingType: NSFocusRingType {
-        get {.none }
-        set {}
-    }
+  open override var focusRingType: NSFocusRingType {
+    get {.none }
+    set {}
+  }
 }

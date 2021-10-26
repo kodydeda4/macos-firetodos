@@ -9,56 +9,56 @@ import SwiftUI
 import ComposableArchitecture
 
 struct Root {
-    struct State: Equatable {
-        var authentication = Authentication.State()
-        var todosList = TodosList.State()
-    }
-    
-    enum Action: Equatable {
-        case authentication(Authentication.Action)
-        case todosList(TodosList.Action)
-    }
+  struct State: Equatable {
+    var authentication = Authentication.State()
+    var todosList = TodosList.State()
+  }
+  
+  enum Action: Equatable {
+    case authentication(Authentication.Action)
+    case todosList(TodosList.Action)
+  }
 }
 
 extension Root {
-    static let reducer = Reducer<State, Action, Void>.combine(
-        Authentication.reducer.pullback(
-            state: \.authentication,
-            action: /Action.authentication,
-            environment: { _ in .init() }
-        ),
-        TodosList.reducer.pullback(
-            state: \.todosList,
-            action: /Action.todosList,
-            environment: { _ in .init() }
-        ),
-        Reducer { state, action, _ in
-            switch action {
-            
-            case let .todosList(subaction):
-                switch subaction {
-
-                case .confirmSignOutAlert:
-                    return Effect(value: .authentication(.signOut))
-
-                default:
-                    break
-                }
-                return .none
-                
-            default:
-                return .none
-            }
+  static let reducer = Reducer<State, Action, Void>.combine(
+    Authentication.reducer.pullback(
+      state: \.authentication,
+      action: /Action.authentication,
+      environment: { _ in .init() }
+    ),
+    TodosList.reducer.pullback(
+      state: \.todosList,
+      action: /Action.todosList,
+      environment: { _ in .init() }
+    ),
+    Reducer { state, action, _ in
+      switch action {
+        
+      case let .todosList(subaction):
+        switch subaction {
+          
+        case .confirmSignOutAlert:
+          return Effect(value: .authentication(.signOut))
+          
+        default:
+          break
         }
-    )
+        return .none
+        
+      default:
+        return .none
+      }
+    }
+  )
     .debug()
 }
 
 extension Root {
-    static let defaultStore = Store(
-        initialState: .init(),
-        reducer: reducer,
-        environment: ()
-    )
+  static let defaultStore = Store(
+    initialState: .init(),
+    reducer: reducer,
+    environment: ()
+  )
 }
 
