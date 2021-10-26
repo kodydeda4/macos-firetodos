@@ -8,97 +8,77 @@
 import ComposableArchitecture
 import AuthenticationServices
 
-struct Authentication {
-  struct State: Equatable {
-    var signedIn = false
-    var attempted = false
-    var error: FirebaseError?
-    var email = String.init()
-    var password = String.init()
+struct AuthenticationState: Equatable {
+  @BindableState var email = String()
+  @BindableState var password = String()
+  var error: FirebaseError?
+}
+
+enum AuthenticationAction: BindableAction, Equatable {
+  case binding(BindingAction<AuthenticationState>)
+  case signInAnonymously
+  case signInWithEmail
+  case signInWithApple(id: ASAuthorizationAppleIDCredential, nonce: String)
+  case signInResult(Result<Bool, FirebaseError>)
+}
+
+struct AuthenticationEnvironment {
+  var signIn: Effect<AuthenticationAction, Never> {
+    Firebase.signIn()
+      .map(AuthenticationAction.signInResult)
+      .eraseToEffect()
   }
   
-  enum Action: Equatable {
-    case updateEmail(String)
-    case updatePassword(String)
-    
-    case signInButtonTapped(FirebaseAuthentication)
-    case signInResult(Result<Bool, FirebaseError>)
-    case signOut
+  func signIn(
+    _ email: String,
+    _ password: String
+  ) -> Effect<AuthenticationAction, Never> {
+    Firebase.signIn(with: email, and: password)
+      .map(AuthenticationAction.signInResult)
+      .eraseToEffect()
   }
   
-  struct Environment {
-    var signIn: Effect<Action, Never> {
-      Firebase.signIn()
-        .map(Action.signInResult)
-        .eraseToEffect()
-    }
-    
-    func signIn(
-      _ email: String,
-      _ password: String
-    ) -> Effect<Action, Never> {
-      Firebase.signIn(with: email, and: password)
-        .map(Action.signInResult)
-        .eraseToEffect()
-    }
-    
-    func signIn(
-      _ appleID: ASAuthorizationAppleIDCredential,
-      _ nonce: String
-    ) -> Effect<Action, Never> {
-      Firebase.signIn(using: appleID, and: nonce)
-        .map(Action.signInResult)
-        .eraseToEffect()
-    }
+  func signIn(
+    _ appleID: ASAuthorizationAppleIDCredential,
+    _ nonce: String
+  ) -> Effect<AuthenticationAction, Never> {
+    Firebase.signIn(using: appleID, and: nonce)
+      .map(AuthenticationAction.signInResult)
+      .eraseToEffect()
   }
 }
 
-extension Authentication {
-  static let reducer = Reducer<State, Action, Environment> { state, action, environment in
+
+let authenticationReducer = Reducer<AuthenticationState, AuthenticationAction, AuthenticationEnvironment> { state, action, environment in
+  
+  switch action {
     
-    switch action {
-      
-    case let .updateEmail(value):
-      state.email = value
-      return .none
-      
-    case let .updatePassword(value):
-      state.password = value
-      return .none
-      
-    case let .signInButtonTapped(authentication):
-      switch authentication {
-        
-      case .anonymous:
-        return environment.signIn
-        
-      case .email:
-        return environment.signIn(state.email, state.password)
-        
-      case let .apple(appleID, nonce):
-        return environment.signIn(appleID, nonce)
-      }
-      
-    case .signOut:
-      state.signedIn = false
-      return .none
-      
-    case .signInResult(.success):
-      state.signedIn.toggle()
-      return .none
-      
-    case let .signInResult(.failure(error)):
-      state.error = error
-      state.attempted = true
-      return .none
-    }
+  case .binding:
+    return .none
+    
+  case .signInAnonymously:
+    return environment.signIn
+    
+  case .signInWithEmail:
+    return environment.signIn(state.email, state.password)
+    
+  case let .signInWithApple(appleID, nonce):
+    return environment.signIn(appleID, nonce)
+    
+  case .signInResult(.success):
+    return .none
+    
+  case let .signInResult(.failure(error)):
+    state.error = error
+    return .none
   }
 }
+  .binding()
 
-extension Authentication {
+extension AuthenticationState {
   static let defaultStore = Store(
     initialState: .init(),
-    reducer: reducer,
+    reducer: authenticationReducer,
     environment: .init()
   )
 }

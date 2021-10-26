@@ -14,13 +14,13 @@ import FirebaseFirestoreSwift
 
 
 struct TodoListState: Equatable {
-  var todos: [TodoState] = []
+  var todos: IdentifiedArrayOf<TodoState> = []
   var error: FirestoreError?
   var alert: AlertState<TodoListAction>?
 }
 
 enum TodoListAction: Equatable {
-  case todos(index: Int, action: TodoAction)
+  case todos(id: TodoState.ID, action: TodoAction)
   
   // firestore
   case fetchTodos
@@ -76,17 +76,16 @@ struct TodoListEnvironment {
 let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment>.combine(
   todoReducer.forEach(
     state: \.todos,
-    action: /TodoListAction.todos(index:action:),
+    action: /TodoListAction.todos(id:action:),
     environment: { _ in () }
   ),
-  
   Reducer { state, action, environment in
     switch action {
       
-    case let .todos(index, action):
-      return Effect(value: .updateTodo(state.todos[index]))
+    case let .todos(id, action):
+      return Effect(value: .updateTodo(state.todos[id: id]!))
       
-      // firestore
+    // firestore
     case .fetchTodos:
       return environment.fetchData
       
@@ -104,7 +103,7 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       
       // results
     case let .didFetchTodos(.success(todos)):
-      state.todos = todos
+      state.todos = IdentifiedArray(uniqueElements: todos)
       return .none
       
     case .didCreateTodo        (.success),
@@ -122,8 +121,6 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       
       state.error = error
       return .none
-      
-      
     }
   }
 )

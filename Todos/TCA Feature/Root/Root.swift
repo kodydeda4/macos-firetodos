@@ -8,13 +8,13 @@
 import ComposableArchitecture
 
 enum RootState: Equatable {
-  case authentication(Authentication.State)
+  case authentication(AuthenticationState)
   case user(UserState)
   
 }
 
 enum RootAction: Equatable {
-  case authentication(Authentication.Action)
+  case authentication(AuthenticationAction)
   case user(UserAction)
 }
 
@@ -23,7 +23,7 @@ struct RootEnvironment {
 }
 
 let rootReducer = Reducer<RootState, RootAction, RootEnvironment>.combine(
-  Authentication.reducer.pullback(
+  authenticationReducer.pullback(
     state: /RootState.authentication,
     action: /RootAction.authentication,
     environment: { _ in .init() }
@@ -41,25 +41,24 @@ let rootReducer = Reducer<RootState, RootAction, RootEnvironment>.combine(
         
       case .signInResult(.success):
         state = .user(.init())
+        return .none
         
       default:
         break
       }
       return .none
       
-//    case let .todosList(subaction):
-//      switch subaction {
-//
-//      case .confirmSignOutAlert:
-//        return Effect(value: .authentication(.signOut))
-//
-//      default:
-//        break
-      
-    default:
+    case let .user(subaction):
+      switch subaction {
+        
+      case .confirmSignOutAlert:
+        state = .authentication(.init())
+        return .none
+        
+      default:
+        break
+      }
       return .none
-        
-        
     }
   }
 )

@@ -23,7 +23,7 @@ struct TodosListView: View {
         
         ForEachStore(store.scope(
           state: \.todos,
-          action: TodoListAction.todos(index:action:)
+          action: TodoListAction.todos(id:action:)
         ), content: TodoView.init)
       }
 //      .alert(store.scope(state: \.alert), dismiss: .dismissSignOutAlert)

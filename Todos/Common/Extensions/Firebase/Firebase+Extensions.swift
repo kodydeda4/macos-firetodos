@@ -10,13 +10,6 @@ import Combine
 import Firebase
 import AuthenticationServices
 
-/// Firebase authenticatication methods.
-enum FirebaseAuthentication: Equatable {
-  case anonymous
-  case email
-  case apple(id: ASAuthorizationAppleIDCredential, nonce: String)
-}
-
 /// Firebase Errors.
 struct FirebaseError: Error, Equatable {
   static func == (lhs: FirebaseError, rhs: FirebaseError) -> Bool {
