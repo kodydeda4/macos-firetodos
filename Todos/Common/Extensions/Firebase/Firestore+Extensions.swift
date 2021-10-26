@@ -45,24 +45,24 @@ extension Firestore {
 //    return rv.eraseToAnyPublisher()
 //  }
   
-  /// Remove document from collection.
-  func remove(
-    _ documentID: String,
-    from collection: String
-    
-  ) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
-    
-    let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
-    
-    self.collection(collection).document(documentID).delete { error in
-      if let error = error {
-        rv.send(.failure(FirestoreError(error)))
-      } else {
-        rv.send(.success(true))
-      }
-    }
-    return rv.eraseToAnyPublisher()
-  }
+//  /// Remove document from collection.
+//  func remove(
+//    _ documentID: String,
+//    from collection: String
+//
+//  ) -> AnyPublisher<Result<Bool, FirestoreError>, Never> {
+//
+//    let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
+//
+//    self.collection(collection).document(documentID).delete { error in
+//      if let error = error {
+//        rv.send(.failure(FirestoreError(error)))
+//      } else {
+//        rv.send(.success(true))
+//      }
+//    }
+//    return rv.eraseToAnyPublisher()
+//  }
   
   /// Remove [document]'s from collection.
   func remove(

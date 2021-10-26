@@ -22,6 +22,7 @@ struct TodoState: Equatable, Identifiable, Codable {
 
 enum TodoAction: Equatable {
   case toggleCompleted
+  case deleteButonTapped
   case updateText(String)
 }
 
@@ -31,6 +32,9 @@ let todoReducer = Reducer<TodoState, TodoAction, Void> { state, action, _ in
     
   case .toggleCompleted:
     state.done.toggle()
+    return .none
+    
+  case .deleteButonTapped:
     return .none
     
   case let .updateText(text):
