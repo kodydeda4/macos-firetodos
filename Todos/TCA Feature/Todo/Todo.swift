@@ -11,11 +11,11 @@ import Firebase
 import FirebaseFirestoreSwift
 
 struct TodoState: Equatable, Identifiable, Codable {
-  @DocumentID var id: String?
+  @DocumentID      var id: String?
   @ServerTimestamp var timestamp: Date?
-  @BindableState var text: String = "Untitled"
-  var done: Bool = false
   var userID: String? = Auth.auth().currentUser?.uid
+  var text: String = "Untitled"
+  var done: Bool = false
 }
 
 enum TodoAction: BindableAction, Equatable {
