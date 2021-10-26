@@ -87,27 +87,27 @@ extension Firestore {
   }
   
   /// Set document to value.
-  func set<Document>(
-    _ documentID: String,
-    to value: Document,
-    in collection: String
-    
-  ) -> AnyPublisher<Result<Bool, FirestoreError>, Never> where Document: Codable {
-    
-    let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
-    do {
-      try self
-        .collection(collection)
-        .document(documentID)
-        .setData(from: value)
-      rv.send(.success(true))
-    }
-    catch {
-      print(error)
-      rv.send(.failure(FirestoreError(error)))
-    }
-    return rv.eraseToAnyPublisher()
-  }
+//  func set<Document>(
+//    _ documentID: String,
+//    to value: Document,
+//    in collection: String
+//    
+//  ) -> AnyPublisher<Result<Bool, FirestoreError>, Never> where Document: Codable {
+//    
+//    let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
+//    do {
+//      try self
+//        .collection(collection)
+//        .document(documentID)
+//        .setData(from: value)
+//      rv.send(.success(true))
+//    }
+//    catch {
+//      print(error)
+//      rv.send(.failure(FirestoreError(error)))
+//    }
+//    return rv.eraseToAnyPublisher()
+//  }
 }
 
 /*------------------------------------------------------------------------------------------

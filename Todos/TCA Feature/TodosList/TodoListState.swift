@@ -39,6 +39,7 @@ enum TodoListAction: Equatable {
 struct UserClient {
   let fetchTodos: () -> Effect<[TodoState], FirestoreError>
   let createTodo: () -> Effect<Bool, FirestoreError>
+  let updateTodo: (TodoState) -> Effect<Bool, FirestoreError>
 }
 
 extension UserClient {
@@ -49,12 +50,7 @@ extension UserClient {
         .collection("todos")
         .whereField("userID", isEqualTo: Auth.auth().currentUser!.uid)
         .addSnapshotListener { querySnapshot, error in
-          if let values = querySnapshot?
-              .documents
-              .compactMap({ snapshot in
-                try? snapshot.data(as: TodoState.self)
-              }) {
-            
+          if let values = querySnapshot?.documents.compactMap({ snapshot in try? snapshot.data(as: TodoState.self) }) {
             rv.send(values)
           } else if let error = error {
             rv.send(completion: .failure(FirestoreError(error)))
@@ -77,6 +73,21 @@ extension UserClient {
       }
       
       return rv.eraseToEffect()
+    },
+    updateTodo: { todo in
+      let rv = PassthroughSubject<Bool, FirestoreError>()
+      do {
+        try Firestore.firestore()
+          .collection("todos")
+          .document(todo.id!)
+          .setData(from: todo)
+        rv.send(true)
+      }
+      catch {
+        print(error)
+        rv.send(completion: .failure(FirestoreError(error)))
+      }
+      return rv.eraseToEffect()
     }
   )
 }
@@ -85,23 +96,17 @@ struct TodoListEnvironment {
   let client: UserClient = .live
   let mainQueue: AnySchedulerOf<DispatchQueue> = .main
   
-  func removeTodo(_ todo: TodoState) -> Effect<TodoListAction, Never> {
-    db.remove(todo.id!, from: collection)
-      .map(TodoListAction.didRemoveTodo)
-      .eraseToEffect()
-  }
-  
-  func clearCompleted(_ todos: [TodoState]) -> Effect<TodoListAction, Never> {
-    db.remove(todos.map(\.id!), from: collection)
-      .map(TodoListAction.didRemoveTodo)
-      .eraseToEffect()
-  }
-  
-  func updateTodo(_ todo: TodoState) -> Effect<TodoListAction, Never> {
-    db.set(todo.id!, to: todo, in: collection)
-      .map(TodoListAction.didUpdateTodo)
-      .eraseToEffect()
-  }
+//  func removeTodo(_ todo: TodoState) -> Effect<TodoListAction, Never> {
+//    db.remove(todo.id!, from: collection)
+//      .map(TodoListAction.didRemoveTodo)
+//      .eraseToEffect()
+//  }
+//
+//  func clearCompleted(_ todos: [TodoState]) -> Effect<TodoListAction, Never> {
+//    db.remove(todos.map(\.id!), from: collection)
+//      .map(TodoListAction.didRemoveTodo)
+//      .eraseToEffect()
+//  }
 }
 
 let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment>.combine(
@@ -132,15 +137,18 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
         .map(TodoListAction.didCreateTodo)
       
     case let .removeTodo(todo):
-      return environment.removeTodo(todo)
+      return .none // environment.removeTodo(todo)
       
     case let .updateTodo(todo):
-      return environment.updateTodo(todo)
-      
+      return environment.client.updateTodo(todo)
+        .receive(on: environment.mainQueue)
+        .catchToEffect()
+        .map(TodoListAction.didCreateTodo)
+
     case .clearCompleted:
-      return environment.clearCompleted(state.todos.filter(\.done))
+      return .none // environment.clearCompleted(state.todos.filter(\.done))
       
-      // results
+    // results
     case let .didFetchTodos(.success(todos)):
       state.todos = IdentifiedArray(uniqueElements: todos)
       return .none
@@ -152,7 +160,7 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       
       return .none
       
-    case let .didFetchTodos     (.failure(error)),
+    case let .didFetchTodos  (.failure(error)),
       let .didCreateTodo     (.failure(error)),
       let .didRemoveTodo     (.failure(error)),
       let .didClearCompleted (.failure(error)),
