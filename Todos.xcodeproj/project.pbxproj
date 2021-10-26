@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		334BC7672728968700CC3779 /* UserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BC7662728968700CC3779 /* UserState.swift */; };
+		334BC7672728968700CC3779 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BC7662728968700CC3779 /* User.swift */; };
 		334BC7692728993100CC3779 /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BC7682728993100CC3779 /* UserView.swift */; };
 		334BFBC02667DB8300F7952C /* TodosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BFBBF2667DB8300F7952C /* TodosApp.swift */; };
 		334BFBC22667DB8300F7952C /* TodoListState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BFBC12667DB8300F7952C /* TodoListState.swift */; };
@@ -35,7 +35,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		334BC7662728968700CC3779 /* UserState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserState.swift; sourceTree = "<group>"; };
+		334BC7662728968700CC3779 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		334BC7682728993100CC3779 /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		334BFBBC2667DB8300F7952C /* Todos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Todos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		334BFBBF2667DB8300F7952C /* TodosApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodosApp.swift; sourceTree = "<group>"; };
@@ -76,6 +76,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		334BC77427289D2400CC3779 /* User */ = {
+			isa = PBXGroup;
+			children = (
+				334BC7662728968700CC3779 /* User.swift */,
+				334BC7682728993100CC3779 /* UserView.swift */,
+			);
+			path = User;
+			sourceTree = "<group>";
+		};
 		334BFBB32667DB8300F7952C = {
 			isa = PBXGroup;
 			children = (
@@ -126,12 +135,11 @@
 		334BFBE22667DEBF00F7952C /* TCA Feature */ = {
 			isa = PBXGroup;
 			children = (
-				334BC7662728968700CC3779 /* UserState.swift */,
-				334BC7682728993100CC3779 /* UserView.swift */,
 				334BFBE32667DEC500F7952C /* Root */,
-				336406572667F3BA00545A25 /* Todo */,
-				334BFBE42667DEC900F7952C /* TodosList */,
 				334BFBE52667DECF00F7952C /* Authentication */,
+				334BC77427289D2400CC3779 /* User */,
+				334BFBE42667DEC900F7952C /* TodosList */,
+				336406572667F3BA00545A25 /* Todo */,
 			);
 			path = "TCA Feature";
 			sourceTree = "<group>";
@@ -285,7 +293,7 @@
 				33B1F0FF266A6D2B0095EA9D /* SignInWithAppleButton+Extensions.swift in Sources */,
 				33A9C83C26691D31008C2D6E /* Color+Extensions.swift in Sources */,
 				33754B15266AAAE60040963D /* Firebase+Extensions.swift in Sources */,
-				334BC7672728968700CC3779 /* UserState.swift in Sources */,
+				334BC7672728968700CC3779 /* User.swift in Sources */,
 				334BFBE72667DF0000F7952C /* RootView.swift in Sources */,
 				334BFBDC2667DCD200F7952C /* Root.swift in Sources */,
 				334BC7692728993100CC3779 /* UserView.swift in Sources */,
