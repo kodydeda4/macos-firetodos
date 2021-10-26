@@ -41,6 +41,8 @@ struct UserClient {
   let createTodo: ()          -> Effect<Bool, FirestoreError>
   let updateTodo: (TodoState) -> Effect<Bool, FirestoreError>
   let removeTodo: (TodoState) -> Effect<Bool, FirestoreError>
+  let removeTodos: ([TodoState]) -> Effect<Bool, FirestoreError>
+
 }
 
 extension UserClient {
@@ -101,6 +103,20 @@ extension UserClient {
         }
       }
       return rv.eraseToEffect()
+    },
+    removeTodos: { todos in
+      let rv = PassthroughSubject<Bool, FirestoreError>()
+      
+      todos.map(\.id).forEach { id in
+        Firestore.firestore().collection("todos").document(id!).delete { error in
+          if let error = error {
+            rv.send(completion: .failure(FirestoreError(error)))
+          } else {
+            rv.send(true)
+          }
+        }
+      }
+      return rv.eraseToEffect()
     }
   )
 }
@@ -108,11 +124,6 @@ extension UserClient {
 struct TodoListEnvironment {
   let client: UserClient = .live
   let mainQueue: AnySchedulerOf<DispatchQueue> = .main
-//  func clearCompleted(_ todos: [TodoState]) -> Effect<TodoListAction, Never> {
-//    db.remove(todos.map(\.id!), from: collection)
-//      .map(TodoListAction.didRemoveTodo)
-//      .eraseToEffect()
-//  }
 }
 
 let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment>.combine(
@@ -166,7 +177,11 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
         .map(TodoListAction.didUpdateTodo)
 
     case .clearCompleted:
-      return .none // environment.clearCompleted(state.todos.filter(\.done))
+      return environment.client.removeTodos(state.todos.filter(\.done))
+        .receive(on: environment.mainQueue)
+        .catchToEffect()
+        .map(TodoListAction.didUpdateTodo)
+
       
     // results
     case let .didFetchTodos(.success(todos)):
