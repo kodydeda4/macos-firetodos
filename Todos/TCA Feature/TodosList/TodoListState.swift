@@ -38,6 +38,7 @@ enum TodoListAction: Equatable {
 
 struct UserClient {
   let fetchTodos: () -> Effect<[TodoState], FirestoreError>
+  let createTodo: () -> Effect<Bool, FirestoreError>
 }
 
 extension UserClient {
@@ -60,6 +61,22 @@ extension UserClient {
           }
         }
       return rv.eraseToEffect()
+    },
+    createTodo: {
+      let rv = PassthroughSubject<Bool, FirestoreError>()
+      
+      do {
+        let _ = try Firestore.firestore()
+          .collection("todos")
+          .addDocument(from: TodoState())
+        
+        rv.send(true)
+      }
+      catch {
+        rv.send(completion: .failure(FirestoreError(error)))
+      }
+      
+      return rv.eraseToEffect()
     }
   )
 }
@@ -67,22 +84,6 @@ extension UserClient {
 struct TodoListEnvironment {
   let client: UserClient = .live
   let mainQueue: AnySchedulerOf<DispatchQueue> = .main
-  
-  let db = Firestore.firestore()
-  let collection = "todos"
-  let userID = Auth.auth().currentUser!.uid
-  
-  //  var fetchData: Effect<TodoListAction, Never> {
-  //    db.fetchData(ofType: TodoState.self, from: collection, for: userID)
-  //      .map(TodoListAction.didFetchTodos)
-  //      .eraseToEffect()
-  //  }
-  
-  func createTodo(_ todo: TodoState) -> Effect<TodoListAction, Never> {
-    db.add(todo, to: collection)
-      .map(TodoListAction.didCreateTodo)
-      .eraseToEffect()
-  }
   
   func removeTodo(_ todo: TodoState) -> Effect<TodoListAction, Never> {
     db.remove(todo.id!, from: collection)
@@ -122,11 +123,13 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       return environment.client.fetchTodos()
         .receive(on: environment.mainQueue)
         .catchToEffect()
-        .cancellable(id: CancelID())
         .map(TodoListAction.didFetchTodos)
       
     case .createTodo:
-      return environment.createTodo(TodoState())
+      return environment.client.createTodo()
+        .receive(on: environment.mainQueue)
+        .catchToEffect()
+        .map(TodoListAction.didCreateTodo)
       
     case let .removeTodo(todo):
       return environment.removeTodo(todo)

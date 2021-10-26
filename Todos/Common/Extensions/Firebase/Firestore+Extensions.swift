@@ -23,54 +23,27 @@ struct FirestoreError: Error, Equatable {
 
 /// MARK:- Manage Firestore Collections
 extension Firestore {
-  
-  /// Fetch user-documents from collection.
-  func fetchData<Document>(
-    ofType: Document.Type,
-    from collection: String,
-    for userID: String
-    
-  ) -> AnyPublisher<Result<[Document], FirestoreError>, Never> where Document: Codable {
-    
-    let rv = PassthroughSubject<Result<[Document], FirestoreError>, Never>()
-    
-    self.collection(collection)
-      .whereField("userID", isEqualTo: userID)
-      .addSnapshotListener { querySnapshot, error in
-        
-        if let values = querySnapshot?
-            .documents
-            .compactMap({ try? $0.data(as: Document.self) }) {
-          
-          rv.send(.success(values))
-          
-        } else if let error = error {
-          rv.send(.failure(FirestoreError(error)))
-          print(error.localizedDescription)
-        }
-      }
-    return rv.eraseToAnyPublisher()
-  }
+
   
   /// Add document to collection.
-  func add<Document>(
-    _ document: Document,
-    to collection: String
-    
-  ) -> AnyPublisher<Result<Bool, FirestoreError>, Never> where Document: Codable {
-    
-    let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
-    
-    do {
-      let _ = try self.collection(collection).addDocument(from: document)
-      rv.send(.success(true))
-    }
-    catch {
-      rv.send(.failure(FirestoreError(error)))
-    }
-    
-    return rv.eraseToAnyPublisher()
-  }
+//  func add<Document>(
+//    _ document: Document,
+//    to collection: String
+//    
+//  ) -> AnyPublisher<Result<Bool, FirestoreError>, Never> where Document: Codable {
+//    
+//    let rv = PassthroughSubject<Result<Bool, FirestoreError>, Never>()
+//    
+//    do {
+//      let _ = try self.collection(collection).addDocument(from: document)
+//      rv.send(.success(true))
+//    }
+//    catch {
+//      rv.send(.failure(FirestoreError(error)))
+//    }
+//    
+//    return rv.eraseToAnyPublisher()
+//  }
   
   /// Remove document from collection.
   func remove(
