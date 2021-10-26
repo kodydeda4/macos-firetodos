@@ -12,7 +12,6 @@ import Firebase
 import FirebaseFirestore
 import FirebaseFirestoreSwift
 
-
 struct TodoListState: Equatable {
   var todos: IdentifiedArrayOf<TodoState> = []
   var error: FirestoreError?
@@ -37,16 +36,47 @@ enum TodoListAction: Equatable {
   case didUpdateTodo     (Result<Bool, FirestoreError>)
 }
 
+struct UserClient {
+  let fetchTodos: () -> Effect<[TodoState], FirestoreError>
+}
+
+extension UserClient {
+  static let live = UserClient(
+    fetchTodos: {
+      let rv = PassthroughSubject<[TodoState], FirestoreError>()
+      Firestore.firestore()
+        .collection("todos")
+        .whereField("userID", isEqualTo: Auth.auth().currentUser!.uid)
+        .addSnapshotListener { querySnapshot, error in
+          if let values = querySnapshot?
+              .documents
+              .compactMap({ snapshot in
+                try? snapshot.data(as: TodoState.self)
+              }) {
+            
+            rv.send(values)
+          } else if let error = error {
+            rv.send(completion: .failure(FirestoreError(error)))
+          }
+        }
+      return rv.eraseToEffect()
+    }
+  )
+}
+
 struct TodoListEnvironment {
+  let client: UserClient = .live
+  let mainQueue: AnySchedulerOf<DispatchQueue> = .main
+  
   let db = Firestore.firestore()
   let collection = "todos"
   let userID = Auth.auth().currentUser!.uid
   
-  var fetchData: Effect<TodoListAction, Never> {
-    db.fetchData(ofType: TodoState.self, from: collection, for: userID)
-      .map(TodoListAction.didFetchTodos)
-      .eraseToEffect()
-  }
+  //  var fetchData: Effect<TodoListAction, Never> {
+  //    db.fetchData(ofType: TodoState.self, from: collection, for: userID)
+  //      .map(TodoListAction.didFetchTodos)
+  //      .eraseToEffect()
+  //  }
   
   func createTodo(_ todo: TodoState) -> Effect<TodoListAction, Never> {
     db.add(todo, to: collection)
@@ -80,14 +110,20 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
     environment: { _ in () }
   ),
   Reducer { state, action, environment in
+    struct CancelID: Hashable {}
+    
     switch action {
       
     case let .todos(id, action):
       return Effect(value: .updateTodo(state.todos[id: id]!))
       
-    // firestore
+      // firestore
     case .fetchTodos:
-      return environment.fetchData
+      return environment.client.fetchTodos()
+        .receive(on: environment.mainQueue)
+        .catchToEffect()
+        .cancellable(id: CancelID())
+        .map(TodoListAction.didFetchTodos)
       
     case .createTodo:
       return environment.createTodo(TodoState())
