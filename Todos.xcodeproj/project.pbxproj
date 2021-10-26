@@ -32,6 +32,7 @@
 		33A9C83C26691D31008C2D6E /* Color+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A9C83B26691D31008C2D6E /* Color+Extensions.swift */; };
 		33AD2EDE27286F5B003BFC3D /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = 33AD2EDD27286F5B003BFC3D /* SFSafeSymbols */; };
 		33B1F0FF266A6D2B0095EA9D /* SignInWithAppleButton+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33B1F0FE266A6D2B0095EA9D /* SignInWithAppleButton+Extensions.swift */; };
+		33E6A7F22728B1A100C7ABE8 /* UserClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E6A7F12728B1A100C7ABE8 /* UserClient.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +59,7 @@
 		33A9C83926691448008C2D6E /* Textfield+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Textfield+Extensions.swift"; sourceTree = "<group>"; };
 		33A9C83B26691D31008C2D6E /* Color+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extensions.swift"; sourceTree = "<group>"; };
 		33B1F0FE266A6D2B0095EA9D /* SignInWithAppleButton+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SignInWithAppleButton+Extensions.swift"; sourceTree = "<group>"; };
+		33E6A7F12728B1A100C7ABE8 /* UserClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserClient.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,6 +106,7 @@
 		334BFBBE2667DB8300F7952C /* Todos */ = {
 			isa = PBXGroup;
 			children = (
+				33E6A7F02728B19800C7ABE8 /* API */,
 				334BFBBF2667DB8300F7952C /* TodosApp.swift */,
 				334BFBE22667DEBF00F7952C /* TCA Feature */,
 				334BFBE12667DEBB00F7952C /* Common */,
@@ -201,6 +204,14 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		33E6A7F02728B19800C7ABE8 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				33E6A7F12728B1A100C7ABE8 /* UserClient.swift */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -290,6 +301,7 @@
 				3364065B2667F3E600545A25 /* TodosListView.swift in Sources */,
 				336406512667E48A00545A25 /* Button+Extensions.swift in Sources */,
 				334BFBDA2667DC4A00F7952C /* Firestore+Extensions.swift in Sources */,
+				33E6A7F22728B1A100C7ABE8 /* UserClient.swift in Sources */,
 				33B1F0FF266A6D2B0095EA9D /* SignInWithAppleButton+Extensions.swift in Sources */,
 				33A9C83C26691D31008C2D6E /* Color+Extensions.swift in Sources */,
 				33754B15266AAAE60040963D /* Firebase+Extensions.swift in Sources */,
