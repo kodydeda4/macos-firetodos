@@ -44,7 +44,7 @@ struct TodosList {
   
   struct Environment {
     let db = Firestore.firestore()
-    let collection = "todos2"
+    let collection = "todos"
     let userID = Auth.auth().currentUser!.uid
     
     var fetchData: Effect<Action, Never> {
