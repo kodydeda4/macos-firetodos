@@ -13,12 +13,15 @@ struct UserView: View {
   
   var body: some View {
     WithViewStore(store) { viewStore in
-      TodoListView(
-        store: store.scope(
-          state: \.todosList,
-          action: UserAction.todosList
-        )
-      )
+      TodoListView(store: store.scope(
+        state: \.todosList,
+        action: UserAction.todosList
+      ))
+//        .toolbar {
+//          Button("Sign Out") {
+//            viewStore.send(.signOut)
+//          }
+//        }
     }
   }
 }

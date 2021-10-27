@@ -38,26 +38,14 @@ let rootReducer = Reducer<RootState, RootAction, RootEnvironment>.combine(
     switch action {
       
     case let .authentication(subaction):
-      switch subaction {
-        
-      case .signInResult(.success):
+      if subaction == .signInResult(.success(true)) {
         state = .user(.init())
-        return .none
-        
-      default:
-        break
       }
       return .none
       
     case let .user(subaction):
-      switch subaction {
-        
-      case .signOut:
+      if subaction == .signOut {
         state = .authentication(.init())
-        return .none
-        
-      default:
-        break
       }
       return .none
     }

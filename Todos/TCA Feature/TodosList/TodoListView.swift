@@ -38,9 +38,9 @@ struct TodoListView: View {
         Button("Clear Completed") {
           viewStore.send(.clearCompleted)
         }
-//        Button("Sign out") {
-//          viewStore.send(.confirmSignOutAlert)
-//        }
+        Button("Sign out") {
+          viewStore.send(.signOutButtonTapped)
+        }
       }
     }
   }

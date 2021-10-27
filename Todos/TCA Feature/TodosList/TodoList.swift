@@ -27,6 +27,7 @@ enum TodoListAction: Equatable {
   // results
   case didFetchTodos(Result<[TodoState], FirestoreError>)
   case didFirestoreCRUD(Result<Bool, FirestoreError>)
+  case signOutButtonTapped
 }
 
 struct TodoListEnvironment {
@@ -52,7 +53,7 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       ? Effect(value: .removeTodo(todo))
       : Effect(value: .updateTodo(todo))
       
-    // firestore
+      // firestore
     case .fetchTodos:
       return environment.client.fetch()
         .receive(on: environment.scheduler)
@@ -83,7 +84,7 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
         .catchToEffect()
         .map(TodoListAction.didFirestoreCRUD)
       
-    // results
+      // results
     case let .didFetchTodos(.success(todos)):
       state.todos = IdentifiedArray(uniqueElements: todos)
       return .none
@@ -97,15 +98,21 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       
     case let .didFirestoreCRUD(.failure(error)):
       state.error = error
-      return .none      
+      return .none
+      
+    case .signOutButtonTapped:
+      return .none
     }
   }
 )
 
 extension TodoListState {
-  static let defaultStore = Store(
+  static let defaultStore = Store<TodoListState, TodoListAction>(
     initialState: .init(),
     reducer: todoListReducer,
-    environment: .init(client: .live, scheduler: .main)
+    environment: TodoListEnvironment(
+      client: .live,
+      scheduler: .main
+    )
   )
 }

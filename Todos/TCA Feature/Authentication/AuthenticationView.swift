@@ -31,7 +31,8 @@ struct AuthenticationView: View {
         Button(action: {viewStore.send(.signInWithEmail)}) {
           ZStack {
             RoundedRectangle(cornerRadius: 4)
-            .foregroundColor(.appColor)
+              .foregroundColor(.appColor)
+            
             Text("Log in")
               .foregroundColor(Color(nsColor: .windowBackgroundColor))
             

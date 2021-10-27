@@ -34,6 +34,9 @@ let userReducer = Reducer<UserState, UserAction, UserEnvironment>.combine(
     switch action {
       
     case let .todosList(subaction):
+      if subaction == .signOutButtonTapped {
+        return Effect(value: .signOut)
+      }
       return .none
       
     case .signOut:
@@ -43,9 +46,12 @@ let userReducer = Reducer<UserState, UserAction, UserEnvironment>.combine(
 )
 
 extension UserState {
-  static let defaultStore = Store(
+  static let defaultStore = Store<UserState, UserAction>(
     initialState: .init(),
     reducer: userReducer,
-    environment: .init(client: .live, scheduler: .main)
+    environment: UserEnvironment(
+      client: .live,
+      scheduler: .main
+    )
   )
 }

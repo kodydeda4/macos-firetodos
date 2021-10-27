@@ -63,9 +63,12 @@ let authenticationReducer = Reducer<AuthenticationState, AuthenticationAction, A
   .binding()
 
 extension AuthenticationState {
-  static let defaultStore = Store(
+  static let defaultStore = Store<AuthenticationState, AuthenticationAction>(
     initialState: .init(),
     reducer: authenticationReducer,
-    environment: .init(client: .live, scheduler: .main)
+    environment: AuthenticationEnvironment(
+      client: .live,
+      scheduler: .main
+    )
   )
 }

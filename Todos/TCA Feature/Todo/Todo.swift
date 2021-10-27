@@ -45,7 +45,7 @@ let todoReducer = Reducer<TodoState, TodoAction, Void> { state, action, _ in
 }
 
 extension TodoState {
-  static let defaultStore = Store(
+  static let defaultStore = Store<TodoState, TodoAction>(
     initialState: .init(
       timestamp: Date(),
       userID: "GxscCXP9odUQucq6A5cBXJEiTBd2",
