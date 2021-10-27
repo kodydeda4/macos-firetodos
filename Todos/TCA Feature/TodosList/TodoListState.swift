@@ -30,7 +30,7 @@ enum TodoListAction: Equatable {
 }
 
 struct TodoListEnvironment {
-  let client: UserClient
+  let client: TodoListClient
   let scheduler: AnySchedulerOf<DispatchQueue>
 }
 
@@ -54,31 +54,31 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       
     // firestore
     case .fetchTodos:
-      return environment.client.fetchTodos()
+      return environment.client.fetch()
         .receive(on: environment.scheduler)
         .catchToEffect()
         .map(TodoListAction.didFetchTodos)
       
     case .createTodo:
-      return environment.client.createTodo()
+      return environment.client.create()
         .receive(on: environment.scheduler)
         .catchToEffect()
         .map(TodoListAction.didFirestoreCRUD)
       
     case let .removeTodo(todo):
-      return environment.client.removeTodo(todo)
+      return environment.client.delete(todo)
         .receive(on: environment.scheduler)
         .catchToEffect()
         .map(TodoListAction.didFirestoreCRUD)
       
     case let .updateTodo(todo):
-      return environment.client.updateTodo(todo)
+      return environment.client.update(todo)
         .receive(on: environment.scheduler)
         .catchToEffect()
         .map(TodoListAction.didFirestoreCRUD)
       
     case .clearCompleted:
-      return environment.client.removeTodos(state.todos.filter(\.done))
+      return environment.client.deleteX(state.todos.filter(\.done))
         .receive(on: environment.scheduler)
         .catchToEffect()
         .map(TodoListAction.didFirestoreCRUD)

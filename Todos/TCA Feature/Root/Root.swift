@@ -18,7 +18,8 @@ enum RootAction: Equatable {
 }
 
 struct RootEnvironment {
-  let client: UserClient
+  let authClient: AuthClient
+  let todosClient: TodoListClient
   let scheduler: AnySchedulerOf<DispatchQueue>
 }
 
@@ -26,12 +27,12 @@ let rootReducer = Reducer<RootState, RootAction, RootEnvironment>.combine(
   authenticationReducer.pullback(
     state: /RootState.authentication,
     action: /RootAction.authentication,
-    environment: { .init(client: $0.client, scheduler: $0.scheduler) }
+    environment: { AuthenticationEnvironment(client: $0.authClient, scheduler: $0.scheduler) }
   ),
   userReducer.pullback(
     state: /RootState.user,
     action: /RootAction.user,
-    environment: { .init(client: $0.client, scheduler: $0.scheduler) }
+    environment: { UserEnvironment(client: $0.todosClient, scheduler: $0.scheduler) }
   ),
   Reducer { state, action, environment in
     switch action {
@@ -64,13 +65,17 @@ let rootReducer = Reducer<RootState, RootAction, RootEnvironment>.combine(
 )
 
 extension RootState {
-  static let defaultStore = Store(
+  static let defaultStore: Store<RootState, RootAction> = .init(
     initialState: .authentication(
-      .init(
+      AuthenticationState.init(
         email: "test@email.com",
         password: "123123"
       )),
     reducer: rootReducer,
-    environment: .init(client: .live, scheduler: .main)
+    environment: RootEnvironment(
+      authClient: .live,
+      todosClient: .live,
+      scheduler: .main
+    )
   )
 }

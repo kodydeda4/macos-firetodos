@@ -23,7 +23,7 @@ enum AuthenticationAction: BindableAction, Equatable {
 }
 
 struct AuthenticationEnvironment {
-  let client: UserClient
+  let client: AuthClient
   let scheduler: AnySchedulerOf<DispatchQueue>
 }
 

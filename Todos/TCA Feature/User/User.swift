@@ -18,7 +18,7 @@ enum UserAction: Equatable {
 }
 
 struct UserEnvironment {
-  let client: UserClient
+  let client: TodoListClient
   let scheduler: AnySchedulerOf<DispatchQueue>
 }
 
