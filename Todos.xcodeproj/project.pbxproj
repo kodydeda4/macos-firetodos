@@ -10,7 +10,7 @@
 		334BC7672728968700CC3779 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BC7662728968700CC3779 /* User.swift */; };
 		334BC7692728993100CC3779 /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BC7682728993100CC3779 /* UserView.swift */; };
 		334BFBC02667DB8300F7952C /* TodosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BFBBF2667DB8300F7952C /* TodosApp.swift */; };
-		334BFBC22667DB8300F7952C /* TodoListState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BFBC12667DB8300F7952C /* TodoListState.swift */; };
+		334BFBC22667DB8300F7952C /* TodoList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BFBC12667DB8300F7952C /* TodoList.swift */; };
 		334BFBC42667DB8500F7952C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 334BFBC32667DB8500F7952C /* Assets.xcassets */; };
 		334BFBC72667DB8500F7952C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 334BFBC62667DB8500F7952C /* Preview Assets.xcassets */; };
 		334BFBD12667DBD300F7952C /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 334BFBD02667DBD300F7952C /* ComposableArchitecture */; };
@@ -41,7 +41,7 @@
 		334BC7682728993100CC3779 /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		334BFBBC2667DB8300F7952C /* Todos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Todos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		334BFBBF2667DB8300F7952C /* TodosApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodosApp.swift; sourceTree = "<group>"; };
-		334BFBC12667DB8300F7952C /* TodoListState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListState.swift; sourceTree = "<group>"; };
+		334BFBC12667DB8300F7952C /* TodoList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoList.swift; sourceTree = "<group>"; };
 		334BFBC32667DB8500F7952C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		334BFBC62667DB8500F7952C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		334BFBC82667DB8500F7952C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -161,7 +161,7 @@
 		334BFBE42667DEC900F7952C /* TodosList */ = {
 			isa = PBXGroup;
 			children = (
-				334BFBC12667DB8300F7952C /* TodoListState.swift */,
+				334BFBC12667DB8300F7952C /* TodoList.swift */,
 				3364065A2667F3E600545A25 /* TodoListView.swift */,
 			);
 			path = TodosList;
@@ -209,8 +209,8 @@
 		33E6A7F02728B19800C7ABE8 /* API */ = {
 			isa = PBXGroup;
 			children = (
-				33E6A7F12728B1A100C7ABE8 /* TodoListClient.swift */,
 				3352C13F2728CBBB003E30AA /* AuthClient.swift */,
+				33E6A7F12728B1A100C7ABE8 /* TodoListClient.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -313,7 +313,7 @@
 				334BFBE72667DF0000F7952C /* RootView.swift in Sources */,
 				334BFBDC2667DCD200F7952C /* Root.swift in Sources */,
 				334BC7692728993100CC3779 /* UserView.swift in Sources */,
-				334BFBC22667DB8300F7952C /* TodoListState.swift in Sources */,
+				334BFBC22667DB8300F7952C /* TodoList.swift in Sources */,
 				334BFBC02667DB8300F7952C /* TodosApp.swift in Sources */,
 				336406562667EE8900545A25 /* Todo.swift in Sources */,
 			);
