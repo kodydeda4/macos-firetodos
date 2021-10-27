@@ -14,26 +14,55 @@ struct AuthenticationView: View {
   
   var body: some View {
     WithViewStore(store) { viewStore in
-      Form {
+      VStack {
+        Circle()
+          .frame(width: 30, height: 30)
+          .foregroundColor(.red)
+          .overlay(Image(systemSymbol: .lock).foregroundColor(.black))
+        
         Text("Login")
           .font(.largeTitle)
         
-        SignInWithAppleButton() {
-          viewStore.send(.signInWithApple(id: $0, nonce: $1))
-        }
         
         TextField("Email", text: viewStore.binding(\.$email))
-        SecureField("Password", text: viewStore.binding(\.$password))
-
-        Button("Login") {
-          viewStore.send(.signInWithEmail)
-        }
+        TextField("Password", text: viewStore.binding(\.$password))
+        //        SecureField("Password", text: viewStore.binding(\.$password))
         
-        Button("Continue as Guest") {
-          viewStore.send(.signInAnonymously)
+        Button(action: {viewStore.send(.signInWithEmail)}) {
+          ZStack {
+            RoundedRectangle(cornerRadius: 4)
+            .foregroundColor(.appColor)
+            Text("Log in")
+              .foregroundColor(Color(nsColor: .windowBackgroundColor))
+            
+          }
         }
+        .frame(height: 24)
+        .buttonStyle(.plain)
+        
+        //        Button("Continue as Guest") {
+        //          viewStore.send(.signInAnonymously)
+        //        }
+        //
+        //        SignInWithAppleButton() {
+        //          viewStore.send(.signInWithApple(id: $0, nonce: $1))
+        //        }
+        
+        HStack {
+          Link("Forgot Password?", destination: URL(string: "https://www.google.com")!)
+          
+          Spacer()
+          Link("Don't have an account? Sign up", destination: URL(string: "https://www.google.com")!)
+        }
+        .foregroundColor(.appColor)
+        
+        Link("Created by Kody Deda", destination: URL(string: "https://kodydeda.netlify.app")!)
+          .padding(.top)
+          .foregroundColor(.gray)
       }
-      .navigationTitle("")
+      .padding()
+      .padding(.horizontal, 100)
+      .navigationTitle("Login")
     }
   }
 }
