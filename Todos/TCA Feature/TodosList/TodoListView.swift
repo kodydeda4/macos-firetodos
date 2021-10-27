@@ -25,27 +25,22 @@ struct TodoListView: View {
           action: TodoListAction.todos(id:action:)
         ), content: TodoView.init)
       }
-//      .alert(store.scope(state: \.alert), dismiss: .dismissSignOutAlert)
+      //      .alert(store.scope(state: \.alert), dismiss: .dismissSignOutAlert)
+      .navigationTitle("")
       .onAppear {
         viewStore.send(.fetchTodos)
       }
       .toolbar {
-        ToolbarItem {
-          Spacer()
+        Spacer()
+        Button("Add") {
+          viewStore.send(.createTodo)
         }
-        ToolbarItem {
-          Button("Add") { viewStore.send(.createTodo) }
+        Button("Clear Completed") {
+          viewStore.send(.clearCompleted)
         }
-        ToolbarItem {
-          Button("Clear Completed") {
-            viewStore.send(.clearCompleted)
-          }
-        }
-        ToolbarItem {
-//          Button("Sign out") {
-//            viewStore.send(.confirmSignOutAlert)
-//          }
-        }
+//        Button("Sign out") {
+//          viewStore.send(.confirmSignOutAlert)
+//        }
       }
     }
   }

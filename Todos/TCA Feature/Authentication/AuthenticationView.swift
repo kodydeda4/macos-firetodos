@@ -14,7 +14,7 @@ struct AuthenticationView: View {
   
   var body: some View {
     WithViewStore(store) { viewStore in
-      VStack {
+      VStack(spacing: 20) {
         Circle()
           .frame(width: 30, height: 30)
           .foregroundColor(.red)
@@ -63,6 +63,7 @@ struct AuthenticationView: View {
       .padding()
       .padding(.horizontal, 100)
       .navigationTitle("Login")
+      .textFieldStyle(RoundedBorderTextFieldStyle())
     }
   }
 }
