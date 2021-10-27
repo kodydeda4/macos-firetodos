@@ -106,8 +106,8 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
   }
 )
 
-extension TodoListState {
-  static let defaultStore = Store<TodoListState, TodoListAction>(
+extension Store where State == TodoListState, Action == TodoListAction {  
+  static let `default` = Store(
     initialState: .init(),
     reducer: todoListReducer,
     environment: TodoListEnvironment(

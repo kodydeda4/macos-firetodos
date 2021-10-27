@@ -56,8 +56,8 @@ let rootReducer = Reducer<RootState, RootAction, RootEnvironment>.combine(
   }
 )
 
-extension RootState {
-  static let defaultStore: Store<RootState, RootAction> = .init(
+extension Store where State == RootState, Action == RootAction {
+  static let `default` = Store(
     initialState: .authentication(
       AuthenticationState.init(
         email: "test@email.com",

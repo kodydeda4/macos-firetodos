@@ -47,8 +47,8 @@ let userReducer = Reducer<UserState, UserAction, UserEnvironment>.combine(
   }
 )
 
-extension UserState {
-  static let defaultStore = Store<UserState, UserAction>(
+extension Store where State == UserState, Action == UserAction {
+  static let `default` = Store(
     initialState: .init(),
     reducer: userReducer,
     environment: UserEnvironment(

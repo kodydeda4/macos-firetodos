@@ -72,7 +72,7 @@ struct AuthenticationView: View {
 
 struct Authentication_Previews: PreviewProvider {
   static var previews: some View {
-    AuthenticationView(store: AuthenticationState.defaultStore)
+    AuthenticationView(store: .default)
   }
 }
 

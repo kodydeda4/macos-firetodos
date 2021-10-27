@@ -48,6 +48,6 @@ struct TodoListView: View {
 
 struct TodosListView_Previews: PreviewProvider {
   static var previews: some View {
-    TodoListView(store: TodoListState.defaultStore)
+    TodoListView(store: .default)
   }
 }

@@ -61,10 +61,10 @@ let authenticationReducer = Reducer<AuthenticationState, AuthenticationAction, A
     return .none
   }
 }
-  .binding()
+.binding()
 
-extension AuthenticationState {
-  static let defaultStore = Store<AuthenticationState, AuthenticationAction>(
+extension Store where State == AuthenticationState, Action == AuthenticationAction {
+  static let `default` = Store(
     initialState: .init(),
     reducer: authenticationReducer,
     environment: AuthenticationEnvironment(
