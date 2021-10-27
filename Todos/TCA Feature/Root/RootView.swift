@@ -14,12 +14,16 @@ struct RootView: View {
   
   var body: some View {
     SwitchStore(store) {
-      CaseLet(state: /RootState.authentication, action: RootAction.authentication) {
-        AuthenticationView(store: $0)
-      }
-      CaseLet(state: /RootState.user, action: RootAction.user) {
-        UserView(store: $0)
-      }
+      CaseLet(
+        state: /RootState.authentication,
+        action: RootAction.authentication,
+        then: AuthenticationView.init(store:)
+      )
+      CaseLet(
+        state: /RootState.user,
+        action: RootAction.user,
+        then: UserView.init(store:)
+      )
     }
   }
 }
