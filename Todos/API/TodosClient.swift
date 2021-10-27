@@ -12,7 +12,7 @@ import FirebaseFirestore
 import FirebaseFirestoreSwift
 import CoreMedia
 
-struct TodoListClient {
+struct TodosClient {
   let fetch:   ()            -> Effect<[TodoState], FirestoreError>
   let create:  ()            -> Effect<Bool, FirestoreError>
   let update:  (TodoState)   -> Effect<Bool, FirestoreError>
@@ -20,8 +20,8 @@ struct TodoListClient {
   let deleteX: ([TodoState]) -> Effect<Bool, FirestoreError>
 }
 
-extension TodoListClient {
-  static let live = TodoListClient(
+extension TodosClient {
+  static let live = TodosClient(
     fetch: {
       let rv = PassthroughSubject<[TodoState], FirestoreError>()
       Firestore.firestore()

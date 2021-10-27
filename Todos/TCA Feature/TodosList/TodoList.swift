@@ -30,7 +30,7 @@ enum TodoListAction: Equatable {
 }
 
 struct TodoListEnvironment {
-  let client: TodoListClient
+  let client: TodosClient
   let scheduler: AnySchedulerOf<DispatchQueue>
 }
 

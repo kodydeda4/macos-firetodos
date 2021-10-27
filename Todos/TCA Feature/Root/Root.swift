@@ -19,7 +19,7 @@ enum RootAction: Equatable {
 
 struct RootEnvironment {
   let authClient: AuthClient
-  let todosClient: TodoListClient
+  let todosClient: TodosClient
   let scheduler: AnySchedulerOf<DispatchQueue>
 }
 
