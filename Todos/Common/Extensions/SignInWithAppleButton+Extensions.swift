@@ -15,35 +15,40 @@ extension SignInWithAppleButton {
   static private var currentNonce = randomNonce()
   
   /// Attempts Apple sign-in and passes id and nonce to `onCompletion` for API validation.
-  init(onCompletion loginUsing: @escaping (((ASAuthorizationAppleIDCredential), String) -> Void)) {
+  init(onCompletion loginUsing: @escaping ((SignInWithAppleToken) -> Void)) {
     self.init(
       onRequest: { request in
         
-        /// 1. update current nonce
+        /// 1. update nonce
         SignInWithAppleButton.currentNonce = randomNonce()
         
         /// 2. update request
         request.requestedScopes = [.fullName, .email]
-        request.nonce = hash(input: SignInWithAppleButton.currentNonce)
+        request.nonce = SignInWithAppleButton.currentNonce.hash()
       },
       
       onCompletion: { authorizationToken in
+        /// 3. unwrap id
+        guard let id = getAppleIDCredential(from: authorizationToken) else { return }
         
-        /// 3. unwrap appleID
-        if let credental = getAppleIDCredential(from: authorizationToken) {
-          
-          /// 4. pass appleID & nonce to `onCompletion`
-          loginUsing(credental, SignInWithAppleButton.currentNonce)
-        }
+        /// 4. login
+        loginUsing(
+          SignInWithAppleToken(
+            id: id,
+            nonce: SignInWithAppleButton.currentNonce
+          )
+        )
       }
     )
   }
 }
 
-// MARK:- Supporting Methods
+struct SignInWithAppleToken: Equatable {
+  let id: ASAuthorizationAppleIDCredential
+  let nonce: String
+}
 
-/// Given `Result<ASAuthorization, Error>`,
-/// returns `ASAuthorizationAppleIDCredential?`
+// MARK:- Supporting Methods
 
 fileprivate func getAppleIDCredential(
   from authorization: Result<ASAuthorization, Error>
@@ -106,13 +111,11 @@ fileprivate func randomNonce(length: Int = 32) -> String {
 }
 
 /// Hash a String
-fileprivate func hash(input: String) -> String {
-  let inputData = Data(input.utf8)
-  
-  let hashString = SHA256
-    .hash(data: inputData)
-    .compactMap { String(format: "%02x", $0) }
-    .joined()
-  
-  return hashString
+private extension String {
+  func hash() -> String {
+    SHA256
+      .hash(data: Data(self.utf8))
+      .compactMap { String(format: "%02x", $0) }
+      .joined()
+  }
 }

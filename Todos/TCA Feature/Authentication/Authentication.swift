@@ -9,6 +9,8 @@ import ComposableArchitecture
 import AuthenticationServices
 import Firebase
 
+
+
 struct AuthenticationState: Equatable {
   @BindableState var email = String()
   @BindableState var password = String()
@@ -19,7 +21,7 @@ enum AuthenticationAction: BindableAction, Equatable {
   case binding(BindingAction<AuthenticationState>)
   case signInAnonymously
   case signInWithEmail
-  case signInWithApple(id: ASAuthorizationAppleIDCredential, nonce: String)
+  case signInWithApple(SignInWithAppleToken)
   case signInResult(Result<User, FirebaseError>)
 }
 
@@ -47,8 +49,8 @@ let authenticationReducer = Reducer<AuthenticationState, AuthenticationAction, A
       .catchToEffect()
       .map(AuthenticationAction.signInResult)
     
-  case let .signInWithApple(appleID, nonce):
-    return environment.client.signInApple(appleID, nonce)
+  case let .signInWithApple(token):
+    return environment.client.signInApple(token.id, token.nonce)
       .receive(on: environment.scheduler)
       .catchToEffect()
       .map(AuthenticationAction.signInResult)

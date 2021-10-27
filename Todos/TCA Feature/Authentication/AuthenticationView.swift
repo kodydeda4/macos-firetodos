@@ -46,7 +46,7 @@ struct AuthenticationView: View {
         }
         
         SignInWithAppleButton() {
-          viewStore.send(.signInWithApple(id: $0, nonce: $1))
+          viewStore.send(.signInWithApple($0))
         }
         
         HStack {
