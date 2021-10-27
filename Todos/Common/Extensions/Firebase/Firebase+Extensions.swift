@@ -10,15 +10,10 @@ import Combine
 import Firebase
 import AuthenticationServices
 
-/// Firebase Errors.
-struct FirebaseError: Error, Equatable {
-  static func == (lhs: FirebaseError, rhs: FirebaseError) -> Bool {
-    lhs.error.localizedDescription == rhs.error.localizedDescription
-  }
-  
-  var error: Error
-  
-  init(_ error: Error) {
-    self.error = error
-  }
+enum FirebaseError: Error, Equatable {
+  case signInAnonymously
+  case signInEmailPassword
+  case signInApple
+  case signout
 }
+

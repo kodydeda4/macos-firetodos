@@ -6,6 +6,7 @@
 //
 
 import ComposableArchitecture
+import Firebase
 
 enum RootState: Equatable {
   case authentication(AuthenticationState)
@@ -38,8 +39,11 @@ let rootReducer = Reducer<RootState, RootAction, RootEnvironment>.combine(
     switch action {
       
     case let .authentication(subaction):
-      if subaction == .signInResult(.success(true)) {
-        state = .user(.init())
+      switch subaction {
+      case let .signInResult(.success(user)):
+        state = .user(.init(user: user))
+      default:
+        break
       }
       return .none
       

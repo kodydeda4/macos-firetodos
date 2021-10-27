@@ -14,43 +14,41 @@ import AuthenticationServices
 import CoreMedia
 
 struct AuthClient {
-  let signInAnonymously:   ()                                                        -> Effect<Bool, FirebaseError>
-  let signInEmailPassword: (_ email: String, _ password: String)                     -> Effect<Bool, FirebaseError>
-  let signInApple:         (_ id: ASAuthorizationAppleIDCredential, _ nonce: String) -> Effect<Bool, FirebaseError>
+  let signInAnonymously:   ()                                                        -> Effect<User, FirebaseError>
+  let signInEmailPassword: (_ email: String, _ password: String)                     -> Effect<User, FirebaseError>
+  let signInApple:         (_ id: ASAuthorizationAppleIDCredential, _ nonce: String) -> Effect<User, FirebaseError>
 }
 
 extension AuthClient {
   static let live = AuthClient(
     signInAnonymously: {
-      let rv = PassthroughSubject<Bool, FirebaseError>()
+      let rv = PassthroughSubject<User, FirebaseError>()
       
-      Auth.auth().signInAnonymously { result, error in
-        print(result.debugDescription)
-        
-        if let error = error {
-          rv.send(completion: .failure(FirebaseError(error)))
-        } else {
-          rv.send(true)
+      Auth.auth().signInAnonymously { _, _ in
+        if let user = Auth.auth().currentUser {
+          rv.send(user)
+          return
         }
+        rv.send(completion: .failure(.signInAnonymously))
       }
       
       return rv.eraseToEffect()
     },
     signInEmailPassword: { email, password in
-      let rv = PassthroughSubject<Bool, FirebaseError>()
+      let rv = PassthroughSubject<User, FirebaseError>()
       
-      Auth.auth().signIn(withEmail: email, password: password) { result, error in
-        if let error = error {
-          rv.send(completion: .failure(FirebaseError(error)))
-        } else {
-          rv.send(true)
+      Auth.auth().signIn(withEmail: email, password: password) { _, _ in
+        if let user = Auth.auth().currentUser {
+          rv.send(user)
+          return
         }
+        rv.send(completion: .failure(.signInEmailPassword))
       }
       
       return rv.eraseToEffect()
     },
     signInApple: { appleID, nonce in
-      let rv = PassthroughSubject<Bool, FirebaseError>()
+      let rv = PassthroughSubject<User, FirebaseError>()
       
       guard let appleIDToken = appleID.identityToken,
             let idTokenString = String(data: appleIDToken, encoding: .utf8)
@@ -62,14 +60,14 @@ extension AuthClient {
           withProviderID: "apple.com",
           idToken: idTokenString,
           rawNonce: nonce
-        )) { authResult, error in
-          switch error {
-          case .none:
-            rv.send(true)
-          case let .some(error):
-            rv.send(completion: .failure(FirebaseError(error)))
-          }
+        )
+      ) { _, _ in
+        if let user = Auth.auth().currentUser {
+          rv.send(user)
+          return
         }
+        rv.send(completion: .failure(.signInApple))
+      }
       return rv.eraseToEffect()
     }
   )

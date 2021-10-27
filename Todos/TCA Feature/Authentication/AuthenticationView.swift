@@ -41,13 +41,13 @@ struct AuthenticationView: View {
         .frame(height: 24)
         .buttonStyle(.plain)
         
-        //        Button("Continue as Guest") {
-        //          viewStore.send(.signInAnonymously)
-        //        }
-        //
-        //        SignInWithAppleButton() {
-        //          viewStore.send(.signInWithApple(id: $0, nonce: $1))
-        //        }
+        Button("Continue as Guest") {
+          viewStore.send(.signInAnonymously)
+        }
+        
+        SignInWithAppleButton() {
+          viewStore.send(.signInWithApple(id: $0, nonce: $1))
+        }
         
         HStack {
           Link("Forgot Password?", destination: URL(string: "https://www.google.com")!)
@@ -63,6 +63,7 @@ struct AuthenticationView: View {
       }
       .padding()
       .padding(.horizontal, 100)
+      .frame(width: 540, height: 860)
       .navigationTitle("Login")
       .textFieldStyle(RoundedBorderTextFieldStyle())
     }

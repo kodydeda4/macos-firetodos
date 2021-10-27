@@ -6,8 +6,10 @@
 //
 
 import ComposableArchitecture
+import Firebase
 
 struct UserState: Equatable {
+  var user: User?
   var todosList = TodoListState()
   var alert: AlertState<UserAction>?
 }

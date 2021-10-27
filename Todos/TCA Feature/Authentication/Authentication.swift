@@ -7,6 +7,7 @@
 
 import ComposableArchitecture
 import AuthenticationServices
+import Firebase
 
 struct AuthenticationState: Equatable {
   @BindableState var email = String()
@@ -19,7 +20,7 @@ enum AuthenticationAction: BindableAction, Equatable {
   case signInAnonymously
   case signInWithEmail
   case signInWithApple(id: ASAuthorizationAppleIDCredential, nonce: String)
-  case signInResult(Result<Bool, FirebaseError>)
+  case signInResult(Result<User, FirebaseError>)
 }
 
 struct AuthenticationEnvironment {
