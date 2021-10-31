@@ -10,7 +10,7 @@ import ComposableArchitecture
 
 struct TodoListState: Equatable {
   var todos: IdentifiedArrayOf<TodoState> = []
-  var error: APIError?
+  var error: DatabaseError?
   var alert: AlertState<TodoListAction>?
 }
 
@@ -21,8 +21,8 @@ enum TodoListAction: Equatable {
   case removeTodo(TodoState)
   case updateTodo(TodoState)
   case clearCompleted
-  case didFetchTodos(Result<[TodoState], APIError>)
-  case didFirestoreCRUD(Result<Bool, APIError>)
+  case didFetchTodos(Result<[TodoState], DatabaseError>)
+  case didFirestoreCRUD(Result<Bool, DatabaseError>)
   case signOutButtonTapped
 }
 
