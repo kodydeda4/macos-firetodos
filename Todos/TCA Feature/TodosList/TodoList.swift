@@ -105,7 +105,7 @@ extension Store where State == TodoListState, Action == TodoListAction {
     initialState: .init(),
     reducer: todoListReducer,
     environment: TodoListEnvironment(
-      client: .firestore,
+      client: .live,
       scheduler: .main
     )
   )

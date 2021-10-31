@@ -52,7 +52,7 @@ extension Store where State == UserState, Action == UserAction {
     initialState: .init(),
     reducer: userReducer,
     environment: UserEnvironment(
-      client: .firestore,
+      client: .live,
       scheduler: .main
     )
   )

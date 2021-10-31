@@ -65,8 +65,8 @@ extension Store where State == RootState, Action == RootAction {
       )),
     reducer: rootReducer,
     environment: RootEnvironment(
-      authClient: .firebase,
-      todosClient: .firestore,
+      authClient: .live,
+      todosClient: .live,
       scheduler: .main
     )
   )
