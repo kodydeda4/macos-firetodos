@@ -78,55 +78,32 @@ private extension String {
 }
 
 
+
+//extension SignInWithAppleToken {
+//  init(_ authorization: Result<ASAuthorization, Error>) {
+//    self.init(appleID: c, nonce: SignInWithAppleButton.currentNonce)
+//  }
+//}
+
+
+
+
 // MARK: - Supporting Methods
 fileprivate func getSignInToken(from authorization: Result<ASAuthorization, Error>) -> SignInWithAppleToken? {
-  
-  var authResults: ASAuthorization? {
-    switch authorization {
-      
-    case let .success(value):
-      return value
-      
-    case .failure:
-      return nil
+  do {
+    let a = try authorization.map(\.credential).get()
+    
+    if let c = a as? ASAuthorizationAppleIDCredential {
+      return SignInWithAppleToken(
+        appleID: c,
+        nonce: SignInWithAppleButton.currentNonce
+      )
     }
-  }
-  var credential: ASAuthorizationAppleIDCredential? {
-    switch authResults?.credential {
-      
-    case let value as ASAuthorizationAppleIDCredential:
-      return value
-      
-    default:
-      return nil
-    }
-  }
-  
-  if let c = credential {
-    return SignInWithAppleToken(
-      appleID: c,
-      nonce: SignInWithAppleButton.currentNonce
-    )
+  } catch {
+    // ...
   }
   return nil
 }
-
-//import Combine
-//// MARK: - Supporting Methods
-//fileprivate func getSignInToken2(from authorization: Result<ASAuthorization, Error>) -> SignInWithAppleToken? {
-////  guard let authResults = authorization.map(\.credential)
-////  else { return nil }
-//
-//  let a = Just(authorization)
-//    .compactMap { $0 as? ASAuthorizationAppleIDCredential }
-//    .map { SignInWithAppleToken(id: $0, nonce: SignInWithAppleButton.currentNonce) }
-//    .eraseToAnyPublisher()
-//
-//
-//
-//  return nil
-//}
-
 
 
 
