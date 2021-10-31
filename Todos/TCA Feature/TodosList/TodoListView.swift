@@ -25,7 +25,7 @@ struct TodoListView: View {
           action: TodoListAction.todos(id:action:)
         ), content: TodoView.init)
       }
-      //      .alert(store.scope(state: \.alert), dismiss: .dismissSignOutAlert)
+//            .alert(store.scope(state: \.alert), dismiss: .dismissSignOutAlert)
       .navigationTitle("")
       .onAppear {
         viewStore.send(.fetchTodos)

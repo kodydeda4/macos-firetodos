@@ -10,23 +10,19 @@ import ComposableArchitecture
 
 struct TodoListState: Equatable {
   var todos: IdentifiedArrayOf<TodoState> = []
-  var error: FirestoreError?
+  var error: DatabaseError?
   var alert: AlertState<TodoListAction>?
 }
 
 enum TodoListAction: Equatable {
   case todos(id: TodoState.ID, action: TodoAction)
-  
-  // firestore
   case fetchTodos
   case createTodo
   case removeTodo(TodoState)
   case updateTodo(TodoState)
   case clearCompleted
-  
-  // results
-  case didFetchTodos(Result<[TodoState], FirestoreError>)
-  case didFirestoreCRUD(Result<Bool, FirestoreError>)
+  case didFetchTodos(Result<[TodoState], DatabaseError>)
+  case didFirestoreCRUD(Result<Bool, DatabaseError>)
   case signOutButtonTapped
 }
 
@@ -53,7 +49,6 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       ? Effect(value: .removeTodo(todo))
       : Effect(value: .updateTodo(todo))
       
-      // firestore
     case .fetchTodos:
       return environment.client.fetch()
         .receive(on: environment.scheduler)
@@ -84,7 +79,6 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
         .catchToEffect()
         .map(TodoListAction.didFirestoreCRUD)
       
-      // results
     case let .didFetchTodos(.success(todos)):
       state.todos = IdentifiedArray(uniqueElements: todos)
       return .none

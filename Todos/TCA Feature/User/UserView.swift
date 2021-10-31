@@ -17,11 +17,6 @@ struct UserView: View {
         state: \.todosList,
         action: UserAction.todosList
       ))
-//        .toolbar {
-//          Button("Sign Out") {
-//            viewStore.send(.signOut)
-//          }
-//        }
     }
   }
 }

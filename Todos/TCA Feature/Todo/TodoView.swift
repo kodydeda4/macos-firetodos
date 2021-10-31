@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ComposableArchitecture
+import SFSafeSymbols
 
 struct TodoView: View {
   let store: Store<TodoState, TodoAction>
@@ -15,20 +16,15 @@ struct TodoView: View {
     WithViewStore(store) { viewStore in
       VStack {
         HStack {
-          Button<Image>(viewStore.done ? .largecircleFillCircle : .circle) {
-            viewStore.send(.toggleCompleted)
+          Button(action: { viewStore.send(.toggleCompleted) }) {
+            Image(systemSymbol: viewStore.done ? .largecircleFillCircle : .circle)
           }
           .buttonStyle(PlainButtonStyle())
           .foregroundColor(.appColor)
           
           TextField("Description", text: viewStore.binding(get: \.text, send: TodoAction.updateText))
             .opacity(viewStore.done ? 0.25 : 1)
-          
-//          Toggle("", isOn: viewStore.binding(\.$done))
-          
-//          TextField("Description", text: viewStore.binding(\.$text))
-//            .opacity(viewStore.done ? 0.25 : 1)
-          
+                    
           Button("delete") {
             viewStore.send(.deleteButonTapped)
           }

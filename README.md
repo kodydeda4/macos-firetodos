@@ -2,6 +2,22 @@
 
 ![banner](https://user-images.githubusercontent.com/45678211/121034624-258f8680-c77b-11eb-96fd-e949a219a2d3.png)
 
+/*------------------------------------------------------------------------------------------
+ 
+ Extra Notes.
+ 
+ SwiftUI: Fetching Data from Firestore in Real Time (April 2020)
+ https://peterfriese.dev/swiftui-firebase-fetch-data/
+ 
+ SwiftUI: Mapping Firestore Documents using Swift Codable (May 2020)
+ https://peterfriese.dev/swiftui-firebase-codable/
+ 
+ Mapping Firestore Data in Swift (March 2021)
+ https://peterfriese.dev/firestore-codable-the-comprehensive-guide/
+ 
+ ------------------------------------------------------------------------------------------*/
+
+
 ## About
 
 `Firetodos` is a Todo's app for macOS that implements Firebase authentication and the Cloud Firestore database.

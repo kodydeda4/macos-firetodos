@@ -13,17 +13,24 @@ import FirebaseFirestoreSwift
 import CoreMedia
 
 struct TodosClient {
-  let fetch:   ()            -> Effect<[TodoState], FirestoreError>
-  let create:  ()            -> Effect<Bool, FirestoreError>
-  let update:  (TodoState)   -> Effect<Bool, FirestoreError>
-  let delete:  (TodoState)   -> Effect<Bool, FirestoreError>
-  let deleteX: ([TodoState]) -> Effect<Bool, FirestoreError>
+  let fetch:   ()            -> Effect<[TodoState], DatabaseError>
+  let create:  ()            -> Effect<Bool, DatabaseError>
+  let update:  (TodoState)   -> Effect<Bool, DatabaseError>
+  let delete:  (TodoState)   -> Effect<Bool, DatabaseError>
+  let deleteX: ([TodoState]) -> Effect<Bool, DatabaseError>
+}
+
+enum DatabaseError: Error, Equatable {
+  case fetch
+  case create
+  case update
+  case delete
 }
 
 extension TodosClient {
   static let live = TodosClient(
     fetch: {
-      let rv = PassthroughSubject<[TodoState], FirestoreError>()
+      let rv = PassthroughSubject<[TodoState], DatabaseError>()
       Firestore.firestore()
         .collection("todos")
         .whereField("userID", isEqualTo: Auth.auth().currentUser!.uid)
@@ -31,13 +38,13 @@ extension TodosClient {
           if let values = querySnapshot?.documents.compactMap({ snapshot in try? snapshot.data(as: TodoState.self) }) {
             rv.send(values)
           } else if let error = error {
-            rv.send(completion: .failure(FirestoreError(error)))
+            rv.send(completion: .failure(.fetch))
           }
         }
       return rv.eraseToEffect()
     },
     create: {
-      let rv = PassthroughSubject<Bool, FirestoreError>()
+      let rv = PassthroughSubject<Bool, DatabaseError>()
       
       do {
         let _ = try Firestore.firestore()
@@ -51,13 +58,13 @@ extension TodosClient {
         rv.send(true)
       }
       catch {
-        rv.send(completion: .failure(FirestoreError(error)))
+        rv.send(completion: .failure(.create))
       }
       
       return rv.eraseToEffect()
     },
     update: { todo in
-      let rv = PassthroughSubject<Bool, FirestoreError>()
+      let rv = PassthroughSubject<Bool, DatabaseError>()
       do {
         try Firestore.firestore()
           .collection("todos")
@@ -67,16 +74,16 @@ extension TodosClient {
       }
       catch {
         print(error)
-        rv.send(completion: .failure(FirestoreError(error)))
+        rv.send(completion: .failure(.update))
       }
       return rv.eraseToEffect()
     },
     delete: { todo in
-      let rv = PassthroughSubject<Bool, FirestoreError>()
+      let rv = PassthroughSubject<Bool, DatabaseError>()
       
       Firestore.firestore().collection("todos").document(todo.id!).delete { error in
         if let error = error {
-          rv.send(completion: .failure(FirestoreError(error)))
+          rv.send(completion: .failure(.delete))
         } else {
           rv.send(true)
         }
@@ -84,12 +91,12 @@ extension TodosClient {
       return rv.eraseToEffect()
     },
     deleteX: { todos in
-      let rv = PassthroughSubject<Bool, FirestoreError>()
+      let rv = PassthroughSubject<Bool, DatabaseError>()
       
       todos.map(\.id).forEach { id in
         Firestore.firestore().collection("todos").document(id!).delete { error in
           if let error = error {
-            rv.send(completion: .failure(FirestoreError(error)))
+            rv.send(completion: .failure(.delete))
           } else {
             rv.send(true)
           }
