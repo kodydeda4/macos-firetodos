@@ -19,7 +19,7 @@ import FirebaseFirestoreSwift
 struct AuthenticationState: Equatable {
   @BindableState var email = String()
   @BindableState var password = String()
-  var error: FirebaseError?
+  var error: AuthError?
 }
 
 enum AuthenticationAction: BindableAction, Equatable {
@@ -27,7 +27,7 @@ enum AuthenticationAction: BindableAction, Equatable {
   case signInAnonymously
   case signInWithEmail
   case signInWithApple(SignInWithAppleToken)
-  case signInResult(Result<User, FirebaseError>)
+  case signInResult(Result<User, AuthError>)
 }
 
 struct AuthenticationEnvironment {
