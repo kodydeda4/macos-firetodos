@@ -45,10 +45,12 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       
     case let .todos(id, action):
       let todo = state.todos[id: id]!
-      
-      return action == .deleteButonTapped
-      ? Effect(value: .removeTodo(todo))
-      : Effect(value: .updateTodo(todo))
+      switch action {
+      case .deleteButonTapped:
+        return Effect(value: .removeTodo(todo))
+      default:
+        return Effect(value: .updateTodo(todo))
+      }
       
     case .fetchTodos:
       return environment.client.fetch()
