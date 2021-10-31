@@ -21,14 +21,14 @@ struct TodosClient {
 }
 
 extension TodosClient {
-  static var live: Self {
+  static var firestore: Self {
+    let db = Firestore.firestore()
     let userID = Auth.auth().currentUser!.uid
     
     return Self(
       fetch: {
         let rv = PassthroughSubject<[TodoState], APIError>()
-        Firestore.firestore()
-          .collection("todos")
+        db.collection("todos")
           .whereField("userID", isEqualTo: userID)
           .addSnapshotListener { querySnapshot, error in
             if let values = querySnapshot?.documents.compactMap({ try? $0.data(as: TodoState.self) }) {
@@ -44,8 +44,8 @@ extension TodosClient {
         let rv = PassthroughSubject<Bool, APIError>()
         
         do {
-          let _ = try Firestore.firestore()
-            .collection("todos")
+          let _ = try
+          db.collection("todos")
             .addDocument(from: TodoState(
               timestamp: Date(),
               userID: userID,
@@ -64,8 +64,8 @@ extension TodosClient {
         let rv = PassthroughSubject<Bool, APIError>()
         let id = todo.id!
         do {
-          try Firestore.firestore()
-            .collection("todos")
+          try
+          db.collection("todos")
             .document(id)
             .setData(from: todo)
           rv.send(true)
@@ -91,8 +91,8 @@ extension TodosClient {
       deleteX: { todos in
         let rv = PassthroughSubject<Bool, APIError>()
         
-        todos.compactMap(\.id).forEach { id in
-          Firestore.firestore().collection("todos").document(id).delete { error in
+        todos.compactMap(\.id).forEach {
+          Firestore.firestore().collection("todos").document($0).delete { error in
             if let error = error {
               rv.send(completion: .failure(.init(error)))
             } else {

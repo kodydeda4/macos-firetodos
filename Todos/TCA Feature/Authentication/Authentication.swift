@@ -72,7 +72,7 @@ extension Store where State == AuthenticationState, Action == AuthenticationActi
     initialState: .init(),
     reducer: authenticationReducer,
     environment: AuthenticationEnvironment(
-      client: .live,
+      client: .firebase,
       scheduler: .main
     )
   )

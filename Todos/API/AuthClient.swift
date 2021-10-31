@@ -19,48 +19,52 @@ struct AuthClient {
 }
 
 extension AuthClient {
-  static let live = AuthClient(
-    signInAnonymously: {
-      let rv = PassthroughSubject<User, APIError>()
-      Auth.auth().signInAnonymously { _, error in
-        if let user = Auth.auth().currentUser {
-          rv.send(user)
+  static var firebase: Self {
+    let auth = Auth.auth()
+    
+    return Self(
+      signInAnonymously: {
+        let rv = PassthroughSubject<User, APIError>()
+        auth.signInAnonymously { _, error in
+          if let user = Auth.auth().currentUser {
+            rv.send(user)
+          }
+          if let error = error {
+            rv.send(completion: .failure(.init(error)))
+          }
         }
-        if let error = error {
-          rv.send(completion: .failure(.init(error)))
+        return rv.eraseToEffect()
+      },
+      signInEmailPassword: { email, password in
+        let rv = PassthroughSubject<User, APIError>()
+        
+        auth.signIn(withEmail: email, password: password) { _, error in
+          if let user = Auth.auth().currentUser {
+            rv.send(user)
+          }
+          if let error = error {
+            rv.send(completion: .failure(.init(error)))
+          }
         }
+        return rv.eraseToEffect()
+      },
+      signInApple: { token in
+        let rv = PassthroughSubject<User, APIError>()
+        let credential = OAuthProvider.credential(
+          withProviderID: "apple.com",
+          idToken: token.appleID.description,
+          rawNonce: token.nonce
+        )
+        auth.signIn(with: credential) { _, error in
+          if let user = Auth.auth().currentUser {
+            rv.send(user)
+          }
+          if let error = error {
+            rv.send(completion: .failure(.init(error)))
+          }
+        }
+        return rv.eraseToEffect()
       }
-      return rv.eraseToEffect()
-    },
-    signInEmailPassword: { email, password in
-      let rv = PassthroughSubject<User, APIError>()
-      
-      Auth.auth().signIn(withEmail: email, password: password) { _, error in
-        if let user = Auth.auth().currentUser {
-          rv.send(user)
-        }
-        if let error = error {
-          rv.send(completion: .failure(.init(error)))
-        }
-      }
-      return rv.eraseToEffect()
-    },
-    signInApple: { token in
-      let rv = PassthroughSubject<User, APIError>()
-      let credential = OAuthProvider.credential(
-        withProviderID: "apple.com",
-        idToken: token.appleID.description,
-        rawNonce: token.nonce
-      )
-      Auth.auth().signIn(with: credential) { _, error in
-        if let user = Auth.auth().currentUser {
-          rv.send(user)
-        }
-        if let error = error {
-          rv.send(completion: .failure(.init(error)))
-        }
-      }
-      return rv.eraseToEffect()
-    }
-  )
+    )
+  }
 }
