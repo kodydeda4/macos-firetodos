@@ -11,6 +11,11 @@ import Firebase
 
 
 
+//import Firebase
+//import FirebaseFirestore
+import FirebaseFirestoreSwift
+
+
 struct AuthenticationState: Equatable {
   @BindableState var email = String()
   @BindableState var password = String()
@@ -30,7 +35,11 @@ struct AuthenticationEnvironment {
   let scheduler: AnySchedulerOf<DispatchQueue>
 }
 
-let authenticationReducer = Reducer<AuthenticationState, AuthenticationAction, AuthenticationEnvironment> { state, action, environment in
+let authenticationReducer = Reducer<
+  AuthenticationState,
+  AuthenticationAction,
+  AuthenticationEnvironment
+> { state, action, environment in
   
   switch action {
     
@@ -49,8 +58,8 @@ let authenticationReducer = Reducer<AuthenticationState, AuthenticationAction, A
       .catchToEffect()
       .map(AuthenticationAction.signInResult)
     
-  case let .signInWithApple(token):
-    return environment.client.signInApple(token.id, token.nonce)
+  case let .signInWithApple(credential):
+    return environment.client.signInApple(credential)
       .receive(on: environment.scheduler)
       .catchToEffect()
       .map(AuthenticationAction.signInResult)
