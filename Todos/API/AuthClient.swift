@@ -47,12 +47,8 @@ extension AuthClient {
       return rv.eraseToEffect()
     },
     signInApple: { token in
-      let rv = PassthroughSubject<User, FirebaseError>()
-      
-     //id: ASAuthorizationAppleIDCredential
-      let appleID = token.id
-      
-      guard let appleIDToken = appleID.identityToken,
+      let rv = PassthroughSubject<User, FirebaseError>()      
+      guard let appleIDToken = token.id.identityToken,
             let idTokenString = String(data: appleIDToken, encoding: .utf8)
               
       else { fatalError("FatalError: Apple authenticatication failed.") }
