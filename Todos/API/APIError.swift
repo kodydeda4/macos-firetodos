@@ -7,10 +7,6 @@
 
 import Foundation
 
-struct APIError: Error, Equatable {
-  let rawValue: String
-  
-  init(_ error: Error) {
-    self.rawValue = error.localizedDescription
-  }
+enum APIError: Error, Equatable {
+  case firebase(String?)
 }

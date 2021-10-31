@@ -33,9 +33,8 @@ extension TodosClient {
           .addSnapshotListener { querySnapshot, error in
             if let values = querySnapshot?.documents.compactMap({ try? $0.data(as: TodoState.self) }) {
               rv.send(values)
-            }
-            if let error = error {
-              rv.send(completion: .failure(.init(error)))
+            } else {
+              rv.send(completion: .failure(.firebase(error?.localizedDescription)))
             }
           }
         return rv.eraseToEffect()
@@ -50,12 +49,14 @@ extension TodosClient {
               timestamp: Date(),
               userID: userID,
               text: "Untitled")
-            )
+            ) { error in
+              rv.send(completion: .failure(.firebase(error?.localizedDescription)))
+            }
           
           rv.send(true)
         }
         catch {
-          rv.send(completion: .failure(.init(error)))
+          //....
         }
         
         return rv.eraseToEffect()
@@ -71,8 +72,7 @@ extension TodosClient {
           rv.send(true)
         }
         catch {
-          print(error)
-          rv.send(completion: .failure(.init(error)))
+          rv.send(completion: .failure(.firebase(error.localizedDescription)))
         }
         return rv.eraseToEffect()
       },
@@ -81,7 +81,7 @@ extension TodosClient {
         
         Firestore.firestore().collection("todos").document(todo.id!).delete { error in
           if let error = error {
-            rv.send(completion: .failure(.init(error)))
+            rv.send(completion: .failure(.firebase(error.localizedDescription)))
           } else {
             rv.send(true)
           }
@@ -94,7 +94,7 @@ extension TodosClient {
         todos.compactMap(\.id).forEach {
           Firestore.firestore().collection("todos").document($0).delete { error in
             if let error = error {
-              rv.send(completion: .failure(.init(error)))
+              rv.send(completion: .failure(.firebase(error.localizedDescription)))
             } else {
               rv.send(true)
             }

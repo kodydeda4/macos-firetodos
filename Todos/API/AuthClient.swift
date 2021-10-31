@@ -28,9 +28,8 @@ extension AuthClient {
         auth.signInAnonymously { _, error in
           if let user = Auth.auth().currentUser {
             rv.send(user)
-          }
-          if let error = error {
-            rv.send(completion: .failure(.init(error)))
+          } else {
+            rv.send(completion: .failure(.firebase(error?.localizedDescription)))
           }
         }
         return rv.eraseToEffect()
@@ -41,9 +40,8 @@ extension AuthClient {
         auth.signIn(withEmail: email, password: password) { _, error in
           if let user = Auth.auth().currentUser {
             rv.send(user)
-          }
-          if let error = error {
-            rv.send(completion: .failure(.init(error)))
+          } else {
+            rv.send(completion: .failure(.firebase(error?.localizedDescription)))
           }
         }
         return rv.eraseToEffect()
@@ -58,9 +56,8 @@ extension AuthClient {
         auth.signIn(with: credential) { _, error in
           if let user = Auth.auth().currentUser {
             rv.send(user)
-          }
-          if let error = error {
-            rv.send(completion: .failure(.init(error)))
+          } else {
+            rv.send(completion: .failure(.firebase(error?.localizedDescription)))
           }
         }
         return rv.eraseToEffect()
