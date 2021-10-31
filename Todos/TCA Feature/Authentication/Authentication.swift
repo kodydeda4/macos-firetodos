@@ -9,13 +9,6 @@ import ComposableArchitecture
 import AuthenticationServices
 import Firebase
 
-
-
-//import Firebase
-//import FirebaseFirestore
-import FirebaseFirestoreSwift
-
-
 struct AuthenticationState: Equatable {
   @BindableState var email = String()
   @BindableState var password = String()
@@ -27,7 +20,7 @@ enum AuthenticationAction: BindableAction, Equatable {
   case signInAnonymously
   case signInWithEmail
   case signInWithApple(SignInWithAppleToken)
-  case signInResult(Result<User, AuthError>)
+  case signInResult(Result<Firebase.User, AuthError>)
 }
 
 struct AuthenticationEnvironment {
