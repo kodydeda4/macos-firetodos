@@ -7,6 +7,7 @@
 
 import Combine
 import ComposableArchitecture
+import IdentifiedCollections
 
 struct TodoListState: Equatable {
   var todos: IdentifiedArrayOf<TodoState> = []
@@ -17,12 +18,12 @@ struct TodoListState: Equatable {
 enum TodoListAction: Equatable {
   case todos(id: TodoState.ID, action: TodoAction)
   case fetchTodos
+  case fetchTodosResult(Result<[TodoState], APIError>)
+  case updateFirestoreResult(Result<Bool, APIError>)
   case createTodo
   case removeTodo(TodoState)
   case updateTodo(TodoState)
   case clearCompleted
-  case didFetchTodos(Result<[TodoState], APIError>)
-  case didFirestoreCRUD(Result<Bool, APIError>)
   case signOutButtonTapped
 }
 
@@ -53,44 +54,44 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       return environment.client.fetch()
         .receive(on: environment.scheduler)
         .catchToEffect()
-        .map(TodoListAction.didFetchTodos)
+        .map(TodoListAction.fetchTodosResult)
       
     case .createTodo:
       return environment.client.create()
         .receive(on: environment.scheduler)
         .catchToEffect()
-        .map(TodoListAction.didFirestoreCRUD)
+        .map(TodoListAction.updateFirestoreResult)
       
     case let .removeTodo(todo):
       return environment.client.delete(todo)
         .receive(on: environment.scheduler)
         .catchToEffect()
-        .map(TodoListAction.didFirestoreCRUD)
+        .map(TodoListAction.updateFirestoreResult)
       
     case let .updateTodo(todo):
       return environment.client.update(todo)
         .receive(on: environment.scheduler)
         .catchToEffect()
-        .map(TodoListAction.didFirestoreCRUD)
+        .map(TodoListAction.updateFirestoreResult)
       
     case .clearCompleted:
       return environment.client.deleteX(state.todos.filter(\.done))
         .receive(on: environment.scheduler)
         .catchToEffect()
-        .map(TodoListAction.didFirestoreCRUD)
+        .map(TodoListAction.updateFirestoreResult)
       
-    case let .didFetchTodos(.success(todos)):
+    case let .fetchTodosResult(.success(todos)):
       state.todos = IdentifiedArray(uniqueElements: todos)
       return .none
       
-    case let .didFetchTodos(.failure(error)):
+    case let .fetchTodosResult(.failure(error)):
       state.error = error
       return .none
       
-    case .didFirestoreCRUD(.success):
+    case .updateFirestoreResult(.success):
       return .none
       
-    case let .didFirestoreCRUD(.failure(error)):
+    case let .updateFirestoreResult(.failure(error)):
       state.error = error
       return .none
       
