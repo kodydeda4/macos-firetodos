@@ -42,11 +42,7 @@ extension TodosClient {
       do {
         let _ = try Firestore.firestore()
           .collection("todos")
-          .addDocument(from: TodoState(
-            timestamp: Date(),
-            userID: Auth.auth().currentUser!.uid,
-            text: "Untitled")
-          )
+          .addDocument(from: TodoState(timestamp: Date(), userID: Auth.auth().currentUser!.uid, text: "Untitled"))
         
         rv.send(true)
       }
@@ -99,3 +95,6 @@ extension TodosClient {
     }
   )
 }
+
+
+

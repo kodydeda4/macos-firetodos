@@ -25,7 +25,6 @@ extension AuthClient {
       Auth.auth().signInAnonymously { _, error in
         if let user = Auth.auth().currentUser {
           rv.send(user)
-          return
         } else {
           rv.send(completion: .failure(.init(error)))
         }
@@ -37,7 +36,6 @@ extension AuthClient {
       Auth.auth().signIn(withEmail: email, password: password) { _, error in
         if let user = Auth.auth().currentUser {
           rv.send(user)
-          return
         } else {
           rv.send(completion: .failure(.init(error)))
         }
@@ -53,7 +51,6 @@ extension AuthClient {
       )) { _, error in
         if let user = Auth.auth().currentUser {
           rv.send(user)
-          return
         } else {
           rv.send(completion: .failure(.init(error)))
         }
