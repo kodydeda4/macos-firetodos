@@ -19,8 +19,11 @@ extension SignInWithAppleButton {
         $0.nonce = SignInWithAppleButton.currentNonce.rawValue.hash()
       },
       onCompletion: {
-        if let token = getSignInToken(from: $0) {
-          handleLogin(token)
+        if let appleIDToken = try? $0.map(\.credential).get() as? ASAuthorizationAppleIDCredential {
+          handleLogin(SignInWithAppleToken(
+            appleID: appleIDToken,
+            nonce: SignInWithAppleButton.currentNonce
+          ))
         }
       }
     )
@@ -78,32 +81,6 @@ private extension String {
 }
 
 
-
-//extension SignInWithAppleToken {
-//  init(_ authorization: Result<ASAuthorization, Error>) {
-//    self.init(appleID: c, nonce: SignInWithAppleButton.currentNonce)
-//  }
-//}
-
-
-
-
-// MARK: - Supporting Methods
-fileprivate func getSignInToken(from authorization: Result<ASAuthorization, Error>) -> SignInWithAppleToken? {
-  do {
-    let a = try authorization.map(\.credential).get()
-    
-    if let c = a as? ASAuthorizationAppleIDCredential {
-      return SignInWithAppleToken(
-        appleID: c,
-        nonce: SignInWithAppleButton.currentNonce
-      )
-    }
-  } catch {
-    // ...
-  }
-  return nil
-}
 
 
 
