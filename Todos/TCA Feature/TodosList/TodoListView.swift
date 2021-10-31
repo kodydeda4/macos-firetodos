@@ -14,19 +14,13 @@ struct TodoListView: View {
   var body: some View {
     WithViewStore(store) { viewStore in
       List {
-        Text("Todos")
-          .font(.system(.title, design: .rounded))
-          .bold()
-          .foregroundColor(.appColor)
-          .padding(.bottom)
-        
         ForEachStore(store.scope(
           state: \.todos,
           action: TodoListAction.todos(id:action:)
         ), content: TodoView.init)
       }
-//            .alert(store.scope(state: \.alert), dismiss: .dismissSignOutAlert)
-      .navigationTitle("")
+      //      .alert(store.scope(state: \.alert), dismiss: .dismissSignOutAlert)
+      .navigationTitle("Todos")
       .onAppear {
         viewStore.send(.fetchTodos)
       }

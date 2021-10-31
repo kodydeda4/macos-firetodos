@@ -18,13 +18,13 @@ struct TodoListState: Equatable {
 enum TodoListAction: Equatable {
   case todos(id: TodoState.ID, action: TodoAction)
   case fetchTodos
-  case fetchTodosResult(Result<[TodoState], APIError>)
-  case updateFirestoreResult(Result<Bool, APIError>)
   case createTodo
   case removeTodo(TodoState)
   case updateTodo(TodoState)
   case clearCompleted
   case signOutButtonTapped
+  case fetchTodosResult(Result<[TodoState], APIError>)
+  case updateFirestoreResult(Result<Bool, APIError>)
 }
 
 struct TodoListEnvironment {

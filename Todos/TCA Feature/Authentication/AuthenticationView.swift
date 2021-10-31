@@ -22,16 +22,14 @@ struct AuthenticationView: View {
         
         Text("Login")
           .font(.largeTitle)
-        
-        
+                
         TextField("Email", text: viewStore.binding(\.$email))
         TextField("Password", text: viewStore.binding(\.$password))
-        //        SecureField("Password", text: viewStore.binding(\.$password))
         
         Button(action: {viewStore.send(.signInWithEmail)}) {
           ZStack {
             RoundedRectangle(cornerRadius: 4)
-              .foregroundColor(.appColor)
+              .foregroundColor(.accentColor)
             
             Text("Log in")
               .foregroundColor(Color(nsColor: .windowBackgroundColor))
@@ -55,7 +53,7 @@ struct AuthenticationView: View {
           Spacer()
           Link("Don't have an account? Sign up", destination: URL(string: "https://www.google.com")!)
         }
-        .foregroundColor(.appColor)
+        .foregroundColor(.accentColor)
         
         Link("Created by Kody Deda", destination: URL(string: "https://kodydeda.netlify.app")!)
           .padding(.top)
