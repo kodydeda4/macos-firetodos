@@ -13,96 +13,95 @@ import FirebaseFirestoreSwift
 import CoreMedia
 
 struct TodosClient {
-  let fetch:   ()            -> Effect<[TodoState], DatabaseError>
-  let create:  ()            -> Effect<Bool, DatabaseError>
-  let update:  (TodoState)   -> Effect<Bool, DatabaseError>
-  let delete:  (TodoState)   -> Effect<Bool, DatabaseError>
-  let deleteX: ([TodoState]) -> Effect<Bool, DatabaseError>
-}
-
-enum DatabaseError: Error, Equatable {
-  case fetch
-  case create
-  case update
-  case delete
+  let fetch:   ()            -> Effect<[TodoState], APIError>
+  let create:  ()            -> Effect<Bool, APIError>
+  let update:  (TodoState)   -> Effect<Bool, APIError>
+  let delete:  (TodoState)   -> Effect<Bool, APIError>
+  let deleteX: ([TodoState]) -> Effect<Bool, APIError>
 }
 
 extension TodosClient {
-  static let live = TodosClient(
-    fetch: {
-      let rv = PassthroughSubject<[TodoState], DatabaseError>()
-      Firestore.firestore()
-        .collection("todos")
-        .whereField("userID", isEqualTo: Auth.auth().currentUser!.uid)
-        .addSnapshotListener { querySnapshot, error in
-          if let values = querySnapshot?.documents.compactMap({ snapshot in try? snapshot.data(as: TodoState.self) }) {
-            rv.send(values)
-          } else if let error = error {
-            rv.send(completion: .failure(.fetch))
+  static var live: Self {
+    let userID = Auth.auth().currentUser!.uid
+    
+    return Self(
+      fetch: {
+        let rv = PassthroughSubject<[TodoState], APIError>()
+        Firestore.firestore()
+          .collection("todos")
+          .whereField("userID", isEqualTo: userID)
+          .addSnapshotListener { querySnapshot, error in
+            if let values = querySnapshot?.documents.compactMap({ try? $0.data(as: TodoState.self) }) {
+              rv.send(values)
+            }
+            if let error = error {
+              rv.send(completion: .failure(.init(error)))
+            }
           }
-        }
-      return rv.eraseToEffect()
-    },
-    create: {
-      let rv = PassthroughSubject<Bool, DatabaseError>()
-      
-      do {
-        let _ = try Firestore.firestore()
-          .collection("todos")
-          .addDocument(from: TodoState(
-            timestamp: Date(),
-            userID: Auth.auth().currentUser!.uid,
-            text: "Untitled")
-          )
+        return rv.eraseToEffect()
+      },
+      create: {
+        let rv = PassthroughSubject<Bool, APIError>()
         
-        rv.send(true)
-      }
-      catch {
-        rv.send(completion: .failure(.create))
-      }
-      
-      return rv.eraseToEffect()
-    },
-    update: { todo in
-      let rv = PassthroughSubject<Bool, DatabaseError>()
-      do {
-        try Firestore.firestore()
-          .collection("todos")
-          .document(todo.id!)
-          .setData(from: todo)
-        rv.send(true)
-      }
-      catch {
-        print(error)
-        rv.send(completion: .failure(.update))
-      }
-      return rv.eraseToEffect()
-    },
-    delete: { todo in
-      let rv = PassthroughSubject<Bool, DatabaseError>()
-      
-      Firestore.firestore().collection("todos").document(todo.id!).delete { error in
-        if let error = error {
-          rv.send(completion: .failure(.delete))
-        } else {
+        do {
+          let _ = try Firestore.firestore()
+            .collection("todos")
+            .addDocument(from: TodoState(
+              timestamp: Date(),
+              userID: userID,
+              text: "Untitled")
+            )
+          
           rv.send(true)
         }
-      }
-      return rv.eraseToEffect()
-    },
-    deleteX: { todos in
-      let rv = PassthroughSubject<Bool, DatabaseError>()
-      
-      todos.map(\.id).forEach { id in
-        Firestore.firestore().collection("todos").document(id!).delete { error in
+        catch {
+          rv.send(completion: .failure(.init(error)))
+        }
+        
+        return rv.eraseToEffect()
+      },
+      update: { todo in
+        let rv = PassthroughSubject<Bool, APIError>()
+        let id = todo.id!
+        do {
+          try Firestore.firestore()
+            .collection("todos")
+            .document(id)
+            .setData(from: todo)
+          rv.send(true)
+        }
+        catch {
+          print(error)
+          rv.send(completion: .failure(.init(error)))
+        }
+        return rv.eraseToEffect()
+      },
+      delete: { todo in
+        let rv = PassthroughSubject<Bool, APIError>()
+        
+        Firestore.firestore().collection("todos").document(todo.id!).delete { error in
           if let error = error {
-            rv.send(completion: .failure(.delete))
+            rv.send(completion: .failure(.init(error)))
           } else {
             rv.send(true)
           }
         }
+        return rv.eraseToEffect()
+      },
+      deleteX: { todos in
+        let rv = PassthroughSubject<Bool, APIError>()
+        
+        todos.compactMap(\.id).forEach { id in
+          Firestore.firestore().collection("todos").document(id).delete { error in
+            if let error = error {
+              rv.send(completion: .failure(.init(error)))
+            } else {
+              rv.send(true)
+            }
+          }
+        }
+        return rv.eraseToEffect()
       }
-      return rv.eraseToEffect()
-    }
-  )
+    )
+  }
 }

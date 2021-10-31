@@ -12,7 +12,7 @@ import Firebase
 struct AuthenticationState: Equatable {
   @BindableState var email = String()
   @BindableState var password = String()
-  var error: AuthError?
+  var error: APIError?
 }
 
 enum AuthenticationAction: BindableAction, Equatable {
@@ -20,7 +20,7 @@ enum AuthenticationAction: BindableAction, Equatable {
   case signInAnonymously
   case signInWithEmail
   case signInWithApple(SignInWithAppleToken)
-  case signInResult(Result<Firebase.User, AuthError>)
+  case signInResult(Result<Firebase.User, APIError>)
 }
 
 struct AuthenticationEnvironment {

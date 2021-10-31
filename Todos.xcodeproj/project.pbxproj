@@ -30,6 +30,7 @@
 		33AD2EDE27286F5B003BFC3D /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = 33AD2EDD27286F5B003BFC3D /* SFSafeSymbols */; };
 		33B1F0FF266A6D2B0095EA9D /* SignInWithAppleButton+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33B1F0FE266A6D2B0095EA9D /* SignInWithAppleButton+Extensions.swift */; };
 		33E6A7F22728B1A100C7ABE8 /* TodosClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E6A7F12728B1A100C7ABE8 /* TodosClient.swift */; };
+		33F3539F272EF8F90054E7D5 /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F3539E272EF8F90054E7D5 /* APIError.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +55,7 @@
 		33A9C83B26691D31008C2D6E /* Color+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extensions.swift"; sourceTree = "<group>"; };
 		33B1F0FE266A6D2B0095EA9D /* SignInWithAppleButton+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SignInWithAppleButton+Extensions.swift"; sourceTree = "<group>"; };
 		33E6A7F12728B1A100C7ABE8 /* TodosClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodosClient.swift; sourceTree = "<group>"; };
+		33F3539E272EF8F90054E7D5 /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -189,6 +191,7 @@
 		33E6A7F02728B19800C7ABE8 /* API */ = {
 			isa = PBXGroup;
 			children = (
+				33F3539E272EF8F90054E7D5 /* APIError.swift */,
 				3352C13F2728CBBB003E30AA /* AuthClient.swift */,
 				33E6A7F12728B1A100C7ABE8 /* TodosClient.swift */,
 			);
@@ -290,6 +293,7 @@
 				334BFBDC2667DCD200F7952C /* Root.swift in Sources */,
 				334BC7692728993100CC3779 /* UserView.swift in Sources */,
 				334BFBC22667DB8300F7952C /* TodoList.swift in Sources */,
+				33F3539F272EF8F90054E7D5 /* APIError.swift in Sources */,
 				334BFBC02667DB8300F7952C /* TodosApp.swift in Sources */,
 				336406562667EE8900545A25 /* Todo.swift in Sources */,
 			);
