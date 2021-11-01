@@ -13,14 +13,26 @@ struct AuthenticationState: Equatable {
   @BindableState var email = String()
   @BindableState var password = String()
   var error: APIError?
+  var route: Route = .login
+  var alert: AlertState<AuthenticationAction>? = nil
+  
+  enum Route {
+    case login
+    case signup
+  }
 }
 
 enum AuthenticationAction: BindableAction, Equatable {
   case binding(BindingAction<AuthenticationState>)
+  case updateRoute(AuthenticationState.Route)
+  case createSignupAlert
+  case alertDismissed
+  
   case signInAnonymously
   case signInWithEmail
   case signInWithApple(SignInWithAppleToken)
   case signInResult(Result<Firebase.User, APIError>)
+  case signUpWithEmail
 }
 
 struct AuthenticationEnvironment {
@@ -62,6 +74,24 @@ let authenticationReducer = Reducer<
     
   case let .signInResult(.failure(error)):
     state.error = error
+    return .none
+    
+  case .signUpWithEmail:
+    return .none
+    
+  case let .updateRoute(route):
+    state.route = route
+    return .none
+    
+  case .alertDismissed:
+    return .none
+    
+  case .createSignupAlert:
+    state.alert = AlertState(
+      title: TextState("Signup Alert"),
+      primaryButton: .default(TextState("Okay"), action: .send(.alertDismissed)),
+      secondaryButton: .cancel(TextState("Cancel"))
+    )
     return .none
   }
 }

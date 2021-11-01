@@ -48,7 +48,7 @@ let rootReducer = Reducer<RootState, RootAction, RootEnvironment>.combine(
       return .none
       
     case let .user(subaction):
-      if subaction == .signOut {
+      if subaction == .signout {
         state = .authentication(.init())
       }
       return .none

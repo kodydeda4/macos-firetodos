@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		331DA0362730197E00947B7E /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331DA0352730197D00947B7E /* ProfileView.swift */; };
+		331DA0382730272F00947B7E /* SignupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331DA0372730272F00947B7E /* SignupView.swift */; };
+		331DA03A2730274700947B7E /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331DA0392730274700947B7E /* LoginView.swift */; };
 		334BC7672728968700CC3779 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BC7662728968700CC3779 /* User.swift */; };
 		334BC7692728993100CC3779 /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BC7682728993100CC3779 /* UserView.swift */; };
 		334BFBC02667DB8300F7952C /* TodosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334BFBBF2667DB8300F7952C /* TodosApp.swift */; };
@@ -33,6 +36,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		331DA0352730197D00947B7E /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		331DA0372730272F00947B7E /* SignupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupView.swift; sourceTree = "<group>"; };
+		331DA0392730274700947B7E /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		334BC7662728968700CC3779 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		334BC7682728993100CC3779 /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		334BFBBC2667DB8300F7952C /* Todos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Todos.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -77,6 +83,8 @@
 			children = (
 				334BC7662728968700CC3779 /* User.swift */,
 				334BC7682728993100CC3779 /* UserView.swift */,
+				331DA0352730197D00947B7E /* ProfileView.swift */,
+				334BFBE42667DEC900F7952C /* TodosList */,
 			);
 			path = User;
 			sourceTree = "<group>";
@@ -135,7 +143,6 @@
 				334BFBE32667DEC500F7952C /* Root */,
 				334BFBE52667DECF00F7952C /* Authentication */,
 				334BC77427289D2400CC3779 /* User */,
-				334BFBE42667DEC900F7952C /* TodosList */,
 				336406572667F3BA00545A25 /* Todo */,
 			);
 			path = "TCA Feature";
@@ -164,6 +171,8 @@
 			children = (
 				334BFBDF2667DEAA00F7952C /* Authentication.swift */,
 				334BFBEA2667DFCD00F7952C /* AuthenticationView.swift */,
+				331DA0372730272F00947B7E /* SignupView.swift */,
+				331DA0392730274700947B7E /* LoginView.swift */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
@@ -282,11 +291,14 @@
 				336406592667F3C400545A25 /* TodoView.swift in Sources */,
 				3364065B2667F3E600545A25 /* TodoListView.swift in Sources */,
 				33E6A7F22728B1A100C7ABE8 /* TodosClient.swift in Sources */,
+				331DA0382730272F00947B7E /* SignupView.swift in Sources */,
 				33B1F0FF266A6D2B0095EA9D /* SignInWithAppleButton+Extensions.swift in Sources */,
 				3352C1402728CBBB003E30AA /* AuthClient.swift in Sources */,
 				334BC7672728968700CC3779 /* User.swift in Sources */,
+				331DA0362730197E00947B7E /* ProfileView.swift in Sources */,
 				334BFBE72667DF0000F7952C /* RootView.swift in Sources */,
 				334BFBDC2667DCD200F7952C /* Root.swift in Sources */,
+				331DA03A2730274700947B7E /* LoginView.swift in Sources */,
 				334BC7692728993100CC3779 /* UserView.swift in Sources */,
 				334BFBC22667DB8300F7952C /* TodoList.swift in Sources */,
 				33F16C66272F0E8D0051E271 /* APIError.swift in Sources */,

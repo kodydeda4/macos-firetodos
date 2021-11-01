@@ -14,56 +14,13 @@ struct AuthenticationView: View {
   
   var body: some View {
     WithViewStore(store) { viewStore in
-      VStack(spacing: 20) {
-        Circle()
-          .frame(width: 30, height: 30)
-          .foregroundColor(.red)
-          .overlay(Image(systemSymbol: .lock).foregroundColor(.black))
+      ZStack {
+        LoginView(store: store)
+          .opacity(viewStore.state.route == .login ? 1 : 0)
         
-        Text("Login")
-          .font(.largeTitle)
-                
-        TextField("Email", text: viewStore.binding(\.$email))
-        TextField("Password", text: viewStore.binding(\.$password))
-        
-        Button(action: {viewStore.send(.signInWithEmail)}) {
-          ZStack {
-            RoundedRectangle(cornerRadius: 4)
-              .foregroundColor(.accentColor)
-            
-            Text("Log in")
-              .foregroundColor(Color(nsColor: .windowBackgroundColor))
-            
-          }
-        }
-        .frame(height: 24)
-        .buttonStyle(.plain)
-        
-        Button("Continue as Guest") {
-          viewStore.send(.signInAnonymously)
-        }
-        
-        SignInWithAppleButton() {
-          viewStore.send(.signInWithApple($0))
-        }
-        
-        HStack {
-          Link("Forgot Password?", destination: URL(string: "https://www.google.com")!)
-          
-          Spacer()
-          Link("Don't have an account? Sign up", destination: URL(string: "https://www.google.com")!)
-        }
-        .foregroundColor(.accentColor)
-        
-        Link("Created by Kody Deda", destination: URL(string: "https://kodydeda.netlify.app")!)
-          .padding(.top)
-          .foregroundColor(.gray)
+        SignupView(store: store)
+          .opacity(viewStore.state.route == .signup ? 1 : 0)
       }
-      .padding()
-      .padding(.horizontal, 100)
-      .frame(width: 540, height: 860)
-      .navigationTitle("Login")
-      .textFieldStyle(RoundedBorderTextFieldStyle())
     }
   }
 }

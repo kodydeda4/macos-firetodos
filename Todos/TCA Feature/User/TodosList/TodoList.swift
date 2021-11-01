@@ -22,7 +22,6 @@ enum TodoListAction: Equatable {
   case removeTodo(TodoState)
   case updateTodo(TodoState)
   case clearCompleted
-  case signOutButtonTapped
   case fetchTodosResult(Result<[TodoState], APIError>)
   case updateFirestoreResult(Result<Bool, APIError>)
 }
@@ -95,9 +94,6 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       
     case let .updateFirestoreResult(.failure(error)):
       state.error = error
-      return .none
-      
-    case .signOutButtonTapped:
       return .none
     }
   }
