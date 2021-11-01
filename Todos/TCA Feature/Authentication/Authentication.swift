@@ -84,6 +84,7 @@ let authenticationReducer = Reducer<
     return .none
     
   case .alertDismissed:
+    state.alert = nil
     return .none
     
   case .createSignupAlert:
