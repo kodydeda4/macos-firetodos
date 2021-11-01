@@ -25,8 +25,8 @@ struct SignupView: View {
         TextField("Email", text: viewStore.binding(\.$email))
         TextField("Password", text: viewStore.binding(\.$password))
         
-        //        Button(action: { viewStore.send(.signUpWithEmail) }) {
-        Button(action: { viewStore.send(.createSignupAlert) }) {
+        Button(action: { viewStore.send(.signUpWithEmail) }) {
+//        Button(action: { viewStore.send(.createSignupAlert) }) {
           ZStack {
             RoundedRectangle(cornerRadius: 4)
               .foregroundColor(.accentColor)

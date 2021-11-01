@@ -26,13 +26,13 @@ enum AuthenticationAction: BindableAction, Equatable {
   case binding(BindingAction<AuthenticationState>)
   case updateRoute(AuthenticationState.Route)
   case createSignupAlert
-  case dismissAlert
-  
+  case dismissAlert  
   case signInAnonymously
   case signInWithEmail
   case signInWithApple(SignInWithAppleToken)
   case signInResult(Result<Firebase.User, APIError>)
   case signUpWithEmail
+  case signupResult(Result<Firebase.User, APIError>)
 }
 
 struct AuthenticationEnvironment {
@@ -76,11 +76,29 @@ let authenticationReducer = Reducer<
     state.error = error
     return .none
     
-  case .signUpWithEmail:
+  case let .signupResult(.success(user)):
+    print(user)
     return .none
     
+  case let .signupResult(.failure(error)):
+    state.alert = AlertState(
+      title: TextState("\(error.localizedDescription)"),
+      primaryButton: .default(TextState("Okay"), action: .send(.dismissAlert)),
+      secondaryButton: .cancel(TextState("Cancel"))
+    )
+    return .none
+
+  case .signUpWithEmail:
+    return environment.authClient.signup(state.email, state.password)
+      .receive(on: environment.scheduler)
+      .catchToEffect()
+      .map(AuthenticationAction.signupResult)
+
   case let .updateRoute(route):
     state.route = route
+    state.email = ""
+    state.password = ""
+    state.alert = nil
     return .none
     
   case .dismissAlert:
@@ -97,6 +115,7 @@ let authenticationReducer = Reducer<
   }
 }
 .binding()
+.debug()
 
 extension Store where State == AuthenticationState, Action == AuthenticationAction {
   static let `default` = Store(

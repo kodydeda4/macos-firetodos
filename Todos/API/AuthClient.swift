@@ -16,6 +16,7 @@ struct AuthClient {
   let signInAnonymously: () -> Effect<User, APIError>
   let signInEmailPassword: (_ email: String, _ password: String) -> Effect<User, APIError>
   let signInApple: (SignInWithAppleToken) -> Effect<User, APIError>
+  let signup: (_ email: String, _ password: String) -> Effect<User, APIError>
 }
 
 extension AuthClient {
@@ -49,6 +50,18 @@ extension AuthClient {
         idToken: token.appleID.description,
         rawNonce: token.nonce
       )) { _, error in
+        if let user = Auth.auth().currentUser {
+          rv.send(user)
+        } else {
+          rv.send(completion: .failure(.init(error)))
+        }
+      }
+      return rv.eraseToEffect()
+    },
+    signup: { email, password in
+      let rv = PassthroughSubject<User, APIError>()
+      //      Auth.auth().createUser(withEmail: email, password: password)   <----- async
+      Auth.auth().createUser(withEmail: email, password: password) { _, error in
         if let user = Auth.auth().currentUser {
           rv.send(user)
         } else {
