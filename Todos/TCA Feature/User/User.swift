@@ -24,7 +24,7 @@ enum UserAction: Equatable {
 }
 
 struct UserEnvironment {
-  let client: TodosClient
+  let todosClient: TodosClient
   let scheduler: AnySchedulerOf<DispatchQueue>
 }
 
@@ -32,7 +32,7 @@ let userReducer = Reducer<UserState, UserAction, UserEnvironment>.combine(
   todoListReducer.pullback(
     state: \.todosList,
     action: /UserAction.todosList,
-    environment: { .init(client: $0.client, scheduler: $0.scheduler) }
+    environment: { .init(todosClient: $0.todosClient, scheduler: $0.scheduler) }
   ),
   Reducer { state, action, environment in
     
@@ -67,7 +67,7 @@ extension Store where State == UserState, Action == UserAction {
     initialState: .init(user: Auth.auth().currentUser!),
     reducer: userReducer,
     environment: UserEnvironment(
-      client: .live,
+      todosClient: .live,
       scheduler: .main
     )
   )

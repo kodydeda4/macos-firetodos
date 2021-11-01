@@ -36,7 +36,7 @@ enum AuthenticationAction: BindableAction, Equatable {
 }
 
 struct AuthenticationEnvironment {
-  let client: AuthClient
+  let authClient: AuthClient
   let scheduler: AnySchedulerOf<DispatchQueue>
 }
 
@@ -52,19 +52,19 @@ let authenticationReducer = Reducer<
     return .none
     
   case .signInAnonymously:
-    return environment.client.signInAnonymously()
+    return environment.authClient.signInAnonymously()
       .receive(on: environment.scheduler)
       .catchToEffect()
       .map(AuthenticationAction.signInResult)
     
   case .signInWithEmail:
-    return environment.client.signInEmailPassword(state.email,state.password)
+    return environment.authClient.signInEmailPassword(state.email,state.password)
       .receive(on: environment.scheduler)
       .catchToEffect()
       .map(AuthenticationAction.signInResult)
     
   case let .signInWithApple(credential):
-    return environment.client.signInApple(credential)
+    return environment.authClient.signInApple(credential)
       .receive(on: environment.scheduler)
       .catchToEffect()
       .map(AuthenticationAction.signInResult)
@@ -103,7 +103,7 @@ extension Store where State == AuthenticationState, Action == AuthenticationActi
     initialState: .init(),
     reducer: authenticationReducer,
     environment: AuthenticationEnvironment(
-      client: .live,
+      authClient: .live,
       scheduler: .main
     )
   )

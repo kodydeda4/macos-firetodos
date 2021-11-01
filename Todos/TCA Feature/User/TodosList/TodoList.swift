@@ -26,11 +26,11 @@ enum TodoListAction: Equatable {
   case updateTodo(TodoState)
   case clearCompleted
   case fetchTodosResult(Result<[TodoState], APIError>)
-  case updateFirestoreResult(Result<Bool, APIError>)
+  case updateRemoteResult(Result<Bool, APIError>)
 }
 
 struct TodoListEnvironment {
-  let client: TodosClient
+  let todosClient: TodosClient
   let scheduler: AnySchedulerOf<DispatchQueue>
 }
 
@@ -67,34 +67,34 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       return .none
       
     case .fetchTodos:
-      return environment.client.fetch()
+      return environment.todosClient.fetch()
         .receive(on: environment.scheduler)
         .catchToEffect()
         .map(TodoListAction.fetchTodosResult)
       
     case .createTodo:
-      return environment.client.create()
+      return environment.todosClient.create()
         .receive(on: environment.scheduler)
         .catchToEffect()
-        .map(TodoListAction.updateFirestoreResult)
+        .map(TodoListAction.updateRemoteResult)
       
     case let .removeTodo(todo):
-      return environment.client.delete(todo)
+      return environment.todosClient.delete(todo)
         .receive(on: environment.scheduler)
         .catchToEffect()
-        .map(TodoListAction.updateFirestoreResult)
+        .map(TodoListAction.updateRemoteResult)
       
     case let .updateTodo(todo):
-      return environment.client.update(todo)
+      return environment.todosClient.update(todo)
         .receive(on: environment.scheduler)
         .catchToEffect()
-        .map(TodoListAction.updateFirestoreResult)
+        .map(TodoListAction.updateRemoteResult)
             
     case .clearCompleted:
-      return environment.client.deleteX(state.todos.filter(\.done))
+      return environment.todosClient.deleteX(state.todos.filter(\.done))
         .receive(on: environment.scheduler)
         .catchToEffect()
-        .map(TodoListAction.updateFirestoreResult)
+        .map(TodoListAction.updateRemoteResult)
       
     case let .fetchTodosResult(.success(todos)):
       state.todos = IdentifiedArray(uniqueElements: todos)
@@ -104,10 +104,10 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       state.error = error
       return .none
       
-    case .updateFirestoreResult(.success):
+    case .updateRemoteResult(.success):
       return .none
       
-    case let .updateFirestoreResult(.failure(error)):
+    case let .updateRemoteResult(.failure(error)):
       state.error = error
       return .none
     }
@@ -119,7 +119,7 @@ extension Store where State == TodoListState, Action == TodoListAction {
     initialState: .init(),
     reducer: todoListReducer,
     environment: TodoListEnvironment(
-      client: .live,
+      todosClient: .live,
       scheduler: .main
     )
   )

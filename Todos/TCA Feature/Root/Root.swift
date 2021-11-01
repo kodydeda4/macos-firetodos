@@ -28,12 +28,12 @@ let rootReducer = Reducer<RootState, RootAction, RootEnvironment>.combine(
   authenticationReducer.pullback(
     state: /RootState.authentication,
     action: /RootAction.authentication,
-    environment: { AuthenticationEnvironment(client: $0.authClient, scheduler: $0.scheduler) }
+    environment: { .init(authClient: $0.authClient, scheduler: $0.scheduler) }
   ),
   userReducer.pullback(
     state: /RootState.user,
     action: /RootAction.user,
-    environment: { UserEnvironment(client: $0.todosClient, scheduler: $0.scheduler) }
+    environment: { .init(todosClient: $0.todosClient, scheduler: $0.scheduler) }
   ),
   Reducer { state, action, environment in
     switch action {
