@@ -77,12 +77,17 @@ let authenticationReducer = Reducer<
     return .none
     
   case let .signupResult(.success(user)):
-    print(user)
+    state.alert = AlertState(
+      title: TextState("Success"),
+      message: TextState("Welcome to FireTodos!"),
+      primaryButton: .default(TextState("Okay"), action: .send(.dismissAlert)),
+      secondaryButton: .cancel(TextState("Cancel"))
+    )
     return .none
     
   case let .signupResult(.failure(error)):
     state.alert = AlertState(
-      title: TextState("\(error.localizedDescription)"),
+      title: TextState("The email or password you provided cannot be used."),
       primaryButton: .default(TextState("Okay"), action: .send(.dismissAlert)),
       secondaryButton: .cancel(TextState("Cancel"))
     )

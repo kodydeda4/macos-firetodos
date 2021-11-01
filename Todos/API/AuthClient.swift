@@ -62,10 +62,10 @@ extension AuthClient {
       let rv = PassthroughSubject<User, APIError>()
       //      Auth.auth().createUser(withEmail: email, password: password)   <----- async
       Auth.auth().createUser(withEmail: email, password: password) { _, error in
-        if let user = Auth.auth().currentUser {
-          rv.send(user)
-        } else {
+        if let error = error {
           rv.send(completion: .failure(.init(error)))
+        } else if let user = Auth.auth().currentUser {
+          rv.send(user)
         }
       }
       return rv.eraseToEffect()
