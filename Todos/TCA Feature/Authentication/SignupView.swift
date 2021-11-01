@@ -45,7 +45,7 @@ struct SignupView: View {
         .foregroundColor(.accentColor)
         .buttonStyle(LinkButtonStyle())
         
-        Link("Created by Kody Deda", destination: URL(string: "https://kodydeda.netlify.app")!)
+        Link("Created by Kody Deda", destination: .kodysHomepage)
           .padding(.top)
           .foregroundColor(.gray)
       }

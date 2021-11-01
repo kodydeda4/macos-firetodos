@@ -48,11 +48,11 @@ struct LoginView: View {
         }
         
         HStack {
-          Link("Forgot Password?", destination: URL(string: "https://www.google.com")!)
+          Link("Forgot Password?", destination: .kodysHomepage)
           
           Spacer()
           Button("Don't have an account? Sign up") {
-            viewStore.send(.updateRoute(.signup))//, animation: .default)
+            viewStore.send(.updateRoute(.signup))
           }
           .foregroundColor(.accentColor)
           .buttonStyle(LinkButtonStyle())
@@ -60,7 +60,7 @@ struct LoginView: View {
         }
         .foregroundColor(.accentColor)
         
-        Link("Created by Kody Deda", destination: URL(string: "https://kodydeda.netlify.app")!)
+        Link("Created by Kody Deda", destination: .kodysHomepage)
           .padding(.top)
           .foregroundColor(.gray)
       }

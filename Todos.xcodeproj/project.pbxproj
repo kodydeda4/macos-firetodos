@@ -31,6 +31,7 @@
 		3364065B2667F3E600545A25 /* TodoListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3364065A2667F3E600545A25 /* TodoListView.swift */; };
 		33AD2EDE27286F5B003BFC3D /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = 33AD2EDD27286F5B003BFC3D /* SFSafeSymbols */; };
 		33B1F0FF266A6D2B0095EA9D /* SignInWithAppleButton+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33B1F0FE266A6D2B0095EA9D /* SignInWithAppleButton+Extensions.swift */; };
+		33CC7E3227302E4400CA811D /* URL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC7E3127302E4400CA811D /* URL+Extensions.swift */; };
 		33E6A7F22728B1A100C7ABE8 /* TodosClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E6A7F12728B1A100C7ABE8 /* TodosClient.swift */; };
 		33F16C66272F0E8D0051E271 /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F16C65272F0E8D0051E271 /* APIError.swift */; };
 /* End PBXBuildFile section */
@@ -58,6 +59,7 @@
 		336406582667F3C400545A25 /* TodoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoView.swift; sourceTree = "<group>"; };
 		3364065A2667F3E600545A25 /* TodoListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListView.swift; sourceTree = "<group>"; };
 		33B1F0FE266A6D2B0095EA9D /* SignInWithAppleButton+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SignInWithAppleButton+Extensions.swift"; sourceTree = "<group>"; };
+		33CC7E3127302E4400CA811D /* URL+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extensions.swift"; sourceTree = "<group>"; };
 		33E6A7F12728B1A100C7ABE8 /* TodosClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodosClient.swift; sourceTree = "<group>"; };
 		33F16C65272F0E8D0051E271 /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -190,6 +192,7 @@
 			isa = PBXGroup;
 			children = (
 				33B1F0FE266A6D2B0095EA9D /* SignInWithAppleButton+Extensions.swift */,
+				33CC7E3127302E4400CA811D /* URL+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -298,6 +301,7 @@
 				331DA0362730197E00947B7E /* ProfileView.swift in Sources */,
 				334BFBE72667DF0000F7952C /* RootView.swift in Sources */,
 				334BFBDC2667DCD200F7952C /* Root.swift in Sources */,
+				33CC7E3227302E4400CA811D /* URL+Extensions.swift in Sources */,
 				331DA03A2730274700947B7E /* LoginView.swift in Sources */,
 				334BC7692728993100CC3779 /* UserView.swift in Sources */,
 				334BFBC22667DB8300F7952C /* TodoList.swift in Sources */,
