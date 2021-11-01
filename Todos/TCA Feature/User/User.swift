@@ -19,7 +19,7 @@ enum UserAction: Equatable {
   case todosList(TodoListAction)
   case signout
   case createSignoutAlert
-  case alertDismissed
+  case dismissAlert
   case buyPremiumButtonTapped
 }
 
@@ -52,9 +52,10 @@ let userReducer = Reducer<UserState, UserAction, UserEnvironment>.combine(
     case .signout:
       return .none
       
-    case .alertDismissed:
+    case .dismissAlert:
+      state.alert = nil
       return .none
-
+      
     case .buyPremiumButtonTapped:
       return .none
     }

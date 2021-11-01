@@ -26,7 +26,7 @@ enum AuthenticationAction: BindableAction, Equatable {
   case binding(BindingAction<AuthenticationState>)
   case updateRoute(AuthenticationState.Route)
   case createSignupAlert
-  case alertDismissed
+  case dismissAlert
   
   case signInAnonymously
   case signInWithEmail
@@ -83,14 +83,14 @@ let authenticationReducer = Reducer<
     state.route = route
     return .none
     
-  case .alertDismissed:
+  case .dismissAlert:
     state.alert = nil
     return .none
     
   case .createSignupAlert:
     state.alert = AlertState(
       title: TextState("Signup Alert"),
-      primaryButton: .default(TextState("Okay"), action: .send(.alertDismissed)),
+      primaryButton: .default(TextState("Okay"), action: .send(.dismissAlert)),
       secondaryButton: .cancel(TextState("Cancel"))
     )
     return .none

@@ -17,6 +17,9 @@ struct TodoListState: Equatable {
 
 enum TodoListAction: Equatable {
   case todos(id: TodoState.ID, action: TodoAction)
+  case createClearCompletedAlert
+  case dismissAlert
+  
   case fetchTodos
   case createTodo
   case removeTodo(TodoState)
@@ -51,6 +54,18 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
         return Effect(value: .updateTodo(todo))
       }
       
+    case .createClearCompletedAlert:
+      state.alert = AlertState(
+        title: TextState("Clear completed?"),
+        primaryButton: .default(TextState("Okay"), action: .send(.clearCompleted)),
+        secondaryButton: .cancel(TextState("Cancel"))
+      )
+      return .none
+    
+    case .dismissAlert:
+      state.alert = nil
+      return .none
+      
     case .fetchTodos:
       return environment.client.fetch()
         .receive(on: environment.scheduler)
@@ -74,7 +89,7 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
         .receive(on: environment.scheduler)
         .catchToEffect()
         .map(TodoListAction.updateFirestoreResult)
-      
+            
     case .clearCompleted:
       return environment.client.deleteX(state.todos.filter(\.done))
         .receive(on: environment.scheduler)

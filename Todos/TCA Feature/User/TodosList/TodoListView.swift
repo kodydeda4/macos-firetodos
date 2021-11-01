@@ -20,12 +20,13 @@ struct TodoListView: View {
         ), content: TodoView.init)
       }
       .navigationTitle("Todos")
+      .alert(store.scope(state: \.alert), dismiss: .dismissAlert)
       .onAppear {
         viewStore.send(.fetchTodos)
       }
       .toolbar {
         Spacer()
-        Button(action: { viewStore.send(.clearCompleted) }) {
+        Button(action: { viewStore.send(.createClearCompletedAlert) }) {
           Image(systemSymbol: .trash)
         }
         Button(action: { viewStore.send(.createTodo) }) {

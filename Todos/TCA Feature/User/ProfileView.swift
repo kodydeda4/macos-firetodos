@@ -26,7 +26,7 @@ struct ProfileView: View {
           viewStore.send(.createSignoutAlert)
         }
       }
-      .alert(store.scope(state: \.alert), dismiss: .alertDismissed)
+      .alert(store.scope(state: \.alert), dismiss: .dismissAlert)
     }
   }
 }
