@@ -67,7 +67,7 @@ let authenticationReducer = Reducer<
     
   case let .signInWithApple(credential):
     return environment.authClient.signInApple(credential)
-//      .mapError(APIError.init)
+      .mapError(APIError.init)
       .receive(on: environment.scheduler)
       .catchToEffect()
       .map(AuthenticationAction.signInResult)

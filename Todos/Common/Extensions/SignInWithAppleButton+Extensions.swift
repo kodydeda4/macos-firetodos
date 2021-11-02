@@ -10,7 +10,7 @@ import AuthenticationServices
 import CryptoKit
 
 struct SignInWithAppleToken: Equatable {
-  let appleID: Data
+  let appleID: String
   let nonce: String
 }
 
@@ -24,7 +24,7 @@ extension SignInWithAppleButton {
         $0.nonce = currentNonce.hash()
       },
       onCompletion: {
-        if let credential = try? ($0.map(\.credential).get() as? ASAuthorizationAppleIDCredential).flatMap(\.identityToken) {
+        if let credential = try? ($0.map(\.credential).get() as? ASAuthorizationAppleIDCredential).flatMap(\.identityToken?.description) {
           handleLogin(SignInWithAppleToken(
             appleID: credential,
             nonce: currentNonce

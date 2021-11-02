@@ -16,7 +16,7 @@ struct AuthClient {
   let signup: (_ email: String, _ password: String) -> Effect<User, Error>
   let signInAnonymously: () -> Effect<User, Error>
   let signInEmailPassword: (_ email: String, _ password: String) -> Effect<User, Error>
-  let signInApple: (SignInWithAppleToken) -> Effect<User, APIError>
+  let signInApple: (SignInWithAppleToken) -> Effect<User, Error>
 }
 
 extension AuthClient {
@@ -37,30 +37,33 @@ extension AuthClient {
       }
     },
 //    signInApple: { token in
-//      Effect.task {
+//      .task {
 //        try await Auth.auth().signIn(with: OAuthProvider.credential(
 //          withProviderID: "apple.com",
-//          idToken: token.appleID.description,
+//          idToken: token.appleID,
 //          rawNonce: token.nonce
 //        ))
-//        .user
 //      }
-//    },
+//    }
     
     signInApple: { token in
-      let rv = PassthroughSubject<User, APIError>()
-      Auth.auth().signIn(with: OAuthProvider.credential(
-        withProviderID: "apple.com",
-        idToken: token.appleID.description,
-        rawNonce: token.nonce
-      )) { _, error in
-        if let user = Auth.auth().currentUser {
-          rv.send(user)
-        } else {
-          rv.send(completion: .failure(.init(error)))
+      .future { callback in
+        Auth.auth().signIn(with: OAuthProvider.credential(
+          withProviderID: "apple.com",
+          idToken: token.appleID,
+          rawNonce: token.nonce
+        )) { _, error in
+          if let user = Auth.auth().currentUser {
+            callback(.success(user))
+          } else if let error = error {
+            callback(.failure(error))
+          } else {
+            fatalError()
+          }
         }
       }
-      return rv.eraseToEffect()
     }
+    
+    // MARK: - END
   )
 }

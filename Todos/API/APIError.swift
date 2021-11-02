@@ -13,4 +13,8 @@ struct APIError: Error, Equatable {
   init(_ error: Error?) {
     self.rawValue = error?.localizedDescription ?? "Unknown"
   }
+  
+  init(rawValue: String) {
+    self.rawValue = rawValue
+  }
 }
