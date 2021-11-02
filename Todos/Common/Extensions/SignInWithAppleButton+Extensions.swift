@@ -24,7 +24,9 @@ extension SignInWithAppleButton {
         $0.nonce = currentNonce.hash()
       },
       onCompletion: {
-        if let credential = try? ($0.map(\.credential).get() as? ASAuthorizationAppleIDCredential).flatMap(\.identityToken?.description) {
+        if let credential = try? ($0.map(\.credential).get() as? ASAuthorizationAppleIDCredential)
+            .flatMap(\.identityToken)
+            .flatMap({ String(data: $0, encoding: .utf8) }) {
           handleLogin(SignInWithAppleToken(
             appleID: credential,
             nonce: currentNonce
