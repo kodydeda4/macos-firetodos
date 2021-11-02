@@ -8,9 +8,6 @@
 import ComposableArchitecture
 import Combine
 import Firebase
-import FirebaseFirestore
-import FirebaseFirestoreSwift
-import AuthenticationServices
 
 struct AuthClient {
   let signup:                (_ email: String, _ password: String)   -> Effect<User, Error>

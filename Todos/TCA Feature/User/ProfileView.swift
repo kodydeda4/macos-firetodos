@@ -14,7 +14,7 @@ struct ProfileView: View {
   var body: some View {
     WithViewStore(store) { viewStore in
       VStack {
-        Text(viewStore.user.email!)
+        Text(viewStore.user.email ?? "Guest")
           .font(.title)
         
         Button("Buy Premium") {
