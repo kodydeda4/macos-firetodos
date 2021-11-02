@@ -14,6 +14,7 @@ struct AuthClient {
   let signInEmailPassword:   (_ email: String, _ password: String)   -> Effect<User, Error>
   let signInApple:           (SignInWithAppleToken)                  -> Effect<User, Error>
   let signInAnonymously:     ()                                      -> Effect<User, Error>
+  let signOut:               ()                                      -> Effect<Never, Never>
 }
 
 extension AuthClient {
@@ -40,6 +41,15 @@ extension AuthClient {
     signInAnonymously: {
       .task {
         try await Auth.auth().signInAnonymously().user
+      }
+    },
+    signOut: {
+      .fireAndForget {
+        do {
+          try Auth.auth().signOut()
+        } catch {
+          // ...
+        }
       }
     }
   )

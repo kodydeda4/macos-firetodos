@@ -33,7 +33,7 @@ let rootReducer = Reducer<RootState, RootAction, RootEnvironment>.combine(
   userReducer.pullback(
     state: /RootState.user,
     action: /RootAction.user,
-    environment: { .init(todosClient: $0.todosClient, scheduler: $0.scheduler) }
+    environment: { .init(authClient: $0.authClient, todosClient: $0.todosClient, scheduler: $0.scheduler) }
   ),
   Reducer { state, action, environment in
     switch action {

@@ -24,6 +24,7 @@ enum UserAction: Equatable {
 }
 
 struct UserEnvironment {
+  let authClient: AuthClient
   let todosClient: TodosClient
   let scheduler: AnySchedulerOf<DispatchQueue>
 }
@@ -50,7 +51,8 @@ let userReducer = Reducer<UserState, UserAction, UserEnvironment>.combine(
       return .none
       
     case .signout:
-      return .none
+      return environment.authClient.signOut()
+        .fireAndForget()
       
     case .dismissAlert:
       state.alert = nil
@@ -67,6 +69,7 @@ extension Store where State == UserState, Action == UserAction {
     initialState: .init(user: Auth.auth().currentUser!),
     reducer: userReducer,
     environment: UserEnvironment(
+      authClient: .live,
       todosClient: .live,
       scheduler: .main
     )
