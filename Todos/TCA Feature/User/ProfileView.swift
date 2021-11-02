@@ -23,7 +23,8 @@ struct ProfileView: View {
         .disabled(viewStore.isPremiumUser)
         
         Button("Sign Out") {
-          viewStore.send(.createSignoutAlert)
+//          viewStore.send(.createSignoutAlert)
+          viewStore.send(.signout)
         }
       }
       .alert(store.scope(state: \.alert), dismiss: .dismissAlert)

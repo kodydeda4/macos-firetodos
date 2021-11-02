@@ -53,18 +53,21 @@ let authenticationReducer = Reducer<
     
   case .signInAnonymously:
     return environment.authClient.signInAnonymously()
+      .mapError(APIError.init)
       .receive(on: environment.scheduler)
       .catchToEffect()
       .map(AuthenticationAction.signInResult)
     
   case .signInWithEmail:
     return environment.authClient.signInEmailPassword(state.email,state.password)
+      .mapError(APIError.init)
       .receive(on: environment.scheduler)
       .catchToEffect()
       .map(AuthenticationAction.signInResult)
     
   case let .signInWithApple(credential):
     return environment.authClient.signInApple(credential)
+//      .mapError(APIError.init)
       .receive(on: environment.scheduler)
       .catchToEffect()
       .map(AuthenticationAction.signInResult)
@@ -95,6 +98,7 @@ let authenticationReducer = Reducer<
 
   case .signUpWithEmail:
     return environment.authClient.signup(state.email, state.password)
+      .mapError(APIError.init)
       .receive(on: environment.scheduler)
       .catchToEffect()
       .map(AuthenticationAction.signupResult)

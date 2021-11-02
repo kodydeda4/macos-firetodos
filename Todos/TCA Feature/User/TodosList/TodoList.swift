@@ -19,8 +19,7 @@ enum TodoListAction: Equatable {
   case todos(id: TodoState.ID, action: TodoAction)
   case createClearCompletedAlert
   case dismissAlert
-  
-  case fetchTodos
+  case attachListener
   case createTodo
   case removeTodo(TodoState)
   case updateTodo(TodoState)
@@ -34,6 +33,11 @@ struct TodoListEnvironment {
   let scheduler: AnySchedulerOf<DispatchQueue>
 }
 
+// problem is your fetchTodos is using a passthrough subject,
+// to cancel the effect, try:
+//  1. making it an actual publisher,
+//  2. add action to cancel the effect in the client.
+
 let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment>.combine(
   todoReducer.forEach(
     state: \.todos,
@@ -41,7 +45,7 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
     environment: { _ in () }
   ),
   Reducer { state, action, environment in
-    struct CancelID: Hashable {}
+    struct EffectID: Hashable {}
     
     switch action {
       
@@ -66,12 +70,13 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       state.alert = nil
       return .none
       
-    case .fetchTodos:
-      return environment.todosClient.fetch()
+    case .attachListener:
+      return environment.todosClient.attachListener()
         .receive(on: environment.scheduler)
         .catchToEffect()
+        .cancellable(id: EffectID())
         .map(TodoListAction.fetchTodosResult)
-      
+            
     case .createTodo:
       return environment.todosClient.create()
         .receive(on: environment.scheduler)

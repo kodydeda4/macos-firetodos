@@ -13,36 +13,40 @@ import FirebaseFirestoreSwift
 import AuthenticationServices
 
 struct AuthClient {
-  let signInAnonymously: () -> Effect<User, APIError>
-  let signInEmailPassword: (_ email: String, _ password: String) -> Effect<User, APIError>
+  let signup: (_ email: String, _ password: String) -> Effect<User, Error>
+  let signInAnonymously: () -> Effect<User, Error>
+  let signInEmailPassword: (_ email: String, _ password: String) -> Effect<User, Error>
   let signInApple: (SignInWithAppleToken) -> Effect<User, APIError>
-  let signup: (_ email: String, _ password: String) -> Effect<User, APIError>
 }
 
 extension AuthClient {
   static let live = AuthClient(
-    signInAnonymously: {
-      let rv = PassthroughSubject<User, APIError>()
-      Auth.auth().signInAnonymously { _, error in
-        if let user = Auth.auth().currentUser {
-          rv.send(user)
-        } else {
-          rv.send(completion: .failure(.init(error)))
-        }
+    signup: { email, password in
+      .task {
+        try await Auth.auth().createUser(withEmail: email, password: password).user
       }
-      return rv.eraseToEffect()
+    },
+    signInAnonymously: {
+      .task {
+        try await Auth.auth().signInAnonymously().user
+      }
     },
     signInEmailPassword: { email, password in
-      let rv = PassthroughSubject<User, APIError>()
-      Auth.auth().signIn(withEmail: email, password: password) { _, error in
-        if let user = Auth.auth().currentUser {
-          rv.send(user)
-        } else {
-          rv.send(completion: .failure(.init(error)))
-        }
+      .task {
+        try await Auth.auth().signIn(withEmail: email, password: password).user
       }
-      return rv.eraseToEffect()
     },
+//    signInApple: { token in
+//      Effect.task {
+//        try await Auth.auth().signIn(with: OAuthProvider.credential(
+//          withProviderID: "apple.com",
+//          idToken: token.appleID.description,
+//          rawNonce: token.nonce
+//        ))
+//        .user
+//      }
+//    },
+    
     signInApple: { token in
       let rv = PassthroughSubject<User, APIError>()
       Auth.auth().signIn(with: OAuthProvider.credential(
@@ -54,18 +58,6 @@ extension AuthClient {
           rv.send(user)
         } else {
           rv.send(completion: .failure(.init(error)))
-        }
-      }
-      return rv.eraseToEffect()
-    },
-    signup: { email, password in
-      let rv = PassthroughSubject<User, APIError>()
-      //      Auth.auth().createUser(withEmail: email, password: password)   <----- async
-      Auth.auth().createUser(withEmail: email, password: password) { _, error in
-        if let error = error {
-          rv.send(completion: .failure(.init(error)))
-        } else if let user = Auth.auth().currentUser {
-          rv.send(user)
         }
       }
       return rv.eraseToEffect()

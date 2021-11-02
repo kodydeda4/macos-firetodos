@@ -38,23 +38,19 @@ let rootReducer = Reducer<RootState, RootAction, RootEnvironment>.combine(
   Reducer { state, action, environment in
     switch action {
       
-    case let .authentication(subaction):
-      switch subaction {
-      case let .signInResult(.success(user)):
-        state = .user(.init(user: user))
-      default:
-        break
-      }
+    case let .authentication(.signInResult(.success(user))):
+      state = .user(.init(user: user))
       return .none
       
-    case let .user(subaction):
-      if subaction == .signout {
-        state = .authentication(.init())
-      }
+    case .user(.signout):
+      state = .authentication(.init())
+      return .none
+      
+    case .authentication, .user:
       return .none
     }
   }
-)
+).debug()
 
 extension Store where State == RootState, Action == RootAction {
   static let `default` = Store(
