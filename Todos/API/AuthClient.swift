@@ -48,7 +48,7 @@ extension AuthClient {
         do {
           try Auth.auth().signOut()
         } catch {
-          // ...
+          print(error.localizedDescription)
         }
       }
     }

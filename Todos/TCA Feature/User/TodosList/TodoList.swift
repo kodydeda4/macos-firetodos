@@ -33,11 +33,6 @@ struct TodoListEnvironment {
   let scheduler: AnySchedulerOf<DispatchQueue>
 }
 
-// problem is your fetchTodos is using a passthrough subject,
-// to cancel the effect, try:
-//  1. making it an actual publisher,
-//  2. add action to cancel the effect in the client.
-
 let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment>.combine(
   todoReducer.forEach(
     state: \.todos,
@@ -49,15 +44,12 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
     
     switch action {
       
-    case let .todos(id, action):
-      let todo = state.todos[id: id]!
-      switch action {
-      case .deleteButonTapped:
-        return Effect(value: .removeTodo(todo))
-      default:
-        return Effect(value: .updateTodo(todo))
-      }
+    case let .todos(id, .deleteButonTapped):
+      return Effect(value: .removeTodo(state.todos[id: id]!))
       
+    case let .todos(id, _):
+      return Effect(value: .removeTodo(state.todos[id: id]!))
+
     case .createClearCompletedAlert:
       state.alert = AlertState(
         title: TextState("Clear completed?"),
@@ -65,6 +57,18 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
         secondaryButton: .cancel(TextState("Cancel"))
       )
       return .none
+      
+    case let .removeTodo(todo):
+      return environment.todosClient.delete(todo)
+        .receive(on: environment.scheduler)
+        .catchToEffect()
+        .map(TodoListAction.updateRemoteResult)
+
+    case let .updateTodo(todo):
+      return environment.todosClient.update(todo)
+        .receive(on: environment.scheduler)
+        .catchToEffect()
+        .map(TodoListAction.updateRemoteResult)
     
     case .dismissAlert:
       state.alert = nil
@@ -79,18 +83,6 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
             
     case .createTodo:
       return environment.todosClient.create()
-        .receive(on: environment.scheduler)
-        .catchToEffect()
-        .map(TodoListAction.updateRemoteResult)
-      
-    case let .removeTodo(todo):
-      return environment.todosClient.delete(todo)
-        .receive(on: environment.scheduler)
-        .catchToEffect()
-        .map(TodoListAction.updateRemoteResult)
-      
-    case let .updateTodo(todo):
-      return environment.todosClient.update(todo)
         .receive(on: environment.scheduler)
         .catchToEffect()
         .map(TodoListAction.updateRemoteResult)

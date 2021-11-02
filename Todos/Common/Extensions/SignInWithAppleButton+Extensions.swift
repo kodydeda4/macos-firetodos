@@ -24,16 +24,20 @@ extension SignInWithAppleButton {
         $0.nonce = currentNonce.hash()
       },
       onCompletion: {
-        if let credential = try? ($0.map(\.credential).get() as? ASAuthorizationAppleIDCredential)
-            .flatMap(\.identityToken)
-            .flatMap({ String(data: $0, encoding: .utf8) }) {
-          handleLogin(SignInWithAppleToken(
-            appleID: credential,
-            nonce: currentNonce
-          ))
+        if let credential = SignInWithAppleToken.from($0, currentNonce) {
+          handleLogin(credential)
         }
       }
     )
+  }
+}
+
+extension SignInWithAppleToken {
+  static func from(_ result: Result<ASAuthorization, Error>, _ nonce: String) -> SignInWithAppleToken? {
+    try? (result.map(\.credential).get() as? ASAuthorizationAppleIDCredential)
+      .flatMap(\.identityToken)
+      .flatMap({ String(data: $0, encoding: .utf8) })
+      .map({ SignInWithAppleToken(appleID: $0, nonce: nonce) })
   }
 }
 
