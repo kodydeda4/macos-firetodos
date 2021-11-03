@@ -16,13 +16,14 @@ struct TodoListState: Equatable {
 
 enum TodoListAction: Equatable {
   case todos(id: TodoState.ID, action: TodoAction)
-  case fetchTodos
-  case createTodo
+  case fetch
+  case create
   case clearCompleted
-  case didFetchTodos(Result<[TodoState], APIError>)
-  case didUpdateRemote(Result<Never, APIError>)
+  case createAlert
   case dismissAlert
-  case createClearCompletedAlert
+  case didFetch(Result<[TodoState], APIError>)
+  case didCreate(Result<Never, APIError>)
+  case didClearCompleted(Result<Never, APIError>)
 }
 
 struct TodoListEnvironment {
@@ -44,30 +45,30 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
     case .todos:
       return .none
       
-    case .fetchTodos:
+    case .fetch:
       return environment.todosClient.fetch()
         .receive(on: environment.scheduler)
         .catchToEffect()
         .cancellable(id: EffectID())
-        .map(TodoListAction.didFetchTodos)
+        .map(TodoListAction.didFetch)
             
-    case .createTodo:
+    case .create:
       return environment.todosClient.create()
         .receive(on: environment.scheduler)
         .catchToEffect()
-        .map(TodoListAction.didUpdateRemote)
+        .map(TodoListAction.didCreate)
       
     case .clearCompleted:
       return environment.todosClient.removeX(state.todos.filter(\.done))
         .receive(on: environment.scheduler)
         .catchToEffect()
-        .map(TodoListAction.didUpdateRemote)
+        .map(TodoListAction.didClearCompleted)
       
     case .dismissAlert:
       state.alert = nil
       return .none
       
-    case .createClearCompletedAlert:
+    case .createAlert:
       state.alert = AlertState(
         title: TextState("Clear completed?"),
         primaryButton: .default(TextState("Okay"), action: .send(.clearCompleted)),
@@ -75,15 +76,19 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       )
       return .none
       
-    case let .didFetchTodos(.success(todos)):
+    case let .didFetch(.success(todos)):
       state.todos = IdentifiedArray(uniqueElements: todos)
       return .none
       
-    case let .didFetchTodos(.failure(error)):
+    case let .didFetch(.failure(error)):
       state.alert = AlertState(title: TextState("\(error.localizedDescription)"))
       return .none
       
-    case let .didUpdateRemote(.failure(error)):
+    case let .didCreate(.failure(error)):
+      state.alert = AlertState(title: TextState("\(error.localizedDescription)"))
+      return .none
+      
+    case let .didClearCompleted(.failure(error)):
       state.alert = AlertState(title: TextState("\(error.localizedDescription)"))
       return .none
     }

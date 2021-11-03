@@ -22,14 +22,14 @@ struct TodoListView: View {
       .navigationTitle("Todos")
       .alert(store.scope(state: \.alert), dismiss: .dismissAlert)
       .onAppear {
-        viewStore.send(.fetchTodos)
+        viewStore.send(.fetch)
       }
       .toolbar {
         Spacer()
-        Button(action: { viewStore.send(.createClearCompletedAlert) }) {
+        Button(action: { viewStore.send(.createAlert) }) {
           Image(systemSymbol: .trash)
         }
-        Button(action: { viewStore.send(.createTodo) }) {
+        Button(action: { viewStore.send(.create) }) {
           Image(systemSymbol: .plus)
         }
       }
