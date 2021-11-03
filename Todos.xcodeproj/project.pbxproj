@@ -145,7 +145,6 @@
 				334BFBE32667DEC500F7952C /* Root */,
 				334BFBE52667DECF00F7952C /* Authentication */,
 				334BC77427289D2400CC3779 /* User */,
-				336406572667F3BA00545A25 /* Todo */,
 			);
 			path = "TCA Feature";
 			sourceTree = "<group>";
@@ -164,6 +163,7 @@
 			children = (
 				334BFBC12667DB8300F7952C /* TodoList.swift */,
 				3364065A2667F3E600545A25 /* TodoListView.swift */,
+				336406572667F3BA00545A25 /* Todo */,
 			);
 			path = TodosList;
 			sourceTree = "<group>";
