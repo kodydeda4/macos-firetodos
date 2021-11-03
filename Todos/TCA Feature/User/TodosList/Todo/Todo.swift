@@ -22,9 +22,8 @@ enum TodoAction: Equatable {
   case setText(String)
   case setDone
   case delete
-  
-  case updateRemote
-  case didUpdateRemote(Result<Never, APIError>)
+  case updateAPI
+  case didUpdateAPI(Result<Never, APIError>)
 }
 
 struct TodoEnvironment {
@@ -37,25 +36,25 @@ let todoReducer = Reducer<TodoState, TodoAction, TodoEnvironment> { state, actio
         
   case let .setText(text):
     state.text = text
-    return Effect(value: .updateRemote)
+    return Effect(value: .updateAPI)
     
   case .setDone:
     state.done.toggle()
-    return Effect(value: .updateRemote)
+    return Effect(value: .updateAPI)
     
   case .delete:
     return environment.todosClient.remove(state)
       .receive(on: environment.scheduler)
       .catchToEffect()
-      .map(TodoAction.didUpdateRemote)
+      .map(TodoAction.didUpdateAPI)
     
-  case .updateRemote:
+  case .updateAPI:
     return environment.todosClient.update(state)
       .receive(on: environment.scheduler)
       .catchToEffect()
-      .map(TodoAction.didUpdateRemote)
+      .map(TodoAction.didUpdateAPI)
     
-  case let .didUpdateRemote(.failure(error)):
+  case let .didUpdateAPI(.failure(error)):
     print(error.localizedDescription)
     return .none
   }
