@@ -21,11 +21,19 @@ struct TodoState: Equatable, Identifiable, Codable {
 enum TodoAction: BindableAction, Equatable {
   case binding(BindingAction<TodoState>)
   case toggleCompleted
-  case deleteButonTapped
   case updateText(String)
+  case deleteButonTapped//<<<<<<<
+
+  case updateFirestore
+  case didUpdateRemote(Result<Never, APIError>)
 }
 
-let todoReducer = Reducer<TodoState, TodoAction, Void> { state, action, _ in
+struct TodoEnvironment {
+  let todosClient: TodosClient
+  let scheduler: AnySchedulerOf<DispatchQueue>
+}
+
+let todoReducer = Reducer<TodoState, TodoAction, TodoEnvironment> { state, action, environment in
   switch action {
     
   case .binding:
@@ -33,13 +41,23 @@ let todoReducer = Reducer<TodoState, TodoAction, Void> { state, action, _ in
     
   case .toggleCompleted:
     state.done.toggle()
-    return .none
+    return Effect(value: .updateFirestore)
+    
+  case let .updateText(text):
+    state.text = text
+    return Effect(value: .updateFirestore)
     
   case .deleteButonTapped:
     return .none
     
-  case let .updateText(text):
-    state.text = text
+  case .updateFirestore:
+    return environment.todosClient.update(state)
+      .receive(on: environment.scheduler)
+      .catchToEffect()
+      .map(TodoAction.didUpdateRemote)
+    
+  case let .didUpdateRemote(.failure(error)):
+    print(error.localizedDescription)
     return .none
   }
 }
@@ -52,6 +70,9 @@ extension Store where State == TodoState, Action == TodoAction {
       text: "Untitled"
     ),
     reducer: todoReducer,
-    environment: ()
+    environment: .init(
+      todosClient: .live,
+      scheduler: .main
+    )
   )
 }
