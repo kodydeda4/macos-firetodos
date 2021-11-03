@@ -14,10 +14,10 @@ import CoreMedia
 
 struct TodosClient {
   let attachListener: ()     -> Effect<[TodoState], APIError>
-  let create:  ()            -> Effect<Never, Error>
-  let update:  (TodoState)   -> Effect<Never, Error>
-  let delete:  (TodoState)   -> Effect<Never, Error>
-  let deleteX: ([TodoState]) -> Effect<Never, Error>
+  let create:  ()            -> Effect<Never, APIError>
+  let update:  (TodoState)   -> Effect<Never, APIError>
+  let delete:  (TodoState)   -> Effect<Never, APIError>
+  let deleteX: ([TodoState]) -> Effect<Never, APIError>
 }
 
 extension TodosClient {
@@ -30,8 +30,10 @@ extension TodosClient {
         .addSnapshotListener { querySnapshot, error in
           if let values = querySnapshot?.documents.compactMap({ snapshot in try? snapshot.data(as: TodoState.self) }) {
             rv.send(values)
-          } else {
+          } else if let error = error {
             rv.send(completion: .failure(.init(error)))
+          } else {
+            fatalError()
           }
         }
       return rv.eraseToEffect()
@@ -48,7 +50,7 @@ extension TodosClient {
             )
           
         } catch {
-          callback(.failure(error))
+          callback(.failure(.init(error)))
         }
       }
     },
@@ -61,7 +63,7 @@ extension TodosClient {
             .setData(from: todo)
           
         } catch {
-          callback(.failure(error))
+          callback(.failure(.init(error)))
         }
       }
     },
@@ -70,7 +72,7 @@ extension TodosClient {
         Firestore.firestore()
           .collection("todos")
           .document(todo.id!)
-          .delete { error in if let error = error { callback(.failure(error)) } }
+          .delete { error in if let error = error { callback(.failure(.init(error))) } }
       }
     },
     deleteX: { todos in
@@ -79,7 +81,7 @@ extension TodosClient {
           Firestore.firestore()
             .collection("todos")
             .document($0)
-            .delete { error in if let error = error { callback(.failure(error)) } }
+            .delete { error in if let error = error { callback(.failure(.init(error))) } }
         }
       }
     }
