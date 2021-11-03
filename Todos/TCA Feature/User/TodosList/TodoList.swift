@@ -59,7 +59,6 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
     // actions
     case .attachListener:
       return environment.todosClient.attachListener()
-        .mapError(APIError.init)
         .receive(on: environment.scheduler)
         .catchToEffect()
         .cancellable(id: EffectID())

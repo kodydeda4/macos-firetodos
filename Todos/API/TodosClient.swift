@@ -13,7 +13,7 @@ import FirebaseFirestoreSwift
 import CoreMedia
 
 struct TodosClient {
-  let attachListener: ()     -> Effect<[TodoState], Error>
+  let attachListener: ()     -> Effect<[TodoState], APIError>
   let create:  ()            -> Effect<Never, Error>
   let update:  (TodoState)   -> Effect<Never, Error>
   let delete:  (TodoState)   -> Effect<Never, Error>
@@ -23,20 +23,18 @@ struct TodosClient {
 extension TodosClient {
   static let live = Self(
     attachListener: {
-      .future { callback in
+      let rv = PassthroughSubject<[TodoState], APIError>()
       Firestore.firestore()
         .collection("todos")
         .whereField("userID", isEqualTo: Auth.auth().currentUser!.uid)
         .addSnapshotListener { querySnapshot, error in
           if let values = querySnapshot?.documents.compactMap({ snapshot in try? snapshot.data(as: TodoState.self) }) {
-            callback(.success(values))
-          } else if let error = error {
-            callback(.failure(error))
+            rv.send(values)
           } else {
-            fatalError()
+            rv.send(completion: .failure(.init(error)))
           }
         }
-      }
+      return rv.eraseToEffect()
     },
     create: {
       .future { callback in
