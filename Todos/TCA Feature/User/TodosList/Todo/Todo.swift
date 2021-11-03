@@ -21,10 +21,11 @@ struct TodoState: Equatable, Identifiable, Codable {
 //enum TodoAction: BindableAction, Equatable {
 //  case binding(BindingAction<TodoState>)
 enum TodoAction: Equatable {
-  case updateText(String)
-  case toggleCompleted
-  case deleteButonTapped
-  case updateFirestore
+  case setText(String)
+  case setDone
+  case delete
+  
+  case updateRemote
   case didUpdateRemote(Result<Never, APIError>)
 }
 
@@ -39,21 +40,21 @@ let todoReducer = Reducer<TodoState, TodoAction, TodoEnvironment> { state, actio
 //  case .binding:
 //    return .none
     
-  case let .updateText(text):
+  case let .setText(text):
     state.text = text
-    return Effect(value: .updateFirestore)
+    return Effect(value: .updateRemote)
     
-  case .toggleCompleted:
+  case .setDone:
     state.done.toggle()
-    return Effect(value: .updateFirestore)
+    return Effect(value: .updateRemote)
     
-  case .deleteButonTapped:
+  case .delete:
     return environment.todosClient.delete(state)
       .receive(on: environment.scheduler)
       .catchToEffect()
       .map(TodoAction.didUpdateRemote)
     
-  case .updateFirestore:
+  case .updateRemote:
     return environment.todosClient.update(state)
       .receive(on: environment.scheduler)
       .catchToEffect()

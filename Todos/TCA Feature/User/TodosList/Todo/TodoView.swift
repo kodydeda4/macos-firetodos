@@ -16,12 +16,12 @@ struct TodoView: View {
     WithViewStore(store) { viewStore in
       VStack {
         HStack {
-          Toggle("", isOn: viewStore.binding(get: \.done, send: TodoAction.toggleCompleted))
-          TextField("Description", text: viewStore.binding(get: \.text, send: TodoAction.updateText))
+          Toggle("", isOn: viewStore.binding(get: \.done, send: TodoAction.setDone))
+          TextField("Description", text: viewStore.binding(get: \.text, send: TodoAction.setText))
             .opacity(viewStore.done ? 0.25 : 1)
           
           Button("delete") {
-            viewStore.send(.deleteButonTapped)
+            viewStore.send(.delete)
           }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

@@ -85,16 +85,19 @@ extension TodosClient {
 // MARK: - Extensions
 private extension Query {
   func snapshotPublisher(includeMetadataChanges: Bool = false) -> AnyPublisher<QuerySnapshot, Error> {
-    let subject = PassthroughSubject<QuerySnapshot, Error>()
-    let listenerHandle = addSnapshotListener(includeMetadataChanges: includeMetadataChanges) { snapshot, error in
+    let publisher = PassthroughSubject<QuerySnapshot, Error>()
+    
+    let snapshotListener = addSnapshotListener(includeMetadataChanges: includeMetadataChanges) { snapshot, error in
       if let error = error {
-        subject.send(completion: .failure(error))
+        publisher.send(completion: .failure(error))
       } else if let snapshot = snapshot {
-        subject.send(snapshot)
+        publisher.send(snapshot)
+      } else {
+        fatalError()
       }
     }
-    return subject
-      .handleEvents(receiveCancel: listenerHandle.remove)
+    return publisher
+      .handleEvents(receiveCancel: snapshotListener.remove)
       .eraseToAnyPublisher()
   }
 }
