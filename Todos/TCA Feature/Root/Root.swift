@@ -50,7 +50,8 @@ let rootReducer = Reducer<RootState, RootAction, RootEnvironment>.combine(
       return .none
     }
   }
-).debug()
+)
+//.debug()
 
 extension Store where State == RootState, Action == RootAction {
   static let `default` = Store(
