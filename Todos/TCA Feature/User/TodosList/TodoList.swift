@@ -26,8 +26,8 @@ enum TodoListAction: Equatable {
   case clearCompleted
   
   // results
-  case fetchTodosResult(Result<[TodoState], APIError>)
-  case updateRemoteResult(Result<Never, APIError>)
+  case didFetchTodos(Result<[TodoState], APIError>)
+  case didUpdateRemote(Result<Never, APIError>)
   
   // alerts
   case dismissAlert
@@ -62,35 +62,35 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
         .receive(on: environment.scheduler)
         .catchToEffect()
         .cancellable(id: EffectID())
-        .map(TodoListAction.fetchTodosResult)
+        .map(TodoListAction.didFetchTodos)
             
     case .createTodo:
       return environment.todosClient.create()
         .mapError(APIError.init)
         .receive(on: environment.scheduler)
         .catchToEffect()
-        .map(TodoListAction.updateRemoteResult)
+        .map(TodoListAction.didUpdateRemote)
       
     case let .removeTodo(todo):
       return environment.todosClient.delete(todo)
         .mapError(APIError.init)
         .receive(on: environment.scheduler)
         .catchToEffect()
-        .map(TodoListAction.updateRemoteResult)
+        .map(TodoListAction.didUpdateRemote)
 
     case let .updateTodo(todo):
       return environment.todosClient.update(todo)
         .mapError(APIError.init)
         .receive(on: environment.scheduler)
         .catchToEffect()
-        .map(TodoListAction.updateRemoteResult)
+        .map(TodoListAction.didUpdateRemote)
       
     case .clearCompleted:
       return environment.todosClient.deleteX(state.todos.filter(\.done))
         .mapError(APIError.init)
         .receive(on: environment.scheduler)
         .catchToEffect()
-        .map(TodoListAction.updateRemoteResult)
+        .map(TodoListAction.didUpdateRemote)
       
     // alerts
     case .dismissAlert:
@@ -106,15 +106,15 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       return .none
       
     // results
-    case let .fetchTodosResult(.success(todos)):
+    case let .didFetchTodos(.success(todos)):
       state.todos = IdentifiedArray(uniqueElements: todos)
       return .none
       
-    case let .fetchTodosResult(.failure(error)):
+    case let .didFetchTodos(.failure(error)):
       state.error = error
       return .none
       
-    case let .updateRemoteResult(.failure(error)):
+    case let .didUpdateRemote(.failure(error)):
       state.error = error
       return .none
     }
