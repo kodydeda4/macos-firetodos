@@ -15,7 +15,7 @@ import CoreMedia
 struct TodosClient {
   let attachListener: ()     -> Effect<[TodoState], APIError>
   let detachListener: ()     -> Effect<Never, Never>
-  let create:  ()            -> Effect<DocumentReference, Error>
+  let create:  ()            -> Effect<Never, Error>
   let update:  (TodoState)   -> Effect<Never, Error>
   let delete:  (TodoState)   -> Effect<Never, Error>
   let deleteX: ([TodoState]) -> Effect<Never, Error>
@@ -48,31 +48,20 @@ extension TodosClient {
         }
       },
       create: {
-//        let rv = PassthroughSubject<Bool, APIError>()
-//
-//        do {
-//          let foo = try Firestore.firestore()
-//            .collection("todos")
-//            .addDocument(from: TodoState(timestamp: Date(), userID: Auth.auth().currentUser!.uid, text: "Untitled"))
-//
-//          rv.send(true)
-//        }
-//        catch {
-//          rv.send(completion: .failure(.init(error)))
-//        }
-//
-//        return rv.eraseToEffect()
-        .task {
-          try await Firestore.firestore()
-            .collection("todos")
-            .addDocument(from: TodoState(
-              timestamp: Date(),
-              userID: Auth.auth().currentUser!.uid,
-              text: "Untitled")
-            )
+        .future { callback in
+          do {
+            let _ = try Firestore.firestore()
+              .collection("todos")
+              .addDocument(from: TodoState(
+                timestamp: Date(),
+                userID: Auth.auth().currentUser!.uid,
+                text: "Untitled")
+              )
+            
+          } catch {
+            callback(.failure(error))
+          }
         }
-        
-        
       },
       update: { todo in
         .future { callback in

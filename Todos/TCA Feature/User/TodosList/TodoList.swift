@@ -9,15 +9,6 @@ import Combine
 import ComposableArchitecture
 import IdentifiedCollections
 
-import ComposableArchitecture
-import Combine
-import Firebase
-import FirebaseFirestore
-import FirebaseFirestoreSwift
-import CoreMedia
-
-
-
 struct TodoListState: Equatable {
   var todos: IdentifiedArrayOf<TodoState> = []
   var error: APIError?
@@ -36,7 +27,7 @@ enum TodoListAction: Equatable {
   case fetchTodosResult(Result<[TodoState], APIError>)
   case updateRemoteResult(Result<Never, APIError>)
 
-  case createTodoResult(Result<DocumentReference, APIError>)
+//  case createTodoResult(Result<DocumentReference, APIError>)
   case crud(Result<Bool, APIError>)
 }
 
@@ -104,7 +95,7 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
         .mapError(APIError.init)
         .receive(on: environment.scheduler)
         .catchToEffect()
-        .map(TodoListAction.createTodoResult)
+        .map(TodoListAction.updateRemoteResult)
             
     case .clearCompleted:
       return environment.todosClient.deleteX(state.todos.filter(\.done))
@@ -122,8 +113,8 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       return .none
       
       
-    case .createTodoResult:
-      return .none
+//    case .createTodoResult:
+//      return .none
       
     // MARK: - CRUD
     case .crud(.success):
