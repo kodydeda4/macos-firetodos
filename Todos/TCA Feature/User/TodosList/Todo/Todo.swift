@@ -12,14 +12,12 @@ import FirebaseFirestoreSwift
 
 struct TodoState: Equatable, Identifiable, Codable {
   @DocumentID var id: String?
-  let timestamp: Date
   let userID: String
-  var text: String
+  var timestamp = Date()
+  var text: String = "Untitled"
   var done: Bool = false
 }
 
-//enum TodoAction: BindableAction, Equatable {
-//  case binding(BindingAction<TodoState>)
 enum TodoAction: Equatable {
   case setText(String)
   case setDone
@@ -36,10 +34,7 @@ struct TodoEnvironment {
 
 let todoReducer = Reducer<TodoState, TodoAction, TodoEnvironment> { state, action, environment in
   switch action {
-    
-//  case .binding:
-//    return .none
-    
+        
   case let .setText(text):
     state.text = text
     return Effect(value: .updateRemote)
@@ -70,8 +65,8 @@ let todoReducer = Reducer<TodoState, TodoAction, TodoEnvironment> { state, actio
 extension Store where State == TodoState, Action == TodoAction {
   static let `default` = Store(
     initialState: .init(
-      timestamp: Date(),
       userID: "GxscCXP9odUQucq6A5cBXJEiTBd2",
+      timestamp: Date(),
       text: "Untitled"
     ),
     reducer: todoReducer,

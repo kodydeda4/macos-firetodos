@@ -37,10 +37,9 @@ extension TodosClient {
           let _ = try Firestore.firestore()
             .collection("todos")
             .addDocument(from: TodoState(
-              timestamp: Date(),
               userID: Auth.auth().currentUser!.uid,
-              text: "Untitled")
-            )
+              timestamp: Date()
+            ))
           
         } catch {
           callback(.failure(.init(error)))
