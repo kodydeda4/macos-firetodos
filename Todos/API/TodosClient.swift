@@ -14,7 +14,6 @@ import CoreMedia
 
 struct TodosClient {
   let attachListener: ()     -> Effect<[TodoState], APIError>
-  let detachListener: ()     -> Effect<Never, Never>
   let create:  ()            -> Effect<Never, Error>
   let update:  (TodoState)   -> Effect<Never, Error>
   let delete:  (TodoState)   -> Effect<Never, Error>
@@ -23,12 +22,11 @@ struct TodosClient {
 
 extension TodosClient {
   static var live: Self {
-    var listener: ListenerRegistration?
     
     return Self(
       attachListener: {
         let rv = PassthroughSubject<[TodoState], APIError>()
-        listener = Firestore.firestore()
+        Firestore.firestore()
           .collection("todos")
           .whereField("userID", isEqualTo: Auth.auth().currentUser!.uid)
           .addSnapshotListener { querySnapshot, error in
@@ -39,13 +37,6 @@ extension TodosClient {
             }
           }
         return rv.eraseToEffect()
-      },
-      detachListener: {
-        .fireAndForget {
-          if let l = listener {
-            l.remove()
-          }
-        }
       },
       create: {
         .future { callback in
