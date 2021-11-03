@@ -45,11 +45,7 @@ extension AuthClient {
     },
     signOut: {
       .fireAndForget {
-        do {
-          try Auth.auth().signOut()
-        } catch {
-          print(error.localizedDescription)
-        }
+        try! Auth.auth().signOut()
       }
     }
   )
