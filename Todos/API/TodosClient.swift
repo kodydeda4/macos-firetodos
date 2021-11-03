@@ -17,7 +17,7 @@ struct TodosClient {
   let detachListener: ()     -> Effect<Never, Never>
   let create:  ()            -> Effect<Bool, APIError>
   let update:  (TodoState)   -> Effect<Never, Error>
-  let delete:  (TodoState)   -> Effect<Bool, APIError>
+  let delete:  (TodoState)   -> Effect<Never, Error>
   let deleteX: ([TodoState]) -> Effect<Bool, APIError>
 }
 
@@ -77,16 +77,12 @@ extension TodosClient {
         }
       },
       delete: { todo in
-        let rv = PassthroughSubject<Bool, APIError>()
-        
-        Firestore.firestore().collection("todos").document(todo.id!).delete { error in
-          if let error = error {
-            rv.send(completion: .failure(.init(error)))
-          } else {
-            rv.send(true)
-          }
+        .future { callback in
+          Firestore.firestore()
+            .collection("todos")
+            .document(todo.id!)
+            .delete { error in if let error = error { callback(.failure(error)) } }
         }
-        return rv.eraseToEffect()
       },
       deleteX: { todos in
         let rv = PassthroughSubject<Bool, APIError>()

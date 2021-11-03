@@ -62,9 +62,10 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       
     case let .removeTodo(todo):
       return environment.todosClient.delete(todo)
+        .mapError(APIError.init)
         .receive(on: environment.scheduler)
         .catchToEffect()
-        .map(TodoListAction.crud)
+        .map(TodoListAction.updateRemoteResult)
 
     case let .updateTodo(todo):
       return environment.todosClient.update(todo)
