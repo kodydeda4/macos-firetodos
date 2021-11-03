@@ -17,18 +17,21 @@ struct TodoListState: Equatable {
 
 enum TodoListAction: Equatable {
   case todos(id: TodoState.ID, action: TodoAction)
-  case createClearCompletedAlert
-  case dismissAlert
+
+  // actions
   case attachListener
   case createTodo
   case removeTodo(TodoState)
   case updateTodo(TodoState)
   case clearCompleted
+  
+  // results
   case fetchTodosResult(Result<[TodoState], APIError>)
   case updateRemoteResult(Result<Never, APIError>)
-
-//  case createTodoResult(Result<DocumentReference, APIError>)
-  case crud(Result<Bool, APIError>)
+  
+  // alerts
+  case dismissAlert
+  case createClearCompletedAlert
 }
 
 struct TodoListEnvironment {
@@ -52,14 +55,21 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       
     case let .todos(id, _):
       return Effect(value: .updateTodo(state.todos[id: id]!))
-
-    case .createClearCompletedAlert:
-      state.alert = AlertState(
-        title: TextState("Clear completed?"),
-        primaryButton: .default(TextState("Okay"), action: .send(.clearCompleted)),
-        secondaryButton: .cancel(TextState("Cancel"))
-      )
-      return .none
+      
+    // actions
+    case .attachListener:
+      return environment.todosClient.attachListener()
+        .receive(on: environment.scheduler)
+        .catchToEffect()
+        .cancellable(id: EffectID())
+        .map(TodoListAction.fetchTodosResult)
+            
+    case .createTodo:
+      return environment.todosClient.create()
+        .mapError(APIError.init)
+        .receive(on: environment.scheduler)
+        .catchToEffect()
+        .map(TodoListAction.updateRemoteResult)
       
     case let .removeTodo(todo):
       return environment.todosClient.delete(todo)
@@ -75,28 +85,6 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
         .catchToEffect()
         .map(TodoListAction.updateRemoteResult)
       
-    case let .updateRemoteResult(.failure(error)):
-      state.error = error
-      return .none
-    
-    case .dismissAlert:
-      state.alert = nil
-      return .none
-      
-    case .attachListener:
-      return environment.todosClient.attachListener()
-        .receive(on: environment.scheduler)
-        .catchToEffect()
-        .cancellable(id: EffectID())
-        .map(TodoListAction.fetchTodosResult)
-            
-    case .createTodo:
-      return environment.todosClient.create()
-        .mapError(APIError.init)
-        .receive(on: environment.scheduler)
-        .catchToEffect()
-        .map(TodoListAction.updateRemoteResult)
-            
     case .clearCompleted:
       return environment.todosClient.deleteX(state.todos.filter(\.done))
         .mapError(APIError.init)
@@ -104,6 +92,20 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
         .catchToEffect()
         .map(TodoListAction.updateRemoteResult)
       
+    // alerts
+    case .dismissAlert:
+      state.alert = nil
+      return .none
+      
+    case .createClearCompletedAlert:
+      state.alert = AlertState(
+        title: TextState("Clear completed?"),
+        primaryButton: .default(TextState("Okay"), action: .send(.clearCompleted)),
+        secondaryButton: .cancel(TextState("Cancel"))
+      )
+      return .none
+      
+    // results
     case let .fetchTodosResult(.success(todos)):
       state.todos = IdentifiedArray(uniqueElements: todos)
       return .none
@@ -112,15 +114,7 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       state.error = error
       return .none
       
-      
-//    case .createTodoResult:
-//      return .none
-      
-    // MARK: - CRUD
-    case .crud(.success):
-      return .none
-      
-    case let .crud(.failure(error)):
+    case let .updateRemoteResult(.failure(error)):
       state.error = error
       return .none
     }
