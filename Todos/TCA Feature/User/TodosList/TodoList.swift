@@ -97,9 +97,10 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
             
     case .clearCompleted:
       return environment.todosClient.deleteX(state.todos.filter(\.done))
+        .mapError(APIError.init)
         .receive(on: environment.scheduler)
         .catchToEffect()
-        .map(TodoListAction.crud)
+        .map(TodoListAction.updateRemoteResult)
       
     case let .fetchTodosResult(.success(todos)):
       state.todos = IdentifiedArray(uniqueElements: todos)
