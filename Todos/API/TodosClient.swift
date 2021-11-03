@@ -65,7 +65,8 @@ extension TodosClient {
         Firestore.firestore()
           .collection("todos")
           .document(todo.id!)
-          .delete { error in if let error = error { callback(.failure(.init(error))) } }
+          .delete { if let error = $0 { callback(.failure(.init(error))) } }
+
       }
     },
     deleteX: { todos in
@@ -74,7 +75,7 @@ extension TodosClient {
           Firestore.firestore()
             .collection("todos")
             .document($0)
-            .delete { error in if let error = error { callback(.failure(.init(error))) } }
+            .delete { if let error = $0 { callback(.failure(.init(error))) } }
         }
       }
     }
