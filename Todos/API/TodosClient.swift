@@ -23,20 +23,13 @@ struct TodosClient {
 extension TodosClient {
   static let live = Self(
     attachListener: {
-      let rv = PassthroughSubject<[TodoState], APIError>()
       Firestore.firestore()
         .collection("todos")
         .whereField("userID", isEqualTo: Auth.auth().currentUser!.uid)
-        .addSnapshotListener { querySnapshot, error in
-          if let values = querySnapshot?.documents.compactMap({ snapshot in try? snapshot.data(as: TodoState.self) }) {
-            rv.send(values)
-          } else if let error = error {
-            rv.send(completion: .failure(.init(error)))
-          } else {
-            fatalError()
-          }
-        }
-      return rv.eraseToEffect()
+        .snapshotPublisher()
+        .map({ $0.documents.compactMap({ try? $0.data(as: TodoState.self) }) })
+        .mapError(APIError.init)
+        .eraseToEffect()
     },
     create: {
       .future { callback in
@@ -86,4 +79,21 @@ extension TodosClient {
       }
     }
   )
+}
+
+// MARK: - Extensions
+private extension Query {
+  func snapshotPublisher(includeMetadataChanges: Bool = false) -> AnyPublisher<QuerySnapshot, Error> {
+    let subject = PassthroughSubject<QuerySnapshot, Error>()
+    let listenerHandle = addSnapshotListener(includeMetadataChanges: includeMetadataChanges) { snapshot, error in
+      if let error = error {
+        subject.send(completion: .failure(error))
+      } else if let snapshot = snapshot {
+        subject.send(snapshot)
+      }
+    }
+    return subject
+      .handleEvents(receiveCancel: listenerHandle.remove)
+      .eraseToAnyPublisher()
+  }
 }
