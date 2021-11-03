@@ -25,7 +25,9 @@ enum TodoListAction: Equatable {
   case updateTodo(TodoState)
   case clearCompleted
   case fetchTodosResult(Result<[TodoState], APIError>)
-  case updateRemoteResult(Result<Bool, APIError>)
+  case updateRemoteResult(Result<Never, APIError>)
+  
+  case crud(Result<Bool, APIError>)
 }
 
 struct TodoListEnvironment {
@@ -48,7 +50,7 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       return Effect(value: .removeTodo(state.todos[id: id]!))
       
     case let .todos(id, _):
-      return Effect(value: .removeTodo(state.todos[id: id]!))
+      return Effect(value: .updateTodo(state.todos[id: id]!))
 
     case .createClearCompletedAlert:
       state.alert = AlertState(
@@ -62,13 +64,18 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       return environment.todosClient.delete(todo)
         .receive(on: environment.scheduler)
         .catchToEffect()
-        .map(TodoListAction.updateRemoteResult)
+        .map(TodoListAction.crud)
 
     case let .updateTodo(todo):
       return environment.todosClient.update(todo)
+        .mapError(APIError.init)
         .receive(on: environment.scheduler)
         .catchToEffect()
         .map(TodoListAction.updateRemoteResult)
+      
+    case let .updateRemoteResult(.failure(error)):
+      state.error = error
+      return .none
     
     case .dismissAlert:
       state.alert = nil
@@ -85,13 +92,13 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       return environment.todosClient.create()
         .receive(on: environment.scheduler)
         .catchToEffect()
-        .map(TodoListAction.updateRemoteResult)
+        .map(TodoListAction.crud)
             
     case .clearCompleted:
       return environment.todosClient.deleteX(state.todos.filter(\.done))
         .receive(on: environment.scheduler)
         .catchToEffect()
-        .map(TodoListAction.updateRemoteResult)
+        .map(TodoListAction.crud)
       
     case let .fetchTodosResult(.success(todos)):
       state.todos = IdentifiedArray(uniqueElements: todos)
@@ -101,10 +108,11 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       state.error = error
       return .none
       
-    case .updateRemoteResult(.success):
+    // MARK: - CRUD
+    case .crud(.success):
       return .none
       
-    case let .updateRemoteResult(.failure(error)):
+    case let .crud(.failure(error)):
       state.error = error
       return .none
     }
