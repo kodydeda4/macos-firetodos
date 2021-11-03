@@ -49,7 +49,7 @@ let todoReducer = Reducer<TodoState, TodoAction, TodoEnvironment> { state, actio
     return Effect(value: .updateRemote)
     
   case .delete:
-    return environment.todosClient.delete(state)
+    return environment.todosClient.remove(state)
       .receive(on: environment.scheduler)
       .catchToEffect()
       .map(TodoAction.didUpdateRemote)

@@ -13,16 +13,16 @@ import FirebaseFirestoreSwift
 import CoreMedia
 
 struct TodosClient {
-  let attachListener: ()     -> Effect<[TodoState], APIError>
+  let fetch:   ()            -> Effect<[TodoState], APIError>
   let create:  ()            -> Effect<Never, APIError>
   let update:  (TodoState)   -> Effect<Never, APIError>
-  let delete:  (TodoState)   -> Effect<Never, APIError>
-  let deleteX: ([TodoState]) -> Effect<Never, APIError>
+  let remove:  (TodoState)   -> Effect<Never, APIError>
+  let removeX: ([TodoState]) -> Effect<Never, APIError>
 }
 
 extension TodosClient {
   static let live = Self(
-    attachListener: {
+    fetch: {
       Firestore.firestore()
         .collection("todos")
         .whereField("userID", isEqualTo: Auth.auth().currentUser!.uid)
@@ -60,7 +60,7 @@ extension TodosClient {
         }
       }
     },
-    delete: { todo in
+    remove: { todo in
       .future { callback in
         Firestore.firestore()
           .collection("todos")
@@ -69,7 +69,7 @@ extension TodosClient {
 
       }
     },
-    deleteX: { todos in
+    removeX: { todos in
       .future { callback in
         todos.compactMap(\.id).forEach {
           Firestore.firestore()

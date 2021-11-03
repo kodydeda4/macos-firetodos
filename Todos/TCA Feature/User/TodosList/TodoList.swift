@@ -16,17 +16,11 @@ struct TodoListState: Equatable {
 
 enum TodoListAction: Equatable {
   case todos(id: TodoState.ID, action: TodoAction)
-
-  // actions
-  case attachListener
+  case fetchTodos
   case createTodo
   case clearCompleted
-  
-  // results
   case didFetchTodos(Result<[TodoState], APIError>)
   case didUpdateRemote(Result<Never, APIError>)
-  
-  // alerts
   case dismissAlert
   case createClearCompletedAlert
 }
@@ -50,9 +44,8 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
     case .todos:
       return .none
       
-    // actions
-    case .attachListener:
-      return environment.todosClient.attachListener()
+    case .fetchTodos:
+      return environment.todosClient.fetch()
         .receive(on: environment.scheduler)
         .catchToEffect()
         .cancellable(id: EffectID())
@@ -65,12 +58,11 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
         .map(TodoListAction.didUpdateRemote)
       
     case .clearCompleted:
-      return environment.todosClient.deleteX(state.todos.filter(\.done))
+      return environment.todosClient.removeX(state.todos.filter(\.done))
         .receive(on: environment.scheduler)
         .catchToEffect()
         .map(TodoListAction.didUpdateRemote)
       
-    // alerts
     case .dismissAlert:
       state.alert = nil
       return .none
@@ -83,7 +75,6 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       )
       return .none
       
-    // results
     case let .didFetchTodos(.success(todos)):
       state.todos = IdentifiedArray(uniqueElements: todos)
       return .none

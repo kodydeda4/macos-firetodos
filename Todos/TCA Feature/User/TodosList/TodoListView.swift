@@ -22,7 +22,7 @@ struct TodoListView: View {
       .navigationTitle("Todos")
       .alert(store.scope(state: \.alert), dismiss: .dismissAlert)
       .onAppear {
-        viewStore.send(.attachListener)
+        viewStore.send(.fetchTodos)
       }
       .toolbar {
         Spacer()
