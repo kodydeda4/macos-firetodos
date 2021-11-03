@@ -11,7 +11,6 @@ import IdentifiedCollections
 
 struct TodoListState: Equatable {
   var todos: IdentifiedArrayOf<TodoState> = []
-  var error: APIError?
   var alert: AlertState<TodoListAction>?
 }
 
@@ -107,11 +106,11 @@ let todoListReducer = Reducer<TodoListState, TodoListAction, TodoListEnvironment
       return .none
       
     case let .didFetchTodos(.failure(error)):
-      state.error = error
+      state.alert = AlertState(title: TextState("\(error.localizedDescription)"))
       return .none
       
     case let .didUpdateRemote(.failure(error)):
-      state.error = error
+      state.alert = AlertState(title: TextState("\(error.localizedDescription)"))
       return .none
     }
   }
