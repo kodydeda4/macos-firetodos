@@ -2,6 +2,9 @@
 
 ![banner](https://user-images.githubusercontent.com/45678211/121034624-258f8680-c77b-11eb-96fd-e949a219a2d3.png)
 
+**Note:** There's a ReactJS counterpart to this app that fetches & updates the same db 😉     
+Check it out here 👉 https://github.com/kodydeda4/react-firetodos
+
 ## About
 
 `Firetodos` is a Todo's app for macOS that implements Firebase authentication and the Cloud Firestore database.
