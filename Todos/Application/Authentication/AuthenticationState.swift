@@ -1,18 +1,11 @@
-//
-//  UserAuthentication.swift
-//  Todos
-//
-//  Created by Kody Deda on 6/2/21.
-//
-
+import Firebase
 import ComposableArchitecture
 import AuthenticationServices
-import Firebase
 
 struct AuthenticationState: Equatable {
   @BindableState var email = String()
   @BindableState var password = String()
-  var error: APIError?
+  var error: AppError?
   var route: Route = .login
   var alert: AlertState<AuthenticationAction>? = nil
   
@@ -26,18 +19,18 @@ enum AuthenticationAction: BindableAction, Equatable {
   case binding(BindingAction<AuthenticationState>)
   case updateRoute(AuthenticationState.Route)
   case createSignupAlert
-  case dismissAlert  
+  case dismissAlert
   case signInAnonymously
   case signInWithEmail
   case signInWithApple(SignInWithAppleToken)
-  case signInResult(Result<Firebase.User, APIError>)
+  case signInResult(Result<Firebase.User, AppError>)
   case signUpWithEmail
-  case signupResult(Result<Firebase.User, APIError>)
+  case signupResult(Result<Firebase.User, AppError>)
 }
 
 struct AuthenticationEnvironment {
-  let authClient: AuthClient
-  let scheduler: AnySchedulerOf<DispatchQueue>
+  let mainQueue: AnySchedulerOf<DispatchQueue>
+  let authClient: AuthenticationClient
 }
 
 let authenticationReducer = Reducer<
@@ -53,24 +46,18 @@ let authenticationReducer = Reducer<
     
   case .signInAnonymously:
     return environment.authClient.signInAnonymously()
-      .mapError(APIError.init)
-      .receive(on: environment.scheduler)
-      .catchToEffect()
-      .map(AuthenticationAction.signInResult)
+      .receive(on: environment.mainQueue)
+      .catchToEffect(AuthenticationAction.signInResult)
     
   case .signInWithEmail:
-    return environment.authClient.signInEmailPassword(state.email,state.password)
-      .mapError(APIError.init)
-      .receive(on: environment.scheduler)
-      .catchToEffect()
-      .map(AuthenticationAction.signInResult)
+    return environment.authClient.signInEmailPassword(LoginCredential(state.email, state.password))
+      .receive(on: environment.mainQueue)
+      .catchToEffect(AuthenticationAction.signInResult)
     
   case let .signInWithApple(credential):
     return environment.authClient.signInApple(credential)
-      .mapError(APIError.init)
-      .receive(on: environment.scheduler)
-      .catchToEffect()
-      .map(AuthenticationAction.signInResult)
+      .receive(on: environment.mainQueue)
+      .catchToEffect(AuthenticationAction.signInResult)
     
   case .signInResult(.success):
     return .none
@@ -95,14 +82,12 @@ let authenticationReducer = Reducer<
       secondaryButton: .cancel(TextState("Cancel"))
     )
     return .none
-
+    
   case .signUpWithEmail:
-    return environment.authClient.signup(state.email, state.password)
-      .mapError(APIError.init)
-      .receive(on: environment.scheduler)
-      .catchToEffect()
-      .map(AuthenticationAction.signupResult)
-
+    return environment.authClient.signup(LoginCredential(state.email, state.password))
+      .receive(on: environment.mainQueue)
+      .catchToEffect(AuthenticationAction.signupResult)
+    
   case let .updateRoute(route):
     state.route = route
     state.email = ""
@@ -126,13 +111,13 @@ let authenticationReducer = Reducer<
 .binding()
 .debug()
 
-extension Store where State == AuthenticationState, Action == AuthenticationAction {
+struct AuthenticationStore {
   static let `default` = Store(
-    initialState: .init(),
+    initialState: AuthenticationState(),
     reducer: authenticationReducer,
     environment: AuthenticationEnvironment(
-      authClient: .live,
-      scheduler: .main
+      mainQueue: .main,
+      authClient: .live
     )
   )
 }

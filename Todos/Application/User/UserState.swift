@@ -1,12 +1,5 @@
-//
-//  UserState.swift
-//  Todos
-//
-//  Created by Kody Deda on 10/26/21.
-//
-
-import ComposableArchitecture
 import Firebase
+import ComposableArchitecture
 
 struct UserState: Equatable {
   var user: User
@@ -24,16 +17,18 @@ enum UserAction: Equatable {
 }
 
 struct UserEnvironment {
-  let authClient: AuthClient
-  let todosClient: TodosClient
-  let scheduler: AnySchedulerOf<DispatchQueue>
+  let mainQueue: AnySchedulerOf<DispatchQueue>
+  let userClient: UserClient
+  let authClient: AuthenticationClient
+  let todoListClient: TodoListClient
+  let todoClient: TodoClient
 }
 
 let userReducer = Reducer<UserState, UserAction, UserEnvironment>.combine(
   todoListReducer.pullback(
     state: \.todosList,
     action: /UserAction.todosList,
-    environment: { .init(todosClient: $0.todosClient, scheduler: $0.scheduler) }
+    environment: { .init(mainQueue: $0.mainQueue, todoListClient: $0.todoListClient, todoClient: $0.todoClient) }
   ),
   Reducer { state, action, environment in
     
@@ -51,7 +46,7 @@ let userReducer = Reducer<UserState, UserAction, UserEnvironment>.combine(
       return .none
       
     case .signout:
-      return environment.authClient.signOut()
+      return environment.userClient.signOut()
         .fireAndForget()
       
     case .dismissAlert:
@@ -64,14 +59,17 @@ let userReducer = Reducer<UserState, UserAction, UserEnvironment>.combine(
   }
 ).debug()
 
-extension Store where State == UserState, Action == UserAction {
+struct UserStore {
   static let `default` = Store(
-    initialState: .init(user: Auth.auth().currentUser!),
+    initialState: UserState(user: Auth.auth().currentUser!),
     reducer: userReducer,
     environment: UserEnvironment(
+      mainQueue: .main,
+      userClient: .live,
       authClient: .live,
-      todosClient: .live,
-      scheduler: .main
+      todoListClient: .live,
+      todoClient: .live
     )
   )
 }
+

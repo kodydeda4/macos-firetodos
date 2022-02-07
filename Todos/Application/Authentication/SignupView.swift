@@ -1,15 +1,7 @@
-//
-//  LoginView.swift
-//  Todos
-//
-//  Created by Kody Deda on 11/1/21.
-//
-
 import SwiftUI
 import ComposableArchitecture
-import AuthenticationServices
 
-struct LoginView: View {
+struct SignupView: View {
   let store: Store<AuthenticationState, AuthenticationAction>
   
   var body: some View {
@@ -20,18 +12,18 @@ struct LoginView: View {
           .foregroundColor(.red)
           .overlay(Image(systemSymbol: .lock).foregroundColor(.black))
         
-        Text("Login")
+        Text("Sign Up")
           .font(.largeTitle)
         
         TextField("Email", text: viewStore.binding(\.$email))
         TextField("Password", text: viewStore.binding(\.$password))
         
-        Button(action: {viewStore.send(.signInWithEmail)}) {
+        Button(action: { viewStore.send(.signUpWithEmail) }) {
           ZStack {
             RoundedRectangle(cornerRadius: 4)
               .foregroundColor(.accentColor)
             
-            Text("Log in")
+            Text("Sign Up")
               .foregroundColor(Color(nsColor: .windowBackgroundColor))
             
           }
@@ -39,48 +31,28 @@ struct LoginView: View {
         .frame(height: 24)
         .buttonStyle(.plain)
         
-        Button("Continue as Guest") {
-          viewStore.send(.signInAnonymously)
-        }
-        
-        SignInWithAppleButton() {
-          viewStore.send(.signInWithApple($0))
-        }
-        
-        HStack {
-          Link("Forgot Password?", destination: .kodysHomepage)
-          
-          Spacer()
-          Button("Don't have an account? Sign up") {
-            viewStore.send(.updateRoute(.signup))
-          }
-          .foregroundColor(.accentColor)
-          .buttonStyle(LinkButtonStyle())
-          
+        Button("Already have an account?") {
+          viewStore.send(.updateRoute(.login))
         }
         .foregroundColor(.accentColor)
+        .buttonStyle(LinkButtonStyle())
         
-        Link("Created by Kody Deda", destination: .kodysHomepage)
+        Link("Created by Kody Deda", destination: .personalWebsite)
           .padding(.top)
           .foregroundColor(.gray)
       }
       .padding()
       .padding(.horizontal, 100)
       .frame(width: 540, height: 860)
-      .navigationTitle("Login")
+      .navigationTitle("Signup")
       .textFieldStyle(RoundedBorderTextFieldStyle())
+      .alert(store.scope(state: \.alert), dismiss: .dismissAlert)
     }
   }
 }
 
-
-struct LoginView_Previews: PreviewProvider {
+struct SignupView_Previews: PreviewProvider {
   static var previews: some View {
-    LoginView(store: .default)
+    SignupView(store: AuthenticationStore.default)
   }
 }
-
-
-
-
-

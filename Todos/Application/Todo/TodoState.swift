@@ -1,14 +1,6 @@
-//
-//  Todo.swift
-//  Todos
-//
-//  Created by Kody Deda on 6/2/21.
-//
-
-import SwiftUI
-import ComposableArchitecture
 import Firebase
 import FirebaseFirestoreSwift
+import ComposableArchitecture
 
 struct TodoState: Equatable, Identifiable, Codable {
   @DocumentID var id: String?
@@ -23,17 +15,17 @@ enum TodoAction: Equatable {
   case setDone
   case delete
   case updateAPI
-  case didUpdateAPI(Result<Never, APIError>)
+  case didUpdateAPI(Result<Never, AppError>)
 }
 
 struct TodoEnvironment {
-  let todosClient: TodosClient
-  let scheduler: AnySchedulerOf<DispatchQueue>
+  let mainQueue: AnySchedulerOf<DispatchQueue>
+  let todoClient: TodoClient
 }
 
 let todoReducer = Reducer<TodoState, TodoAction, TodoEnvironment> { state, action, environment in
   switch action {
-        
+    
   case let .setText(text):
     state.text = text
     return Effect(value: .updateAPI)
@@ -43,25 +35,23 @@ let todoReducer = Reducer<TodoState, TodoAction, TodoEnvironment> { state, actio
     return Effect(value: .updateAPI)
     
   case .delete:
-    return environment.todosClient.remove(state)
-      .receive(on: environment.scheduler)
-      .catchToEffect()
-      .map(TodoAction.didUpdateAPI)
+    return environment.todoClient.remove(state)
+      .receive(on: environment.mainQueue)
+      .catchToEffect(TodoAction.didUpdateAPI)
     
   case .updateAPI:
-    return environment.todosClient.update(state)
-      .receive(on: environment.scheduler)
-      .catchToEffect()
-      .map(TodoAction.didUpdateAPI)
+    return environment.todoClient.update(state)
+      .receive(on: environment.mainQueue)
+      .catchToEffect(TodoAction.didUpdateAPI)
     
   case let .didUpdateAPI(.failure(error)):
     print(error.localizedDescription)
     return .none
   }
-}
-.debug()
+}.debug()
 
-extension Store where State == TodoState, Action == TodoAction {
+
+struct TodoStore {
   static let `default` = Store(
     initialState: .init(
       userID: "GxscCXP9odUQucq6A5cBXJEiTBd2",
@@ -70,8 +60,8 @@ extension Store where State == TodoState, Action == TodoAction {
     ),
     reducer: todoReducer,
     environment: .init(
-      todosClient: .live,
-      scheduler: .main
+      mainQueue: .main,
+      todoClient: .live
     )
   )
 }

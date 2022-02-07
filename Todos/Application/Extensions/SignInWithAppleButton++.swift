@@ -1,13 +1,6 @@
-//
-//  SignIn.swift
-//  Todos
-//
-//  Created by Kody Deda on 6/4/21.
-//
-
 import SwiftUI
-import AuthenticationServices
 import CryptoKit
+import AuthenticationServices
 
 struct SignInWithAppleToken: Equatable {
   let appleID: String
@@ -32,7 +25,7 @@ extension SignInWithAppleButton {
   }
 }
 
-extension SignInWithAppleToken {
+private extension SignInWithAppleToken {
   static func from(_ result: Result<ASAuthorization, Error>, _ nonce: String) -> SignInWithAppleToken? {
     try? (result.map(\.credential).get() as? ASAuthorizationAppleIDCredential)
       .flatMap(\.identityToken)
@@ -72,7 +65,7 @@ private extension SignInWithAppleButton {
   }
 }
 
-extension String {
+private extension String {
   func hash() -> String {
     SHA256
       .hash(data: Data(self.utf8))

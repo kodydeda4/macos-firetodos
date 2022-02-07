@@ -1,10 +1,3 @@
-//
-//  ProfileView.swift
-//  Todos
-//
-//  Created by Kody Deda on 11/1/21.
-//
-
 import SwiftUI
 import ComposableArchitecture
 
@@ -24,7 +17,6 @@ struct ProfileView: View {
         
         Button("Sign Out") {
           viewStore.send(.createSignoutAlert)
-//          viewStore.send(.signout)
         }
       }
       .alert(store.scope(state: \.alert), dismiss: .dismissAlert)
@@ -34,6 +26,6 @@ struct ProfileView: View {
 
 struct ProfileView_Previews: PreviewProvider {
   static var previews: some View {
-    ProfileView(store: .default)
+    ProfileView(store: UserStore.default)
   }
 }

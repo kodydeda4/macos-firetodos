@@ -1,13 +1,6 @@
-//
-//  TodoView.swift
-//  Todos
-//
-//  Created by Kody Deda on 6/2/21.
-//
-
+import SFSafeSymbols
 import SwiftUI
 import ComposableArchitecture
-import SFSafeSymbols
 
 struct TodoView: View {
   let store: Store<TodoState, TodoAction>
@@ -34,6 +27,6 @@ struct TodoView: View {
 
 struct TodoView_Previews: PreviewProvider {
   static var previews: some View {
-    TodoView(store: .default)
+    TodoView(store: TodoStore.default)
   }
 }

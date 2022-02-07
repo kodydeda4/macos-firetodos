@@ -1,10 +1,3 @@
-//
-//  AuthenticationView.swift
-//  Todos
-//
-//  Created by Kody Deda on 6/2/21.
-//
-
 import SwiftUI
 import ComposableArchitecture
 import AuthenticationServices
@@ -30,7 +23,7 @@ struct AuthenticationView: View {
 
 struct Authentication_Previews: PreviewProvider {
   static var previews: some View {
-    AuthenticationView(store: .default)
+    AuthenticationView(store: AuthenticationStore.default)
   }
 }
 
