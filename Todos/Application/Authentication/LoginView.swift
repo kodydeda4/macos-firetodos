@@ -59,7 +59,6 @@ struct LoginView: View {
       }
       .padding()
       .padding(.horizontal, 100)
-      .frame(width: 540, height: 860)
       .navigationTitle("Login")
       .textFieldStyle(RoundedBorderTextFieldStyle())
     }

@@ -7,8 +7,14 @@ struct ProfileView: View {
   var body: some View {
     WithViewStore(store) { viewStore in
       ScrollView {
+        Spacer()
+        
         Text(viewStore.user.email ?? "Guest")
           .font(.title)
+          .foregroundColor(.gray)
+          .opacity(0.5)
+        
+        Spacer()
       }
       .padding()
       .alert(store.scope(state: \.alert), dismiss: .dismissAlert)

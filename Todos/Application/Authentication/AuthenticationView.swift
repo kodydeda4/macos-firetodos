@@ -15,7 +15,6 @@ struct AuthenticationView: View {
         SignupView(store: store)
           .opacity(viewStore.state.route == .signup ? 1 : 0)
           .transition(.opacity.combined(with: .offset(x: 0, y: 20)))
-        
       }
     }
   }

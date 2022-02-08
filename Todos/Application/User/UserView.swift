@@ -7,15 +7,7 @@ struct UserView: View {
   var body: some View {
     WithViewStore(store) { viewStore in
       NavigationView {
-        List {
-          NavigationLink(destination: { TodoListView(store: store.scope(state: \.todosList, action: UserAction.todosList))}) {
-            Label("Todos", systemSymbol: .checkmarkSquareFill)
-          }
-          NavigationLink(destination: { ProfileView(store: store) }) {
-            Label("Profile", systemSymbol: .personCircleFill)
-          }
-        }
-        .listStyle(SidebarListStyle())
+        SidebarView(store: store)
         
         TodoListView(store: store.scope(
           state: \.todosList,
@@ -31,4 +23,6 @@ struct UserView_Previews: PreviewProvider {
     UserView(store: UserStore.default)
   }
 }
+
+
 

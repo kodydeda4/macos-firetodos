@@ -34,6 +34,7 @@
 		3373109427B1E4CC00B3405D /* TodoListClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3373109327B1E4CC00B3405D /* TodoListClient.swift */; };
 		3373109627B1E53700B3405D /* TodoClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3373109527B1E53700B3405D /* TodoClient.swift */; };
 		3373109827B1E61900B3405D /* UserClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3373109727B1E61900B3405D /* UserClient.swift */; };
+		337310D527B2049300B3405D /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 337310D427B2049300B3405D /* SidebarView.swift */; };
 		33AD2EDE27286F5B003BFC3D /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = 33AD2EDD27286F5B003BFC3D /* SFSafeSymbols */; };
 		33B1F0FF266A6D2B0095EA9D /* SignInWithAppleButton++.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33B1F0FE266A6D2B0095EA9D /* SignInWithAppleButton++.swift */; };
 		33CC7E3227302E4400CA811D /* URL++.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC7E3127302E4400CA811D /* URL++.swift */; };
@@ -67,6 +68,7 @@
 		3373109327B1E4CC00B3405D /* TodoListClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListClient.swift; sourceTree = "<group>"; };
 		3373109527B1E53700B3405D /* TodoClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoClient.swift; sourceTree = "<group>"; };
 		3373109727B1E61900B3405D /* UserClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserClient.swift; sourceTree = "<group>"; };
+		337310D427B2049300B3405D /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
 		33B1F0FE266A6D2B0095EA9D /* SignInWithAppleButton++.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SignInWithAppleButton++.swift"; sourceTree = "<group>"; };
 		33CC7E3127302E4400CA811D /* URL++.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL++.swift"; sourceTree = "<group>"; };
 		33F16C65272F0E8D0051E271 /* AppError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppError.swift; sourceTree = "<group>"; };
@@ -95,6 +97,7 @@
 				3373109727B1E61900B3405D /* UserClient.swift */,
 				334BC7682728993100CC3779 /* UserView.swift */,
 				331DA0352730197D00947B7E /* ProfileView.swift */,
+				337310D427B2049300B3405D /* SidebarView.swift */,
 			);
 			path = User;
 			sourceTree = "<group>";
@@ -310,6 +313,7 @@
 				334BC7692728993100CC3779 /* UserView.swift in Sources */,
 				3373108F27B1CEC900B3405D /* Firestore++.swift in Sources */,
 				3373109627B1E53700B3405D /* TodoClient.swift in Sources */,
+				337310D527B2049300B3405D /* SidebarView.swift in Sources */,
 				334BFBC22667DB8300F7952C /* TodoListState.swift in Sources */,
 				3373109427B1E4CC00B3405D /* TodoListClient.swift in Sources */,
 				3373109827B1E61900B3405D /* UserClient.swift in Sources */,

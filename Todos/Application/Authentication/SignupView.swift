@@ -43,7 +43,6 @@ struct SignupView: View {
       }
       .padding()
       .padding(.horizontal, 100)
-      .frame(width: 540, height: 860)
       .navigationTitle("Signup")
       .textFieldStyle(RoundedBorderTextFieldStyle())
       .alert(store.scope(state: \.alert), dismiss: .dismissAlert)
