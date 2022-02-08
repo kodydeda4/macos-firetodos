@@ -6,11 +6,15 @@ struct ProfileView: View {
   
   var body: some View {
     WithViewStore(store) { viewStore in
-      VStack {
+      ScrollView {
         Text(viewStore.user.email ?? "Guest")
           .font(.title)
-        
-        Button("Buy Premium") {
+      }
+      .padding()
+      .alert(store.scope(state: \.alert), dismiss: .dismissAlert)
+      .navigationTitle("Profile")
+      .toolbar {
+        Button("Upgrade") {
           viewStore.send(.buyPremiumButtonTapped)
         }
         .disabled(viewStore.isPremiumUser)
@@ -19,7 +23,6 @@ struct ProfileView: View {
           viewStore.send(.createSignoutAlert)
         }
       }
-      .alert(store.scope(state: \.alert), dismiss: .dismissAlert)
     }
   }
 }
